@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="New" />
+            <MenuItem mnemonicParsing="false" text="Open…" />
+            <Menu mnemonicParsing="false" text="Open Recent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" text="Save" />
+            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" text="Revert" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Preferences…" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="miExit" mnemonicParsing="false" onAction="#exitApp" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Undo" />
+            <MenuItem mnemonicParsing="false" text="Redo" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem mnemonicParsing="false" text="Copy" />
+            <MenuItem mnemonicParsing="false" text="Paste" />
+            <MenuItem mnemonicParsing="false" text="Delete" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Select All" />
+            <MenuItem mnemonicParsing="false" text="Unselect All" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Label fx:id="lblSrcFile" layoutX="22.0" layoutY="35.0" prefHeight="27.0" prefWidth="77.0" style="&#10;" text="Source File" wrapText="false">
+          <font>
+            <Font name="Arial Bold" size="12.0" />
+          </font>
+        </Label>
+            <TextField fx:id="srcFileOrDirectory" layoutX="100.0" layoutY="36.0" onMouseEntered="#showSrcFileOrDirectoryTips" prefHeight="25.0" prefWidth="442.0" style="-fx-background-color: #efdecd;" />
+            <Button fx:id="btnSrcFileOrDirectory" layoutX="554.0" layoutY="36.0" mnemonicParsing="false" onKeyPressed="#chooseSrcFileOrDirectory" onMouseClicked="#chooseSrcFileOrDirectory" prefHeight="25.0" prefWidth="61.0" text="..." />
+            <Label layoutX="22.0" layoutY="71.0" prefHeight="27.0" prefWidth="77.0" text="Target File">
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="targetFileOrDirectory" layoutX="100.0" layoutY="72.0" onMouseEntered="#showTargetFileOrDirectoryTips" prefHeight="25.0" prefWidth="442.0" style="-fx-background-color: #efdecd;" />
+            <Button fx:id="btnTargetFileOrDirectory" layoutX="554.0" layoutY="72.0" mnemonicParsing="false" onKeyPressed="#chooseTargetFileOrDirectory" onMouseClicked="#chooseTargetFileOrDirectory" prefHeight="25.0" prefWidth="61.0" text="..." />
+            <Label layoutX="22.0" layoutY="108.0" prefHeight="25.0" prefWidth="77.0" text="To File Type">
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cboTargetFileType" layoutX="100.0" layoutY="108.0" onKeyReleased="#chooseTargetFileType" onMouseReleased="#chooseTargetFileType" prefHeight="25.0" prefWidth="77.0" />
+            <Label layoutX="317.0" layoutY="108.0" prefHeight="25.0" prefWidth="46.0" text="File ?">
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtFileNameMatcher" layoutX="355.0" layoutY="108.0" prefHeight="25.0" prefWidth="260.0" style="-fx-background-color: #efdecd;" />
+            <Label layoutX="258.0" layoutY="5.0" prefHeight="25.0" prefWidth="124.0" text="File(s) Conversion">
+               <font>
+                  <Font name="Arial Bold" size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnStartConv" layoutX="452.0" layoutY="344.0" mnemonicParsing="false" onKeyReleased="#startFileConv" onMouseClicked="#startFileConv" prefHeight="25.0" prefWidth="61.0" text="Start">
+               <font>
+                  <Font name="Arial Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnCancelFileConv" layoutX="554.0" layoutY="344.0" mnemonicParsing="false" onKeyPressed="#cancelFileConv" onMouseClicked="#cancelFileConv" text="Cancel">
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font>
+            </Button>
+            <TextArea fx:id="txteareLogInfo" layoutX="22.0" layoutY="143.0" prefHeight="192.0" prefWidth="594.0" style="-fx-background-color: #efdecd;" />
+            <ProgressBar fx:id="pbForConv" disable="true" layoutX="22.0" layoutY="345.0" prefWidth="200.0" progress="0.0" style="-fx-background-color: #fbcce7;" />
+            <Label layoutX="193.0" layoutY="108.0" prefHeight="25.0" prefWidth="61.0" text="Batch Conv" />
+            <ToggleButton fx:id="tbForBatchConv" alignment="CENTER_LEFT" layoutX="257.0" layoutY="108.0" mnemonicParsing="false" onAction="#batchValidation" text="Batch" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
