@@ -78,6 +78,10 @@ public class FileUtils {
 
 //    http://javasampleapproach.com/java/java-read-write-csv-file-opencsv-example
 //    https://mydevgeek.com/csv-file-reading-writing-java-using-google-jcsv/
+//    https://crunchify.com/how-to-read-a-file-line-by-line-using-java-8-stream-files-lines-and-files-newbufferedreader-utils/
+//    https://crunchify.com/how-to-read-a-file-line-by-line-using-java-8-stream-files-lines-and-files-newbufferedreader-utils/
+//    https://www.mkyong.com/java8/java-8-stream-read-a-file-line-by-line/
+//    https://alvinalexander.com/blog/post/java/how-open-read-file-java-string-array-list
     static void writeToCsv(Stream<String> stream, String directory, String fileName) {
         String fileSeparator = File.separator;
         String csvFile = directory.concat(fileSeparator).concat(fileName);
