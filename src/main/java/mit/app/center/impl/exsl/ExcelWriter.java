@@ -2,12 +2,13 @@ package mit.app.center.impl.exsl;
 
 import javafx.util.Pair;
 import mit.app.center.intf.Writer;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
 public class ExcelWriter implements Writer {
 
     @Override
-    public void write(Pair<List<String>, List<List<String>>> dataInfo, String filePath) throws IOException {
+    public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         // Create a Workbook
         Workbook workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
 
@@ -32,8 +33,68 @@ public class ExcelWriter implements Writer {
         CreationHelper createHelper = workbook.getCreationHelper();
 
         // Create a Sheet
-        Sheet sheet = workbook.createSheet("Employee");
+        Sheet sheet = workbook.createSheet();
 
+        Integer rowNum = 0;
+        List<String> lstHeader = dataInfo.getKey();
+        if (lstHeader != null && lstHeader.size() > 0) {
+            CellStyle headerCellStyle = createHeadStyle(workbook);
+
+            // Create a Row
+            Row headerRow = sheet.createRow(rowNum++);
+
+            // Creating cells
+            int column = 0;
+            for (String title : lstHeader) {
+                Cell cell = headerRow.createCell(column++);
+                cell.setCellValue(title);
+                cell.setCellStyle(headerCellStyle);
+            }
+        }
+
+        // Cell Style for formatting Date
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+
+        List<List<Object>> lstData = dataInfo.getValue();
+        // Create Other rows and cells with data
+
+        for (List<Object> rowData : lstData) {
+            Row row = sheet.createRow(rowNum++);
+            int columnNum = 0;
+            for (Object colData : rowData) {
+                Cell cell = row.createCell(columnNum++);
+                if (colData != null) {
+                    Class<?> dataClass = colData.getClass();
+                    if (ClassUtils.isAssignable(dataClass, String.class)) {
+                        cell.setCellValue(String.class.cast(colData));
+                    } else if (ClassUtils.isAssignable(dataClass, Double.class, true)) {
+                        cell.setCellValue(Double.class.cast(colData));
+                    } else if (ClassUtils.isAssignable(dataClass, Date.class)) {
+                        cell.setCellValue(Date.class.cast(colData));
+                        cell.setCellStyle(dateCellStyle);
+                    } else if (ClassUtils.isAssignable(dataClass, Boolean.class, true)) {
+                        cell.setCellValue(Boolean.class.cast(colData));
+                    }
+                }
+            }
+        }
+
+        // Resize all columns to fit the content size
+        sheet.getRow(0).forEach(cell -> {
+            int column = cell.getColumnIndex();
+            sheet.autoSizeColumn(column);
+        });
+
+        // Write the output to a file
+        FileOutputStream fileOut = new FileOutputStream(filePath);
+        workbook.write(fileOut);
+        fileOut.close();
+
+        workbook.close();
+    }
+
+    private CellStyle createHeadStyle(Workbook workbook) {
         // Create a Font for styling header cells
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);
@@ -43,83 +104,6 @@ public class ExcelWriter implements Writer {
         // Create a CellStyle with the font
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
-
-        // Create a Row
-        Row headerRow = sheet.createRow(0);
-
-        // Creating cells
-        for(int i = 0; i < columns.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columns[i]);
-            cell.setCellStyle(headerCellStyle);
-        }
-
-        // Cell Style for formatting Date
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
-
-        // Create Other rows and cells with employees data
-        int rowNum = 1;
-        for(Employee employee: employees) {
-            Row row = sheet.createRow(rowNum++);
-
-            row.createCell(0)
-                .setCellValue(employee.getName());
-
-            row.createCell(1)
-                .setCellValue(employee.getEmail());
-
-            Cell dateOfBirthCell = row.createCell(2);
-            dateOfBirthCell.setCellValue(employee.getDateOfBirth());
-            dateOfBirthCell.setCellStyle(dateCellStyle);
-
-            row.createCell(3)
-                .setCellValue(employee.getSalary());
-        }
-
-        // Resize all columns to fit the content size
-        for(int i = 0; i < columns.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("poi-generated-file.xlsx");
-        workbook.write(fileOut);
-        fileOut.close();
-
-        workbook.close();
-    }
-
-
-    // Example to modify an existing excel file
-    private static void modifyExistingWorkbook() throws InvalidFormatException, IOException {
-        // Obtain a workbook from the excel file
-        Workbook workbook = WorkbookFactory.create(new File("existing-spreadsheet.xlsx"));
-
-        // Get Sheet at index 0
-        Sheet sheet = workbook.getSheetAt(0);
-
-        // Get Row at index 1
-        Row row = sheet.getRow(1);
-
-        // Get the Cell at index 2 from the above row
-        Cell cell = row.getCell(2);
-
-        // Create the cell if it doesn't exist
-        if (cell == null)
-            cell = row.createCell(2);
-
-        // Update the cell's value
-        cell.setCellType(CellType.STRING);
-        cell.setCellValue("Updated Value");
-
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("existing-spreadsheet.xlsx");
-        workbook.write(fileOut);
-        fileOut.close();
-
-        // Closing the workbook
-        workbook.close();
-    }
+        return headerCellStyle;
     }
 }

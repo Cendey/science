@@ -33,10 +33,6 @@ public class ExcelReader implements Reader {
 
             workbook.forEach(sheet -> {
                 List<String> sheetHeader = new ArrayList<>();
-                if (isFileWithHeader) {
-                    Row headerRow = sheet.getRow(0);
-                    headerRow.forEach(cell -> sheetHeader.add(cell.getStringCellValue()));
-                }
                 List<List<Object>> sheetData = new ArrayList<>();
                 sheet.forEach(row -> {
                     int rowNum = row.getRowNum();
@@ -46,6 +42,9 @@ public class ExcelReader implements Reader {
                             List<Object> rowData = new ArrayList<>();
                             row.forEach(cell -> rowData.add(parse(workbook, cell)));
                             sheetData.add(rowData);
+                        } else {
+                            Row headerRow = sheet.getRow(rowNum);
+                            headerRow.forEach(cell -> sheetHeader.add(cell.getStringCellValue()));
                         }
                     } else {
                         List<Object> rowData = new ArrayList<>();
@@ -72,11 +71,7 @@ public class ExcelReader implements Reader {
                 value = cell.getRichStringCellValue().getString();
                 break;
             case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    value = cell.getDateCellValue();
-                } else {
-                    value = cell.getNumericCellValue();
-                }
+                value = DateUtil.isCellDateFormatted(cell) ? cell.getDateCellValue() : cell.getNumericCellValue();
                 break;
             case FORMULA:
                 FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
@@ -84,7 +79,6 @@ public class ExcelReader implements Reader {
                 break;
             default:
                 value = null;
-
         }
         return value;
     }

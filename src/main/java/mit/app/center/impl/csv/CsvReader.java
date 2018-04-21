@@ -35,7 +35,7 @@ public class CsvReader implements Reader {
         ) {
             result = new ArrayList<>();
             if (isFileWithHeader) {
-                List<String> lstHeader = new ArrayList<>(csvParser.getHeaderMap().keySet());
+                List<String> lstHeader = new ArrayList<>();
                 List<List<Object>> lstData = new ArrayList<>();
                 csvParser.forEach((csvRecord) -> {
                     long recNum = csvRecord.getRecordNumber();
@@ -44,6 +44,8 @@ public class CsvReader implements Reader {
                         List<Object> data = new ArrayList<>();
                         lstHeader.forEach((header) -> data.add(csvRecord.get(header)));
                         lstData.add(data);
+                    } else {
+                        csvRecord.forEach(lstHeader::add);
                     }
                 });
                 Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(lstHeader, lstData);

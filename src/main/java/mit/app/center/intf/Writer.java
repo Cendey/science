@@ -17,5 +17,5 @@ import java.util.List;
  */
 public interface Writer {
 
-    void write(Pair<List<String>, List<List<String>>> dataInfo, String filePath) throws IOException;
+    void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException;
 }
