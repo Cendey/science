@@ -3,13 +3,11 @@ package mit.app.center.impl.exsl;
 import javafx.util.Pair;
 import mit.app.center.intf.Reader;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,48 +23,87 @@ import java.util.List;
 public class ExcelReader implements Reader {
 
     @Override
-    public List<Pair<List<String>, List<List<String>>>> read(String filePath, Boolean isFileWithHeader) throws IOException {
-        List<Pair<List<String>, List<List<String>>>> result = null;
+    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader) throws IOException {
+        final List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
-        try (Workbook workbook = WorkbookFactory.create(new File(filePath))) {
+        try (final Workbook workbook = WorkbookFactory.create(new File(filePath))) {
             // Retrieving the number of sheets in the Workbook
             System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
-            workbook.forEach(sheet -> {sheet.forEach(row -> {
 
-            });});
+            workbook.forEach(sheet -> {
+                List<String> sheetHeader = new ArrayList<>();
+                if (isFileWithHeader) {
+                    Row headerRow = sheet.getRow(0);
+                    headerRow.forEach(cell -> sheetHeader.add(cell.getStringCellValue()));
+                }
+                List<List<Object>> sheetData = new ArrayList<>();
+                sheet.forEach(row -> {
+                    int rowNum = row.getRowNum();
+                    if (isFileWithHeader) {
+                        // Skip header row
+                        if (rowNum != 0) {
+                            List<Object> rowData = new ArrayList<>();
+                            row.forEach(cell -> rowData.add(parse(workbook, cell)));
+                            sheetData.add(rowData);
+                        }
+                    } else {
+                        List<Object> rowData = new ArrayList<>();
+                        row.forEach(cell -> rowData.add(parse(workbook, cell)));
+                        sheetData.add(rowData);
+                    }
+                });
+                Pair<List<String>, List<List<Object>>> sheetRecord = new Pair<>(sheetHeader, sheetData);
+                result.add(sheetRecord);
+            });
         } catch (InvalidFormatException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
-    private static Object parse(Cell cell) {
-        Object value = null;
+    private static Object parse(Workbook workbook, Cell cell) {
+        Object value;
         switch (cell.getCellTypeEnum()) {
             case BOOLEAN:
-                value= cell.getBooleanCellValue();
+                value = cell.getBooleanCellValue();
                 break;
             case STRING:
-                value =cell.getRichStringCellValue().getString();
+                value = cell.getRichStringCellValue().getString();
                 break;
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     value = cell.getDateCellValue();
                 } else {
-                    value=cell.getNumericCellValue();
+                    value = cell.getNumericCellValue();
                 }
                 break;
             case FORMULA:
-                System.out.print(cell.getCellFormula());
-                break;
-            case BLANK:
-                System.out.print("");
+                FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+                value = formula(evaluator.evaluate(cell));
                 break;
             default:
-                System.out.print("");
-        }
+                value = null;
 
-       return value;
+        }
+        return value;
+    }
+
+    private static Object formula(CellValue cellValue) {
+        Object value;
+        switch (cellValue.getCellTypeEnum()) {
+            case BOOLEAN:
+                value = cellValue.getBooleanValue();
+                break;
+            case NUMERIC:
+                value = cellValue.getNumberValue();
+                break;
+            case STRING:
+                value = cellValue.getStringValue();
+                break;
+            default:
+                value = null;
+        }
+        return value;
     }
 }

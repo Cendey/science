@@ -17,5 +17,5 @@ import java.util.List;
  */
 public interface Reader {
 
-    List<Pair<List<String>, List<List<String>>>> read(String filePath, Boolean isFileWithHeader) throws IOException;
+    List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader) throws IOException;
 }

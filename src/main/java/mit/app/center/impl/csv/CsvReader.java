@@ -25,9 +25,9 @@ import java.util.List;
 public class CsvReader implements Reader {
 
     @Override
-    public List<Pair<List<String>, List<List<String>>>> read(String filePath, Boolean isFileWithHeader)
-        throws IOException {
-        List<Pair<List<String>, List<List<String>>>> result;
+    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
+            throws IOException {
+        List<Pair<List<String>, List<List<Object>>>> result;
         CSVFormat csvFormat = CSVFormat.DEFAULT;
         if (isFileWithHeader) csvFormat.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim();
         try (java.io.Reader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8);
@@ -36,22 +36,26 @@ public class CsvReader implements Reader {
             result = new ArrayList<>();
             if (isFileWithHeader) {
                 List<String> lstHeader = new ArrayList<>(csvParser.getHeaderMap().keySet());
-                List<List<String>> lstData = new ArrayList<>();
+                List<List<Object>> lstData = new ArrayList<>();
                 csvParser.forEach((csvRecord) -> {
-                    List<String> data = new ArrayList<>();
-                    lstHeader.forEach((header) -> data.add(csvRecord.get(header)));
-                    lstData.add(data);
+                    long recNum = csvRecord.getRecordNumber();
+                    // Collect csv real data skip header portion
+                    if (recNum != 0) {
+                        List<Object> data = new ArrayList<>();
+                        lstHeader.forEach((header) -> data.add(csvRecord.get(header)));
+                        lstData.add(data);
+                    }
                 });
-                Pair<List<String>, List<List<String>>> csvSheet = new Pair<>(lstHeader, lstData);
+                Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(lstHeader, lstData);
                 result.add(csvSheet);
             } else {
-                List<List<String>> lstData = new ArrayList<>();
+                List<List<Object>> lstData = new ArrayList<>();
                 csvParser.forEach((csvRecord) -> {
-                    List<String> data = new ArrayList<>();
+                    List<Object> data = new ArrayList<>();
                     csvRecord.forEach(data::add);
                     lstData.add(data);
                 });
-                Pair<List<String>, List<List<String>>> csvSheet = new Pair<>(null, lstData);
+                Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(null, lstData);
                 result.add(csvSheet);
             }
         }
