@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="New" />
+                        <MenuItem mnemonicParsing="false" text="Open…" />
+                        <Menu mnemonicParsing="false" text="Open Recent" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Close" />
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" text="Save As…" />
+                        <MenuItem mnemonicParsing="false" text="Revert" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Preferences…" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="miExit" mnemonicParsing="false" onAction="#exitApp" text="Quit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo" />
+                        <MenuItem mnemonicParsing="false" text="Redo" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Cut" />
+                        <MenuItem mnemonicParsing="false" text="Copy" />
+                        <MenuItem mnemonicParsing="false" text="Paste" />
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Select All" />
+                        <MenuItem mnemonicParsing="false" text="Unselect All" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About File Conversion" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane prefHeight="376.0" prefWidth="637.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Label fx:id="lblSrcFile" layoutX="22.0" layoutY="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" style="&#10;" text="Source File" wrapText="false">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="srcFileOrDirectory" layoutX="100.0" layoutY="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#showSrcFileOrDirectoryTips" prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;" />
+                <Button fx:id="btnSrcFileOrDirectory" layoutX="554.0" layoutY="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onKeyPressed="#chooseSrcFileOrDirectory" onMouseClicked="#chooseSrcFileOrDirectory" prefHeight="25.0" prefWidth="61.0" text="..." />
+                <Label layoutX="22.0" layoutY="77.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="77.0" text="Target File">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="targetFileOrDirectory" layoutX="100.0" layoutY="76.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#showTargetFileOrDirectoryTips" prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;" />
+                <Button fx:id="btnTargetFileOrDirectory" layoutX="554.0" layoutY="76.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onKeyPressed="#chooseTargetFileOrDirectory" onMouseClicked="#chooseTargetFileOrDirectory" prefHeight="25.0" prefWidth="61.0" text="..." />
+                <Label layoutX="396.0" layoutY="102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="84.0" text="Target Format">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Label>
+                <ComboBox fx:id="cboTargetFileType" layoutX="480.0" layoutY="102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyReleased="#chooseTargetFileType" onMouseReleased="#chooseTargetFileType" prefHeight="25.0" prefWidth="73.0" style="-fx-background-color: #efdecd;" />
+                <Label layoutX="22.0" layoutY="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" text="Named As">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="txtFuzzySrcFileName" layoutX="100.0" layoutY="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyFileName" prefHeight="25.0" prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" />
+                <Label layoutX="258.0" prefHeight="25.0" prefWidth="124.0" text="File(s) Conversion">
+                    <font>
+                        <Font name="Arial Bold" size="14.0" />
+                    </font>
+                </Label>
+                <Button fx:id="btnStartConv" layoutX="452.0" layoutY="343.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onKeyReleased="#startFileConv" onMouseClicked="#startFileConv" prefHeight="25.0" prefWidth="61.0" text="Start">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Button>
+                <Button fx:id="btnCancelFileConv" layoutX="554.0" layoutY="343.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onKeyPressed="#cancelFileConv" onMouseClicked="#cancelFileConv" prefHeight="25.0" prefWidth="61.0" text="Cancel">
+                    <font>
+                        <Font name="Arial" size="12.0" />
+                    </font>
+                </Button>
+                <TextArea fx:id="txteareLogInfo" disable="true" layoutX="22.0" layoutY="129.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="206.0" prefWidth="594.0" style="-fx-control-inner-background: #efdecd;">
+                    <font>
+                        <Font name="Arial Bold Italic" size="12.0" />
+                    </font>
+                </TextArea>
+                <ProgressBar fx:id="pbForConv" disable="true" layoutX="22.0" layoutY="345.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0.0" style="-fx-background-color: #fbcce7;" />
+                <Label layoutX="22.0" layoutY="102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" text="Renamed As">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </Label>
+                <CheckBox fx:id="cbxIndicatorForBatch" layoutX="491.0" layoutY="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#validateBatchConv" prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #efdecd;" text="Batch?">
+                    <font>
+                        <Font name="Arial" size="12.0" />
+                    </font>
+                </CheckBox>
+                <TextField fx:id="txtFuzzyTargetFileName" layoutX="100.0" layoutY="102.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#chooseTargetFuzzyFileName" prefHeight="25.0" prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" />
+                <CheckBox fx:id="cbxNeedFileHeader" layoutX="402.0" layoutY="50.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" style="-fx-background-color: #efdecd;" text="Header?">
+                    <font>
+                        <Font name="Arial Bold" size="12.0" />
+                    </font>
+                </CheckBox>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
