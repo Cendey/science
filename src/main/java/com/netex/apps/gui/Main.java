@@ -16,7 +16,7 @@ public class Main extends Application {
         if (resource != null) {
             Parent root = FXMLLoader.load(resource);
             primaryStage.setTitle("File(s) Conversion");
-            primaryStage.setScene(new Scene(root, 300, 650));
+            primaryStage.setScene(new Scene(root, 650, 400));
             primaryStage.show();
         }
     }
