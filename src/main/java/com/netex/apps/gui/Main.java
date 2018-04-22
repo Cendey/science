@@ -15,8 +15,8 @@ public class Main extends Application {
         URL resource = Thread.currentThread().getContextClassLoader().getResource("configs/science.fxml");
         if (resource != null) {
             Parent root = FXMLLoader.load(resource);
-            primaryStage.setTitle("Hello World");
-            primaryStage.setScene(new Scene(root, 300, 275));
+            primaryStage.setTitle("File(s) Conversion");
+            primaryStage.setScene(new Scene(root, 300, 650));
             primaryStage.show();
         }
     }
