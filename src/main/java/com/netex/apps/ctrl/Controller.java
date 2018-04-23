@@ -8,21 +8,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -68,23 +58,23 @@ public class Controller implements Initializable {
         Model model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
         StringBuilder tipsForSrc = new StringBuilder(
-            "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
-            .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
+                "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
+                .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(srcPath, tipsForSrc.toString());
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         StringBuilder tipsForSrcFuzzyName = new StringBuilder(
-            "Specify the source file name to match, which is only available for batch files conversion.\n")
-            .append("In single file conversion, the source name to matched will be ignored!");
+                "Specify the source file name to match, which is only available for batch files conversion.\n")
+                .append("In single file conversion, the source name to matched will be ignored!");
         addTextChangeListener(txtFuzzySrcFileName, tipsForSrcFuzzyName.toString());
         destPath.textProperty().bindBidirectional(model.destPathProperty());
         StringBuilder tipsForDestPath = new StringBuilder(
-            "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
-            .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
+                "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
+                .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(destPath, tipsForDestPath.toString());
         txtDestPrefixName.textProperty().bindBidirectional(model.destNamedToProperty());
         StringBuilder tipsForDestPrefixName = new StringBuilder(
-            "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n")
-            .append("In single file conversion, the target prefix file name is optional!");
+                "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n")
+                .append("In single file conversion, the target prefix file name is optional!");
         addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName.toString());
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
@@ -103,10 +93,27 @@ public class Controller implements Initializable {
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream()
-                    .filter(
-                        node -> node.isResizable() && !Labeled.class.isAssignableFrom(node.getClass()) && Control.class
-                            .isAssignableFrom(node.getClass()))
-                    .forEach(node -> Utilities.adjustSize(node, "Width", delta));
+                        .filter(
+                                node -> node.isResizable() && !Labeled.class.isAssignableFrom(node.getClass()) && Control.class
+                                        .isAssignableFrom(node.getClass()))
+                        .forEach(node -> {
+                            double prefWidth = -1, prefHeight = -1;
+                            Orientation contentBias = node.getContentBias();
+                            switch (contentBias) {
+                                case HORIZONTAL:
+                                    prefWidth = node.prefWidth(-1);
+                                    prefHeight = node.prefHeight(prefWidth);
+                                    break;
+                                case VERTICAL:
+                                    prefHeight = node.prefHeight(-1);
+                                    prefWidth = node.prefWidth(prefHeight);
+                                    break;
+                                default:
+                                    prefWidth = node.prefWidth(-1);
+                                    prefHeight = node.prefHeight(-1);
+                            }
+                            Utilities.adjustSize(node, "Width", delta);
+                        });
             }
         });
         scene.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -114,8 +121,8 @@ public class Controller implements Initializable {
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream()
-                    .filter(node -> node.isResizable() && TextArea.class.isAssignableFrom(node.getClass()))
-                    .forEach(node -> Utilities.adjustSize(node, "Height", delta));
+                        .filter(node -> node.isResizable() && TextArea.class.isAssignableFrom(node.getClass()))
+                        .forEach(node -> Utilities.adjustSize(node, "Height", delta));
             }
         });
     }
@@ -160,19 +167,19 @@ public class Controller implements Initializable {
 
     private void addFileChooserListener(TextField instance) {
         instance.textProperty().addListener(
-            (observable, oldItem, newItem) -> {
-                if (newItem != null) {
-                    instance.tooltipProperty().setValue(null);
-                    instance.setStyle("-fx-text-fill: BLACK");
+                (observable, oldItem, newItem) -> {
+                    if (newItem != null) {
+                        instance.tooltipProperty().setValue(null);
+                        instance.setStyle("-fx-text-fill: BLACK");
 
-                    File file = new File(newItem.trim());
-                    if (!file.isFile() || !file.exists()) {
-                        instance.setStyle("-fx-text-fill: RED");
-                        instance.tooltipProperty()
-                            .setValue(new Tooltip("The file is not existed, please double check!"));
+                        File file = new File(newItem.trim());
+                        if (!file.isFile() || !file.exists()) {
+                            instance.setStyle("-fx-text-fill: RED");
+                            instance.tooltipProperty()
+                                    .setValue(new Tooltip("The file is not existed, please double check!"));
+                        }
                     }
                 }
-            }
         );
     }
 
@@ -243,13 +250,13 @@ public class Controller implements Initializable {
             fileChooser.setTitle("View File");
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
-                .addAll(
-                    new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
-                    new FileChooser.ExtensionFilter("Normal text file", "*.txt"),
-                    new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
-                    new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
-                    new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
-                );
+                    .addAll(
+                            new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
+                            new FileChooser.ExtensionFilter("Normal text file", "*.txt"),
+                            new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
+                            new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
+                            new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
+                    );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }

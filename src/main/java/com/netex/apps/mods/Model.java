@@ -19,7 +19,7 @@ import javafx.collections.ObservableList;
  */
 public class Model {
 
-    public static final String BLANK = "";
+    private static final String BLANK = "";
 
     private StringProperty srcPath;
     private StringProperty srcNamedAs;
