@@ -1,16 +1,17 @@
-package com.netex.apps.meta;
+package com.netex.apps.modl;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.meta.Meta</p>
+ * <p>Description: com.netex.apps.modl.Model</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *
  * @author <chao.deng@kewill.com>
  * @version 1.0
- * @date 04/20/2018
+ * @date 04/23/2018
  */
-public class Meta {
+public class Model {
+
     private String srcFileOrDirectory;
     private String srcFileFuzzyName;
     private String srcFileFormat;
@@ -18,20 +19,23 @@ public class Meta {
     private String targetFileRenamedAs;
     private String targetFileFormat;
 
-    public Meta(String srcFileOrDirectory, String targetFileOrDirectory, String targetFileFormat) {
+    public Model(String srcFileOrDirectory, String targetFileOrDirectory, String targetFileFormat) {
         this.srcFileOrDirectory = srcFileOrDirectory;
         this.targetFileOrDirectory = targetFileOrDirectory;
         this.targetFileFormat = targetFileFormat;
     }
 
-    public Meta(String srcFileOrDirectory, String srcFileFuzzyName, String targetFileOrDirectory, String targetFileFormat) {
+    public Model(
+        String srcFileOrDirectory, String srcFileFuzzyName, String targetFileOrDirectory, String targetFileFormat) {
         this.srcFileOrDirectory = srcFileOrDirectory;
         this.srcFileFuzzyName = srcFileFuzzyName;
         this.targetFileOrDirectory = targetFileOrDirectory;
         this.targetFileFormat = targetFileFormat;
     }
 
-    public Meta(String srcFileOrDirectory, String srcFileFuzzyName, String targetFileOrDirectory, String targetFileRenamedAs, String targetFileFormat) {
+    public Model(
+        String srcFileOrDirectory, String srcFileFuzzyName, String targetFileOrDirectory, String targetFileRenamedAs,
+        String targetFileFormat) {
         this.srcFileOrDirectory = srcFileOrDirectory;
         this.srcFileFuzzyName = srcFileFuzzyName;
         this.targetFileOrDirectory = targetFileOrDirectory;

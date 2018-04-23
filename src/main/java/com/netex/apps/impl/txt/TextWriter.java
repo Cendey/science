@@ -14,15 +14,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TextWriter implements Writer {
+
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
-        try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(Paths.get(filePath), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
-            List<String> header = dataInfo.getKey();
-            if (header != null) {
-                writer.println(header.stream().collect(Collectors.joining("\t")));
+        if (dataInfo != null) {
+            try (final PrintWriter writer = new PrintWriter(
+                Files.newBufferedWriter(Paths.get(filePath), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
+                List<String> header = dataInfo.getKey();
+                if (header != null) {
+                    writer.println(header.stream().collect(Collectors.joining("\t")));
+                }
+                List<List<Object>> data = dataInfo.getValue();
+                if (data != null && data.size() > 0) {
+                    data.forEach(
+                        row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t"))));
+                }
             }
-            List<List<Object>> data = dataInfo.getValue();
-            data.forEach(row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t"))));
         }
     }
 }
