@@ -17,13 +17,22 @@ import com.netex.apps.intf.Writer;
  */
 public class ExcelFactory implements Factory {
 
+    private static Reader excelReader;
+    private static Writer excelWriter;
+
     @Override
     public Reader createReader() {
-        return new ExcelReader();
+        if (excelReader == null) {
+            excelReader = new ExcelReader();
+        }
+        return excelReader;
     }
 
     @Override
     public Writer createWriter() {
-        return new ExcelWriter();
+        if (excelWriter == null) {
+            excelWriter = new ExcelWriter();
+        }
+        return excelWriter;
     }
 }

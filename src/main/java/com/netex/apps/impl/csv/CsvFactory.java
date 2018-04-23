@@ -17,13 +17,22 @@ import com.netex.apps.intf.Writer;
  */
 public class CsvFactory implements Factory {
 
+    private static Reader csvReader;
+    private static Writer csvWriter;
+
     @Override
     public Reader createReader() {
-        return new CsvReader();
+        if (csvReader == null) {
+            csvReader = new CsvReader();
+        }
+        return csvReader;
     }
 
     @Override
     public Writer createWriter() {
-        return new CsvWriter();
+        if (csvWriter == null) {
+            csvWriter = new CsvWriter();
+        }
+        return csvWriter;
     }
 }

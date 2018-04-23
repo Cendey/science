@@ -7,13 +7,22 @@ import com.netex.apps.intf.Writer;
 
 public class TextFactory implements Factory {
 
+    private static Reader textReader;
+    private static Writer textWriter;
+
     @Override
     public Reader createReader() {
-        return new TextReader();
+        if (textReader == null) {
+            textReader = new TextReader();
+        }
+        return textReader;
     }
 
     @Override
     public Writer createWriter() {
-        return new TextWriter();
+        if (textWriter == null) {
+            textWriter = new TextWriter();
+        }
+        return textWriter;
     }
 }
