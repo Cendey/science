@@ -67,8 +67,18 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Model model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
+        StringBuilder tipsForSrc = new StringBuilder(
+            "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
+            .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
+        addTextChangeListener(srcPath, tipsForSrc.toString());
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
+        StringBuilder tipsForSrcFuzzyName = new StringBuilder(
+            "Specify the source file name to match, which is only available for batch files conversion.\n")
+            .append("In single file conversion, the source name to matched will be ignored!");
+        addTextChangeListener(txtFuzzySrcFileName, tipsForSrc.toString());
         destPath.textProperty().bindBidirectional(model.destPathProperty());
+        StringBuilder tipsForDestPath = new StringBuilder();
+        addTextChangeListener(destPath, tipsForDestPath.toString());
         txtDestPrefixName.textProperty().bindBidirectional(model.destNamedToProperty());
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
@@ -76,10 +86,10 @@ public class Controller implements Initializable {
         textareaLogInfo.textProperty().bindBidirectional(model.logInfoProperty());
         stage.setResizable(true);
         cbxIndicatorForBatch.selectedProperty().bindBidirectional(stage.resizableProperty());
-        resizeNodes();
+        addResizeListener();
     }
 
-    private void resizeNodes() {
+    private void addResizeListener() {
         Scene scene = stage.getScene();
         Parent root = scene.getRoot();
         scene.widthProperty().addListener((observable, oldValue, newValue) -> {
