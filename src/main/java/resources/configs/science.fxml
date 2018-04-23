@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
@@ -66,7 +65,7 @@
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="srcFileOrDirectory" layoutX="100.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
+                <TextField fx:id="srcPath" layoutX="100.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseEntered="#showSrcFileOrDirectoryTips"
                            prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"/>
                 <Button fx:id="btnSrcFileOrDirectory" layoutX="554.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
@@ -78,7 +77,7 @@
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="targetFileOrDirectory" layoutX="100.0" layoutY="76.0"
+                <TextField fx:id="destPath" layoutX="100.0" layoutY="76.0"
                            maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                            onMouseEntered="#showTargetFileOrDirectoryTips" prefHeight="25.0" prefWidth="453.0"
                            style="-fx-alignment: CENTER-LEFT;"/>

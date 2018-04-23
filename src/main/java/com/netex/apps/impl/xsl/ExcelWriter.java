@@ -2,9 +2,15 @@ package com.netex.apps.impl.xsl;
 
 import com.netex.apps.intf.Writer;
 import javafx.util.Pair;
-
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -14,7 +20,7 @@ import java.util.List;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.impl.exsl.ExcelWriter</p>
+ * <p>Description: com.netex.apps.impl.xsl.ExcelWriter</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *

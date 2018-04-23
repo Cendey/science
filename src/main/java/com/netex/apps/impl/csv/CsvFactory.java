@@ -7,7 +7,7 @@ import com.netex.apps.intf.Writer;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.impl.csv.CsvFactory</p>
+ * <p>Description: com.netex.apps.impl.csv.CsvFactory</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *

@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.intf.Writer</p>
+ * <p>Description: com.netex.apps.intf.Writer</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *

@@ -2,7 +2,7 @@ package com.netex.apps.intf;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.intf.Factory</p>
+ * <p>Description: com.netex.apps.intf.Factory</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *

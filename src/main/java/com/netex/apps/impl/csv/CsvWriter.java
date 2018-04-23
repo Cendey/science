@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * <p>Title: science</p>
- * <p>Description: mit.app.center.impl.csv.CsvWriter</p>
+ * <p>Description: com.netex.apps.impl.csv.CsvWriter</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *
