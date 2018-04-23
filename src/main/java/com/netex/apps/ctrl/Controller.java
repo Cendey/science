@@ -75,11 +75,17 @@ public class Controller implements Initializable {
         StringBuilder tipsForSrcFuzzyName = new StringBuilder(
             "Specify the source file name to match, which is only available for batch files conversion.\n")
             .append("In single file conversion, the source name to matched will be ignored!");
-        addTextChangeListener(txtFuzzySrcFileName, tipsForSrc.toString());
+        addTextChangeListener(txtFuzzySrcFileName, tipsForSrcFuzzyName.toString());
         destPath.textProperty().bindBidirectional(model.destPathProperty());
-        StringBuilder tipsForDestPath = new StringBuilder();
+        StringBuilder tipsForDestPath = new StringBuilder(
+            "1. For batch operation, tick batch checkbox first, then choose a work directory.\n")
+            .append("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(destPath, tipsForDestPath.toString());
         txtDestPrefixName.textProperty().bindBidirectional(model.destNamedToProperty());
+        StringBuilder tipsForDestPrefixName = new StringBuilder(
+            "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n")
+            .append("In single file conversion, the target prefix file name is optional!");
+        addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName.toString());
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
         cboDestFileFormat.setItems(model.getDestFormat());
