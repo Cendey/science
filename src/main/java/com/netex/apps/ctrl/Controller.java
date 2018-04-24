@@ -9,21 +9,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import opennlp.tools.util.StringUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,6 +25,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static javafx.application.Platform.exit;
 
 public class Controller implements Initializable {
 
@@ -67,23 +62,24 @@ public class Controller implements Initializable {
         model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
         String tipsForSrc = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-            .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(srcPath, tipsForSrc);
         addFileListener(srcPath);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         String tipsForSrcFuzzyName =
-            "Specify the source file name to match, which is only available for batch files conversion.\n"
-                .concat("In single file conversion, the source name to matched will be ignored!");
+                "Specify the source file name to match, which is only available for batch files conversion.\n"
+                        .concat("In single file conversion, the source name to matched will be ignored!");
         addTextChangeListener(txtFuzzySrcFileName, tipsForSrcFuzzyName);
+        txtFuzzySrcFileName.setEditable(false);
         destPath.textProperty().bindBidirectional(model.destPathProperty());
         String tipsForDestPath = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-            .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(destPath, tipsForDestPath);
         addFileListener(destPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
         String tipsForDestPrefixName =
-            "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
-                .concat("In single file conversion, the target prefix file name is optional!");
+                "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
+                        .concat("In single file conversion, the target prefix file name is optional!");
         addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
@@ -107,8 +103,8 @@ public class Controller implements Initializable {
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream()
-                    .filter(node -> node.isResizable() && TextArea.class.isAssignableFrom(node.getClass()))
-                    .forEach(node -> adjust(node, "Height", delta));
+                        .filter(node -> node.isResizable() && TextArea.class.isAssignableFrom(node.getClass()))
+                        .forEach(node -> adjust(node, "Height", delta));
             }
         });
     }
@@ -169,16 +165,16 @@ public class Controller implements Initializable {
 
     private void addFileListener(TextField instance) {
         instance.textProperty().addListener(
-            (observable, oldItem, newItem) -> {
-                if (newItem != null) {
-                    File file = new File(newItem.trim());
-                    if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                        instance.setStyle("-fx-text-fill: WHITE");
-                    } else {
-                        instance.setStyle("-fx-text-fill: RED");
+                (observable, oldItem, newItem) -> {
+                    if (newItem != null) {
+                        File file = new File(newItem.trim());
+                        if ((file.isFile() || file.isDirectory()) && file.exists()) {
+                            instance.setStyle("-fx-text-fill: GREEN");
+                        } else {
+                            instance.setStyle("-fx-text-fill: RED");
+                        }
                     }
                 }
-            }
         );
     }
 
@@ -193,7 +189,7 @@ public class Controller implements Initializable {
     private Boolean available(TextField instance) {
         Boolean available = true;
         StringProperty property = instance.textProperty();
-        if (property.getValue() == null || property.getValue().trim().length() == 0) {
+        if (StringUtils.isEmpty(property.getValue())) {
             property.setValue(StringUtils.EMPTY);
             createMessageDialog("Directory or file is required!");
             instance.setStyle("-fx-background-color: RED");
@@ -202,7 +198,7 @@ public class Controller implements Initializable {
         } else {
             File file = new File(property.getValue());
             if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                instance.setStyle("-fx-background-color: WHITE");
+                instance.setStyle("-fx-background-color: GREEN");
             } else {
                 property.setValue(StringUtils.EMPTY);
                 createMessageDialog("Directory or file not exists, please check!");
@@ -216,55 +212,104 @@ public class Controller implements Initializable {
 
 
     public void exitApp() {
-
+        stage.hide();
+        exit();
     }
 
+    @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
+
     }
 
+    @SuppressWarnings(value = {"unused"})
     public void cancelWork(ActionEvent keyEvent) {
+
     }
 
+    @SuppressWarnings(value = {"unused"})
     public void validate(ActionEvent actionEvent) {
+        if (cbxIndicatorForBatch.isSelected()) {
+            txtFuzzySrcFileName.setEditable(true);
+            srcPath.textProperty().setValue(StringUtils.EMPTY);
+            destPath.textProperty().setValue(StringUtils.EMPTY);
+            stage.titleProperty().setValue("Batch Files Conversion");
+        } else {
+            txtFuzzySrcFileName.setEditable(false);
+            stage.titleProperty().setValue("Single File Conversion");
+        }
     }
 
+    @SuppressWarnings(value = {"unused"})
     public void chooseSrcPath(ActionEvent actionEvent) {
-        choosePath(srcPath);
+        choosePath(srcPath, false);
     }
 
-    private void choosePath(TextField receiver) {
+    private void choosePath(TextField receiver, Boolean needDirectory) {
         boolean isForBatch = cbxIndicatorForBatch.isSelected();
         String workDirectory = initDirectory(receiver.getText() != null ? receiver.getText().trim() : null);
-        if (isForBatch) {
+        if (isForBatch || needDirectory) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("View Directory");
             directoryChooser.setInitialDirectory(new File(workDirectory));
             File parent = directoryChooser.showDialog(stage);
-            Optional.ofNullable(parent).ifPresent(directory -> receiver.setText(directory.getPath()));
+            Optional.ofNullable(parent).ifPresent(directory -> receiver.textProperty().setValue(directory.getPath()));
         } else {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("View File");
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
-                .addAll(
-                    new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
-                    new FileChooser.ExtensionFilter("Normal text file", "*.txt"),
-                    new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
-                    new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
-                    new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
-                );
+                    .addAll(
+                            new FileChooser.ExtensionFilter("All", "*.*"),
+                            new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
+                            new FileChooser.ExtensionFilter("Normal text file", "*.txt"),
+                            new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
+                            new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
+                            new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
+                    );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }
     }
 
+    @SuppressWarnings(value = {"unused"})
     public void chooseDestPath(ActionEvent actionEvent) {
-        choosePath(destPath);
+        choosePath(destPath, true);
     }
 
-    public void chooseSrcFuzzyName(ActionEvent actionEvent) {
+    private void fuzzyFileName(String initDirectory, TextField instance) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("View File");
+        fileChooser.setInitialDirectory(new File(initDirectory));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Files", "*.*"));
+        File file = fileChooser.showOpenDialog(stage);
+        Optional.ofNullable(file).ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
     }
 
-    public void chooseDestPrefixName(ActionEvent actionEvent) {
+    @SuppressWarnings(value = {"unused"})
+    public void chooseSrcFuzzyName(MouseEvent actionEvent) {
+        if (txtFuzzySrcFileName.isEditable() && actionEvent.getClickCount() == 2) {
+            if (StringUtil.isEmpty(txtFuzzySrcFileName.textProperty().getValue())) {
+                fuzzyFileName(System.getProperty("user.home"), txtFuzzySrcFileName);
+            } else {
+                String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
+                if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
+                    createMessageDialog("Source file name is illegal.");
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings(value = {"unused"})
+    public void chooseDestPrefixName(MouseEvent actionEvent) {
+        if (actionEvent.getClickCount() == 2) {
+            if (StringUtils.isEmpty(txtDestPrefixName.textProperty().getValue())) {
+                fuzzyFileName(System.getProperty("user.home"), txtDestPrefixName);
+            } else {
+                String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
+                if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
+                    createMessageDialog("Target file name is illegal.");
+                }
+            }
+        }
     }
 }

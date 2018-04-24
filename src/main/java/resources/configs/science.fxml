@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.152"
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -87,9 +74,8 @@
                     </font>
                 </Label>
                 <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0"
-                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
-                           GridPane.rowIndex="1"/>
+                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
+                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1"/>
                 <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseSrcPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER"/>
@@ -101,9 +87,8 @@
                     </font>
                 </Label>
                 <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0"
-                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
-                           GridPane.rowIndex="3"/>
+                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
+                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="3"/>
                 <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseDestPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER"/>
@@ -122,7 +107,7 @@
                     </font>
                 </Label>
                 <TextField fx:id="txtFuzzySrcFileName" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onAction="#chooseSrcFuzzyName" prefHeight="25.0"
+                           maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0"
                            prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
                            GridPane.columnSpan="2" GridPane.rowIndex="2"/>
                 <Label alignment="CENTER" prefHeight="25.0" prefWidth="238.0" text="File(s) Conversion"
@@ -172,7 +157,7 @@
                     </font>
                 </CheckBox>
                 <TextField fx:id="txtDestPrefixName" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onAction="#chooseDestPrefixName" prefHeight="25.0"
+                           maxWidth="1.7976931348623157E308" onMouseClicked="#chooseDestPrefixName" prefHeight="25.0"
                            prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
                            GridPane.columnSpan="2" GridPane.rowIndex="4"/>
                 <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
