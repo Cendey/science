@@ -33,8 +33,11 @@ public class ExcelWriter implements Writer {
         Workbook workbook;
         if (StringUtils.equals(extension, ".xlsx")) {
             workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
-        } else {
+        } else if (StringUtils.equals(extension, ".xls")) {
             workbook = new HSSFWorkbook();
+        } else {
+            System.err.println("Invalid file name!");
+            return;
         }
 
         /* CreationHelper helps us create instances for various things like DataFormat,
