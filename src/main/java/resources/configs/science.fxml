@@ -87,7 +87,7 @@
                     </font>
                 </Label>
                 <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           onMouseEntered="#showSrcPathTips" prefHeight="25.0" prefWidth="453.0"
+                           prefHeight="25.0" prefWidth="453.0"
                            style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
                            GridPane.rowIndex="1"/>
                 <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
@@ -101,7 +101,7 @@
                     </font>
                 </Label>
                 <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           onMouseEntered="#showDestPathTips" prefHeight="25.0" prefWidth="453.0"
+                           prefHeight="25.0" prefWidth="453.0"
                            style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
                            GridPane.rowIndex="3"/>
                 <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"

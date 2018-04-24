@@ -20,7 +20,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -229,9 +228,6 @@ public class Controller implements Initializable {
     public void validate(ActionEvent actionEvent) {
     }
 
-    public void showSrcPathTips(MouseEvent mouseEvent) {
-    }
-
     public void chooseSrcPath(ActionEvent actionEvent) {
         choosePath(srcPath);
     }
@@ -260,9 +256,6 @@ public class Controller implements Initializable {
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }
-    }
-
-    public void showDestPathTips(MouseEvent mouseEvent) {
     }
 
     public void chooseDestPath(ActionEvent actionEvent) {
