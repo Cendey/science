@@ -26,6 +26,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -69,6 +70,7 @@ public class Controller implements Initializable {
         String tipsForSrc = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
             .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(srcPath, tipsForSrc);
+        addFileListener(srcPath);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         String tipsForSrcFuzzyName =
             "Specify the source file name to match, which is only available for batch files conversion.\n"
@@ -78,6 +80,7 @@ public class Controller implements Initializable {
         String tipsForDestPath = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
             .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(destPath, tipsForDestPath);
+        addFileListener(destPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
         String tipsForDestPrefixName =
             "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
@@ -165,18 +168,15 @@ public class Controller implements Initializable {
         });
     }
 
-    private void addFileChooserListener(TextField instance) {
+    private void addFileListener(TextField instance) {
         instance.textProperty().addListener(
             (observable, oldItem, newItem) -> {
                 if (newItem != null) {
-                    instance.tooltipProperty().setValue(null);
-                    instance.setStyle("-fx-text-fill: BLACK");
-
                     File file = new File(newItem.trim());
-                    if (!file.isFile() || !file.exists()) {
+                    if ((file.isFile() || file.isDirectory()) && file.exists()) {
+                        instance.setStyle("-fx-text-fill: WHITE");
+                    } else {
                         instance.setStyle("-fx-text-fill: RED");
-                        instance.tooltipProperty()
-                            .setValue(new Tooltip("The file is not existed, please double check!"));
                     }
                 }
             }
@@ -191,22 +191,22 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    private Boolean isFileAvailable(TextField instance) {
+    private Boolean available(TextField instance) {
         Boolean available = true;
         StringProperty property = instance.textProperty();
         if (property.getValue() == null || property.getValue().trim().length() == 0) {
-            property.setValue("");
-            createMessageDialog("The file is required!");
+            property.setValue(StringUtils.EMPTY);
+            createMessageDialog("Directory or file is required!");
             instance.setStyle("-fx-background-color: RED");
             instance.requestFocus();
             available = false;
         } else {
-            File sourceLogFile = new File(property.getValue());
-            if (sourceLogFile.isFile() && sourceLogFile.exists()) {
+            File file = new File(property.getValue());
+            if ((file.isFile() || file.isDirectory()) && file.exists()) {
                 instance.setStyle("-fx-background-color: WHITE");
             } else {
-                property.setValue("");
-                createMessageDialog("The file specified is not found, please double check first!");
+                property.setValue(StringUtils.EMPTY);
+                createMessageDialog("Directory or file not exists, please check!");
                 instance.setStyle("-fx-background-color: RED");
                 instance.requestFocus();
                 available = false;
