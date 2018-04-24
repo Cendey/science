@@ -2,15 +2,11 @@ package com.netex.apps.impl.xsl;
 
 import com.netex.apps.intf.Writer;
 import javafx.util.Pair;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -33,7 +29,13 @@ public class ExcelWriter implements Writer {
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         // Create a Workbook
-        Workbook workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
+        String extension = FilenameUtils.getExtension(filePath);
+        Workbook workbook;
+        if (StringUtils.equals(extension, ".xlsx")) {
+            workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
+        } else {
+            workbook = new HSSFWorkbook();
+        }
 
         /* CreationHelper helps us create instances for various things like DataFormat,
            Hyperlink, RichTextString etc in a format (HSSF, XSSF) independent way */

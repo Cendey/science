@@ -261,7 +261,7 @@ public class Controller implements Initializable {
                     .addAll(
                             new FileChooser.ExtensionFilter("All", "*.*"),
                             new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
-                            new FileChooser.ExtensionFilter("Normal text file", "*.txt"),
+                            new FileChooser.ExtensionFilter("Normal text file", "*.txt", "*.text"),
                             new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
                             new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
                             new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")

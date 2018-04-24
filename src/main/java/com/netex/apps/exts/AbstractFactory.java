@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public abstract class AbstractFactory implements Factory {
+public class AbstractFactory {
     private static Tika tika = new Tika(new TypeDetector());
 
     public static Factory factory(String filePath) {
