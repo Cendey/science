@@ -6,7 +6,6 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,8 +32,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import static javafx.geometry.Orientation.HORIZONTAL;
 
 public class Controller implements Initializable {
 
@@ -99,9 +96,7 @@ public class Controller implements Initializable {
             double delta = newValue.doubleValue() - oldValue.doubleValue();
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
-                components.parallelStream()
-                    .filter(Node::isResizable)
-                    .forEach(node -> adjust(node, "Width", delta));
+                components.parallelStream().filter(Node::isResizable).forEach(node -> adjust(node, "Width", delta));
             }
         });
 
@@ -125,13 +120,7 @@ public class Controller implements Initializable {
                     adjust(child, propertyName, delta);
                 }
             } else {
-                if (ClassUtils.isAssignable(node.getClass(), Labeled.class)) {
-                    Orientation orientation = node.getContentBias();
-                    if (orientation != null && orientation.equals(HORIZONTAL)) {
-                        double anchorX = node.getLayoutX();
-                        node.setLayoutX(anchorX + delta);
-                    }
-                } else {
+                if (!ClassUtils.isAssignable(node.getClass(), Labeled.class)) {
                     Utilities.adjustSize(node, propertyName, delta);
                 }
             }

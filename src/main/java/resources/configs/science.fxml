@@ -11,10 +11,12 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.152"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -56,103 +58,135 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <AnchorPane minHeight="376.0" minWidth="637.0" prefHeight="376.0" prefWidth="637.0" VBox.vgrow="ALWAYS">
+        <GridPane VBox.vgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
             <children>
-                <Label fx:id="lblSrcFile" layoutX="22.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" style="&#10;"
-                       text="Source File">
+                <Label fx:id="lblSrcFile" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       prefHeight="25.0" prefWidth="77.0" style="&#10;" text="Source File" GridPane.hgrow="NEVER"
+                       GridPane.rowIndex="1" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="srcPath" layoutX="100.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onMouseEntered="#showSrcPathTips" prefHeight="25.0"
-                           prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"/>
-                <Button fx:id="btnSrcPath" layoutX="554.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseSrcPath"
-                        prefHeight="25.0" prefWidth="61.0" text="..."/>
-                <Label layoutX="22.0" layoutY="77.0" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="77.0" text="Target File">
+                <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                           onMouseEntered="#showSrcPathTips" prefHeight="25.0" prefWidth="453.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="1"/>
+                <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#chooseSrcPath" prefHeight="25.0" prefWidth="61.0" text="..."
+                        GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER"/>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0"
+                       prefWidth="77.0" text="Target File" GridPane.hgrow="NEVER" GridPane.rowIndex="3"
+                       GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="destPath" layoutX="100.0" layoutY="76.0" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onMouseEntered="#showDestPathTips" prefHeight="25.0"
-                           prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"/>
-                <Button fx:id="btnDestPath" layoutX="554.0" layoutY="76.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseDestPath"
-                        prefHeight="25.0" prefWidth="61.0" text="..."/>
-                <Label layoutX="396.0" layoutY="102.0" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="84.0" text="Target Format">
+                <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                           onMouseEntered="#showDestPathTips" prefHeight="25.0" prefWidth="453.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="3"/>
+                <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#chooseDestPath" prefHeight="25.0" prefWidth="61.0" text="..."
+                        GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER"/>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
+                       prefWidth="84.0" text="Target Format" GridPane.columnIndex="3" GridPane.hgrow="NEVER"
+                       GridPane.rowIndex="4" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <Label layoutX="22.0" layoutY="50.0" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" text="Named As">
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
+                       prefWidth="77.0" text="Named As" GridPane.hgrow="NEVER" GridPane.rowIndex="2"
+                       GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <TextField fx:id="txtFuzzySrcFileName" layoutX="100.0" layoutY="50.0" maxHeight="1.7976931348623157E308"
+                <TextField fx:id="txtFuzzySrcFileName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onAction="#chooseSrcFuzzyName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;"/>
-                <Label layoutX="258.0" prefHeight="25.0" prefWidth="124.0" text="File(s) Conversion">
+                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
+                           GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+                <Label alignment="CENTER" prefHeight="25.0" prefWidth="238.0" text="File(s) Conversion"
+                       textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2">
                     <font>
                         <Font name="Arial Bold" size="14.0"/>
                     </font>
                 </Label>
-                <Button fx:id="btnStart" layoutX="452.0" layoutY="343.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#startWork"
-                        prefHeight="25.0" prefWidth="61.0" text="Start">
+                <Button fx:id="btnStart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#startWork" prefHeight="25.0" prefWidth="61.0" text="Start"
+                        GridPane.columnIndex="4" GridPane.hgrow="NEVER" GridPane.rowIndex="8" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Button>
-                <Button fx:id="btnCancel" layoutX="554.0" layoutY="343.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#cancelWork"
-                        prefHeight="25.0" prefWidth="61.0" text="Cancel">
+                <Button fx:id="btnCancel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                        mnemonicParsing="false" onAction="#cancelWork" prefHeight="25.0" prefWidth="61.0" text="Cancel"
+                        GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="8" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial" size="12.0"/>
                     </font>
                 </Button>
-                <TextArea fx:id="textareaLogInfo" disable="true" layoutX="22.0" layoutY="129.0"
-                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="206.0"
-                          prefWidth="594.0" style="-fx-control-inner-background: #efdecd;">
+                <TextArea fx:id="textareaLogInfo" disable="true" maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308" prefHeight="206.0" prefWidth="594.0"
+                          style="-fx-control-inner-background: #efdecd;" GridPane.columnSpan="6" GridPane.rowIndex="5"
+                          GridPane.rowSpan="3">
                     <font>
                         <Font name="Arial Bold Italic" size="12.0"/>
                     </font>
                 </TextArea>
-                <ProgressBar fx:id="progressIndicator" disable="true" layoutX="22.0" layoutY="345.0"
-                             maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0"
-                             progress="0.0" style="-fx-background-color: #fbcce7;"/>
-                <Label layoutX="22.0" layoutY="102.0" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" text="Renamed As">
+                <ProgressBar fx:id="progressIndicator" disable="true" maxHeight="1.7976931348623157E308"
+                             maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0.0"
+                             style="-fx-background-color: #fbcce7;" GridPane.columnSpan="2" GridPane.rowIndex="8"/>
+                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
+                       prefWidth="77.0" text="Renamed As" GridPane.hgrow="NEVER" GridPane.rowIndex="4"
+                       GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </Label>
-                <CheckBox fx:id="cbxIndicatorForBatch" layoutX="491.0" layoutY="50.0" maxHeight="1.7976931348623157E308"
+                <CheckBox fx:id="cbxIndicatorForBatch" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#validate"
-                          prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #efdecd;" text="Batch?">
+                          prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #efdecd;" text="Batch?"
+                          GridPane.columnIndex="4" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </CheckBox>
-                <TextField fx:id="txtDestPrefixName" layoutX="100.0" layoutY="102.0" maxHeight="1.7976931348623157E308"
+                <TextField fx:id="txtDestPrefixName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onAction="#chooseDestPrefixName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;"/>
-                <CheckBox fx:id="cbxNeedFileHeader" layoutX="400.0" layoutY="50.0" maxHeight="1.7976931348623157E308"
-                          maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"
-                          style="-fx-background-color: #efdecd;" text="Header?">
+                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
+                           GridPane.columnSpan="2" GridPane.rowIndex="4"/>
+                <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                          mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"
+                          style="-fx-background-color: #efdecd;" text="Header?" GridPane.columnIndex="3"
+                          GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="NEVER">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </CheckBox>
-                <ChoiceBox fx:id="cboDestFileFormat" layoutX="482.0" layoutY="102.0" prefHeight="25.0" prefWidth="70.0"
-                           style="-fx-background-color: #efdecd;"/>
+                <ChoiceBox fx:id="cboDestFileFormat" prefHeight="25.0" prefWidth="119.0"
+                           style="-fx-background-color: #efdecd;" GridPane.columnIndex="4" GridPane.hgrow="NEVER"
+                           GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
             </children>
-        </AnchorPane>
+        </GridPane>
     </children>
 </VBox>
