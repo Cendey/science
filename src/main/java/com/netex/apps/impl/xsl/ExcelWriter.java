@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,25 +29,26 @@ public class ExcelWriter implements Writer {
 
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
+
         // Create a Workbook
-        String extension = FilenameUtils.getExtension(filePath);
-        Workbook workbook;
-        if (StringUtils.equals(extension, ".xlsx")) {
-            workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
-        } else if (StringUtils.equals(extension, ".xls")) {
-            workbook = new HSSFWorkbook();
-        } else {
-            System.err.println("Invalid file name!");
-            return;
+        try (Workbook workbook = create(filePath)) {
+            if (workbook == null) return;
+
+            // Create a Sheet
+            Sheet sheet = workbook.createSheet();
+
+            fillData(dataInfo, workbook, sheet);
+
+            resizeColumn(sheet);
+
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
         }
+    }
 
-        /* CreationHelper helps us create instances for various things like DataFormat,
-           Hyperlink, RichTextString etc in a format (HSSF, XSSF) independent way */
-        CreationHelper createHelper = workbook.getCreationHelper();
-
-        // Create a Sheet
-        Sheet sheet = workbook.createSheet();
-
+    private void fillData(Pair<List<String>, List<List<Object>>> dataInfo, Workbook workbook, Sheet sheet) {
         Integer rowNum = 0;
         List<String> lstHeader = dataInfo.getKey();
         if (lstHeader != null && lstHeader.size() > 0) {
@@ -64,9 +66,7 @@ public class ExcelWriter implements Writer {
             }
         }
 
-        // Cell Style for formatting Date
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+        CellStyle dateCellStyle = stylize(workbook);
 
         List<List<Object>> lstData = dataInfo.getValue();
         // Create Other rows and cells with data
@@ -91,19 +91,39 @@ public class ExcelWriter implements Writer {
                 }
             }
         }
+    }
 
+    @NotNull
+    private CellStyle stylize(Workbook workbook) {
+        // Cell Style for formatting Date
+        /* CreationHelper helps us create instances for various things like DataFormat,
+           Hyperlink, RichTextString etc in a format (HSSF, XSSF) independent way */
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+        return dateCellStyle;
+    }
+
+    private void resizeColumn(Sheet sheet) {
         // Resize all columns to fit the content size
         sheet.getRow(0).forEach(cell -> {
             int column = cell.getColumnIndex();
             sheet.autoSizeColumn(column);
         });
+    }
 
-        // Write the output to a file
-        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
-            workbook.write(fileOut);
+    private Workbook create(String filePath) {
+        String extension = FilenameUtils.getExtension(filePath);
+        Workbook workbook;
+        if (StringUtils.equals(extension, ".xlsx")) {
+            workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
+        } else if (StringUtils.equals(extension, ".xls")) {
+            workbook = new HSSFWorkbook();
+        } else {
+            System.err.println("Invalid file name!");
+            return null;
         }
-
-        workbook.close();
+        return workbook;
     }
 
     private CellStyle createHeadStyle(Workbook workbook) {
