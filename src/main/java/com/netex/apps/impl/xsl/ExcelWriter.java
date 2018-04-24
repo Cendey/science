@@ -96,9 +96,9 @@ public class ExcelWriter implements Writer {
         });
 
         // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream(filePath);
-        workbook.write(fileOut);
-        fileOut.close();
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
+        }
 
         workbook.close();
     }
