@@ -56,7 +56,7 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <AnchorPane onMouseDragged="#mouseDraggedHandler" prefHeight="376.0" prefWidth="637.0" VBox.vgrow="ALWAYS">
+        <AnchorPane minHeight="376.0" minWidth="637.0" prefHeight="376.0" prefWidth="637.0" VBox.vgrow="ALWAYS">
             <children>
                 <Label fx:id="lblSrcFile" layoutX="22.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
                        maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="77.0" style="&#10;"
@@ -67,8 +67,7 @@
                 </Label>
                 <TextField fx:id="srcPath" layoutX="100.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseEntered="#showSrcPathTips" prefHeight="25.0"
-                           prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;" AnchorPane.leftAnchor="100.0"
-                           AnchorPane.rightAnchor="84.0"/>
+                           prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"/>
                 <Button fx:id="btnSrcPath" layoutX="554.0" layoutY="24.0" maxHeight="1.7976931348623157E308"
                         maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseSrcPath"
                         prefHeight="25.0" prefWidth="61.0" text="..."/>

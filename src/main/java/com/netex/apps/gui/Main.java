@@ -3,10 +3,8 @@ package com.netex.apps.gui;
 import com.netex.apps.ctrl.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -21,16 +19,12 @@ public class Main extends Application {
         if (resource != null) {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
             Parent root = fxmlLoader.load();
-            final Controller controller = fxmlLoader.getController();
-            controller.setStage(primaryStage);
-            primaryStage.setTitle("File(s) Conversion");
             final Scene scene = new Scene(root, 650, 400);
             primaryStage.setScene(scene);
+            final Controller controller = fxmlLoader.getController();
+            controller.setStage(primaryStage);
             primaryStage.setOnCloseRequest(we -> System.out.println("Stage is closing"));
             primaryStage.show();
-            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            primaryStage.setX(primScreenBounds.getWidth() - primaryStage.getWidth() / 2);
-            primaryStage.setY(primScreenBounds.getHeight() - primaryStage.getHeight() / 4);
         }
     }
 

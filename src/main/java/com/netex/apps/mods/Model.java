@@ -21,12 +21,14 @@ public class Model {
 
     private static final String BLANK = "";
 
+    private StringProperty title;
     private StringProperty srcPath;
     private StringProperty srcNamedAs;
     private StringProperty srcFuzzyName;
     private StringProperty srcFormat;
     private StringProperty destPath;
     private StringProperty destNamedTo;
+    private StringProperty destRenameTo;
     private ObservableList<String> destFormat;
     private BooleanProperty isForBatch;
     private BooleanProperty isWithHeader;
@@ -34,12 +36,14 @@ public class Model {
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
+        this.title = new SimpleStringProperty("File(s) Conversion");
         this.srcPath = new SimpleStringProperty(BLANK);
         this.srcNamedAs = new SimpleStringProperty(BLANK);
         this.srcFuzzyName = new SimpleStringProperty(BLANK);
         this.srcFormat = new SimpleStringProperty(BLANK);
         this.destPath = new SimpleStringProperty(BLANK);
         this.destNamedTo = new SimpleStringProperty(BLANK);
+        this.destRenameTo = new SimpleStringProperty(BLANK);
         this.destFormat = FXCollections.observableArrayList(".txt", ".csv", ".xls", ".xlsx");
         this.logInfo = new SimpleStringProperty(BLANK);
         this.isForBatch = new SimpleBooleanProperty(false);
@@ -47,10 +51,12 @@ public class Model {
     }
 
     public Model(
+        String title,
         String srcPath, String srcNamedAs,
         String srcFuzzyName, String srcFormat,
         String destPath, String destNamedTo,
         String[] destFormat, String logInfo, Boolean isForBatch, Boolean isWithHeader) {
+        this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
         this.srcFuzzyName = new SimpleStringProperty(srcFuzzyName);
@@ -61,6 +67,18 @@ public class Model {
         this.logInfo = new SimpleStringProperty(logInfo);
         this.isForBatch = new SimpleBooleanProperty(isForBatch);
         this.isWithHeader = new SimpleBooleanProperty(isWithHeader);
+    }
+
+    public String getTitle() {
+        return title.get();
+    }
+
+    public StringProperty titleProperty() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title.set(title);
     }
 
     public String getSrcPath() {
@@ -133,6 +151,18 @@ public class Model {
 
     public void setDestNamedTo(String destNamedTo) {
         this.destNamedTo.set(destNamedTo);
+    }
+
+    public String getDestRenameTo() {
+        return destRenameTo.get();
+    }
+
+    public StringProperty destRenameToProperty() {
+        return destRenameTo;
+    }
+
+    public void setDestRenameTo(String destRenameTo) {
+        this.destRenameTo.set(destRenameTo);
     }
 
     public ObservableList<String> getDestFormat() {
