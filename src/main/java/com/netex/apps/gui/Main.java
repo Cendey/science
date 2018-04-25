@@ -11,6 +11,7 @@ import javafx.stage.StageStyle;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 public class Main extends Application {
 
@@ -24,7 +25,7 @@ public class Main extends Application {
             final Scene scene = new Scene(root, 650, 400);
             primaryStage.setScene(scene);
             URL imageUrl = classLoader.getResource("picture/office.png");
-            Image icon = new Image(imageUrl.toExternalForm());
+            Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
             primaryStage.getIcons().add(icon);
             final Controller controller = fxmlLoader.getController();
             controller.setStage(primaryStage);

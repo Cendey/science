@@ -1,5 +1,6 @@
 package com.netex.apps.mods;
 
+import com.netex.apps.meta.FileExtension;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +21,7 @@ import javafx.collections.ObservableList;
 public class Model {
 
     private static final String BLANK = "";
-
+    private static final FileExtension[] COMMON_FILE_EXTENSION = {new FileExtension("Text File", ".text"), new FileExtension("ASCII Text File", ".txt"), new FileExtension("Comma Separated Values", ".csv"), new FileExtension("Microsoft Excel", ".xls"), new FileExtension("Office Open XML Workbook", ".xlsx")};
     private StringProperty title;
     private StringProperty srcPath;
     private StringProperty srcNamedAs;
@@ -29,7 +30,7 @@ public class Model {
     private StringProperty destPath;
     private StringProperty destNamedTo;
     private StringProperty destRenameTo;
-    private ObservableList<String> destFormat;
+    private ObservableList<FileExtension> destFormat;
     private BooleanProperty isForBatch;
     private BooleanProperty isWithHeader;
     private StringProperty logInfo;
@@ -44,18 +45,18 @@ public class Model {
         this.destPath = new SimpleStringProperty(BLANK);
         this.destNamedTo = new SimpleStringProperty(BLANK);
         this.destRenameTo = new SimpleStringProperty(BLANK);
-        this.destFormat = FXCollections.observableArrayList(".txt", ".csv", ".xls", ".xlsx");
+        this.destFormat = FXCollections.observableArrayList(COMMON_FILE_EXTENSION);
         this.logInfo = new SimpleStringProperty(BLANK);
         this.isForBatch = new SimpleBooleanProperty(false);
         this.isWithHeader = new SimpleBooleanProperty(false);
     }
 
     public Model(
-        String title,
-        String srcPath, String srcNamedAs,
-        String srcFuzzyName, String srcFormat,
-        String destPath, String destNamedTo,
-        String[] destFormat, String logInfo, Boolean isForBatch, Boolean isWithHeader) {
+            String title,
+            String srcPath, String srcNamedAs,
+            String srcFuzzyName, String srcFormat,
+            String destPath, String destNamedTo,
+            FileExtension[] destFormat, String logInfo, Boolean isForBatch, Boolean isWithHeader) {
         this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
@@ -165,11 +166,11 @@ public class Model {
         this.destRenameTo.set(destRenameTo);
     }
 
-    public ObservableList<String> getDestFormat() {
+    public ObservableList<FileExtension> getDestFormat() {
         return destFormat;
     }
 
-    public void setDestFormat(ObservableList<String> destFormat) {
+    public void setDestFormat(ObservableList<FileExtension> destFormat) {
         this.destFormat = destFormat;
     }
 

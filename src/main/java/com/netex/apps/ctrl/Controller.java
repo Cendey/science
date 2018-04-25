@@ -1,5 +1,7 @@
 package com.netex.apps.ctrl;
 
+import com.google.common.io.Files;
+import com.netex.apps.meta.FileExtension;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
 import javafx.beans.property.StringProperty;
@@ -10,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -29,7 +32,8 @@ import java.util.ResourceBundle;
 import static javafx.application.Platform.exit;
 
 public class Controller implements Initializable {
-
+    public static final String FROM_SOURCE = "source";
+    public static final String FROM_TARGET = "target";
 
     public MenuItem miExit;
     public TextField srcPath;
@@ -37,7 +41,7 @@ public class Controller implements Initializable {
     public Label lblSrcFile;
     public TextField destPath;
     public Button btnDestPath;
-    public ChoiceBox<String> cboDestFileFormat;
+    public ChoiceBox<FileExtension> cboDestFileFormat;
     public TextField txtFuzzySrcFileName;
     public Button btnStart;
     public Button btnCancel;
@@ -83,7 +87,7 @@ public class Controller implements Initializable {
         addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
-        cboDestFileFormat.setItems(model.getDestFormat());
+        cboDestFileFormat.getItems().addAll(model.getDestFormat());
         textareaLogInfo.textProperty().bindBidirectional(model.logInfoProperty());
     }
 
@@ -102,9 +106,7 @@ public class Controller implements Initializable {
             double delta = newValue.doubleValue() - oldValue.doubleValue();
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
-                components.parallelStream()
-                        .filter(node -> node.isResizable() && TextArea.class.isAssignableFrom(node.getClass()))
-                        .forEach(node -> adjust(node, "Height", delta));
+                components.parallelStream().filter(Node::isResizable).forEach(node -> adjust(node, "Height", delta));
             }
         });
     }
@@ -118,8 +120,21 @@ public class Controller implements Initializable {
                     adjust(child, propertyName, delta);
                 }
             } else {
-                if (!ClassUtils.isAssignable(node.getClass(), Labeled.class)) {
-                    Utilities.adjustSize(node, propertyName, delta);
+                //Adjust orientation only for TextField.class or TextArea.class
+                switch (propertyName) {
+                    case "Width":
+                        if (ClassUtils.isAssignable(node.getClass(), TextInputControl.class)) {
+                            Utilities.adjustSize(node, propertyName, delta);
+                        }
+                        break;
+                    case "Height":
+                        if (ClassUtils.isAssignable(node.getClass(), TextArea.class)) {
+                            Utilities.adjustSize(node, propertyName, delta);
+                        }
+                        break;
+                    default:
+                        node.prefHeight(-1);
+                        node.prefWidth(-1);
                 }
             }
         }
@@ -186,28 +201,53 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    private Boolean available(TextField instance) {
-        Boolean available = true;
+    public void available(InputMethodEvent inputMethodEvent) {
+        TextField instance = (TextField) inputMethodEvent.getSource();
         StringProperty property = instance.textProperty();
-        if (StringUtils.isEmpty(property.getValue())) {
-            property.setValue(StringUtils.EMPTY);
-            createMessageDialog("Directory or file is required!");
-            instance.setStyle("-fx-background-color: RED");
-            instance.requestFocus();
-            available = false;
-        } else {
-            File file = new File(property.getValue());
-            if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                instance.setStyle("-fx-background-color: GREEN");
-            } else {
-                property.setValue(StringUtils.EMPTY);
-                createMessageDialog("Directory or file not exists, please check!");
-                instance.setStyle("-fx-background-color: RED");
-                instance.requestFocus();
-                available = false;
-            }
+        final File path = new File(property.getValue().trim());
+        if (instance.equals(srcPath)) {
+            handleFilePath(instance, path, FROM_SOURCE);
+        } else if (instance.equals(txtFuzzySrcFileName)) {
+            handlePrefixFileName(instance, property, FROM_SOURCE);
+        } else if (instance.equals(destPath)) {
+            handleFilePath(instance, path, FROM_TARGET);
+        } else if (instance.equals(txtDestPrefixName)) {
+            handlePrefixFileName(instance, property, FROM_TARGET);
         }
-        return available;
+    }
+
+    private void handlePrefixFileName(TextField instance, StringProperty property, String from) {
+        String name = FilenameUtils.normalize(property.getValue());
+        Optional.of(StringUtils.equalsIgnoreCase(property.getValue(), name)).ifPresent(decision -> {
+            if (decision) instance.setStyle("-fx-text-fill: GREEN");
+            else {
+                createMessageDialog(String.format("%s%s%s", "This is not a valid prefix of ", from, " file name!"));
+                instance.setStyle("-fx-text-fill: RED");
+                instance.requestFocus();
+            }
+        });
+    }
+
+    private void handleFilePath(TextField instance, File path, String from) {
+        if (cbxIndicatorForBatch.isSelected()) {
+            Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
+                if (decision) instance.setStyle("-fx-text-fill: GREEN");
+                else {
+                    createMessageDialog(String.format("%s%s%s", "This is not a valid ", from, " directory!"));
+                    instance.setStyle("-fx-text-fill: RED");
+                    instance.requestFocus();
+                }
+            });
+        } else {
+            Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
+                if (decision) instance.setStyle("-fx-text-fill: GREEN");
+                else {
+                    createMessageDialog(String.format("%s%s%s", "This is not a valid ", from, " file!"));
+                    instance.setStyle("-fx-text-fill: RED");
+                    instance.requestFocus();
+                }
+            });
+        }
     }
 
 
@@ -232,6 +272,7 @@ public class Controller implements Initializable {
             txtFuzzySrcFileName.setEditable(true);
             srcPath.textProperty().setValue(StringUtils.EMPTY);
             destPath.textProperty().setValue(StringUtils.EMPTY);
+
             stage.titleProperty().setValue("Batch Files Conversion");
         } else {
             txtFuzzySrcFileName.setEditable(false);

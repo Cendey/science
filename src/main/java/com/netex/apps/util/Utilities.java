@@ -107,4 +107,13 @@ public class Utilities {
         }
         return lstFiles;
     }
+
+    public static String rename(String srcPath, String prefix) {
+        String fileName = null;
+        if (StringUtils.isNotEmpty(prefix)) {
+        } else {
+
+        }
+        return fileName;
+    }
 }

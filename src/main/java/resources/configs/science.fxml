@@ -74,8 +74,9 @@
                     </font>
                 </Label>
                 <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
-                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1"/>
+                           onInputMethodTextChanged="#available" prefHeight="25.0" prefWidth="453.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="1"/>
                 <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseSrcPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.vgrow="NEVER"/>
@@ -87,8 +88,9 @@
                     </font>
                 </Label>
                 <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
-                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="3"/>
+                           onInputMethodTextChanged="#available" prefHeight="25.0" prefWidth="453.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="3"/>
                 <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseDestPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.vgrow="NEVER"/>
@@ -107,9 +109,10 @@
                     </font>
                 </Label>
                 <TextField fx:id="txtFuzzySrcFileName" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
-                           GridPane.columnSpan="2" GridPane.rowIndex="2"/>
+                           maxWidth="1.7976931348623157E308" onInputMethodTextChanged="#available"
+                           onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0" prefWidth="281.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                           GridPane.rowIndex="2"/>
                 <Label alignment="CENTER" prefHeight="25.0" prefWidth="238.0" text="File(s) Conversion"
                        textAlignment="CENTER" GridPane.columnIndex="2" GridPane.columnSpan="2">
                     <font>
@@ -132,8 +135,8 @@
                 </Button>
                 <TextArea fx:id="textareaLogInfo" disable="true" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308" prefHeight="206.0" prefWidth="594.0"
-                          style="-fx-control-inner-background: #efdecd;" GridPane.columnSpan="6" GridPane.rowIndex="5"
-                          GridPane.rowSpan="3">
+                          style="-fx-control-inner-background: #efdecd;" GridPane.columnSpan="6" GridPane.hgrow="NEVER"
+                          GridPane.rowIndex="5" GridPane.rowSpan="3">
                     <font>
                         <Font name="Arial Bold Italic" size="12.0"/>
                     </font>
@@ -157,9 +160,10 @@
                     </font>
                 </CheckBox>
                 <TextField fx:id="txtDestPrefixName" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" onMouseClicked="#chooseDestPrefixName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
-                           GridPane.columnSpan="2" GridPane.rowIndex="4"/>
+                           maxWidth="1.7976931348623157E308" onInputMethodTextChanged="#available"
+                           onMouseClicked="#chooseDestPrefixName" prefHeight="25.0" prefWidth="281.0"
+                           style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1" GridPane.columnSpan="2"
+                           GridPane.rowIndex="4"/>
                 <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                           mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"
                           style="-fx-background-color: #efdecd;" text="Header?" GridPane.columnIndex="3"
@@ -168,9 +172,9 @@
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </CheckBox>
-                <ChoiceBox fx:id="cboDestFileFormat" prefHeight="25.0" prefWidth="119.0"
-                           style="-fx-background-color: #efdecd;" GridPane.columnIndex="4" GridPane.hgrow="NEVER"
-                           GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
+                <ChoiceBox fx:id="cboDestFileFormat" prefHeight="25.0" prefWidth="241.0"
+                           style="-fx-background-color: #efdecd;" GridPane.columnIndex="4" GridPane.columnSpan="2"
+                           GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
             </children>
         </GridPane>
     </children>
