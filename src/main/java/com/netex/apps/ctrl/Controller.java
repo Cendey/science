@@ -32,8 +32,8 @@ import java.util.ResourceBundle;
 import static javafx.application.Platform.exit;
 
 public class Controller implements Initializable {
-    public static final String FROM_SOURCE = "source";
-    public static final String FROM_TARGET = "target";
+    private static final String FROM_SOURCE = "source";
+    private static final String FROM_TARGET = "target";
 
     public MenuItem miExit;
     public TextField srcPath;
@@ -87,6 +87,7 @@ public class Controller implements Initializable {
         addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
+        cboDestFileFormat.setConverter(new FileExtension.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         textareaLogInfo.textProperty().bindBidirectional(model.logInfoProperty());
     }
@@ -121,20 +122,14 @@ public class Controller implements Initializable {
                 }
             } else {
                 //Adjust orientation only for TextField.class or TextArea.class
-                switch (propertyName) {
-                    case "Width":
-                        if (ClassUtils.isAssignable(node.getClass(), TextInputControl.class)) {
-                            Utilities.adjustSize(node, propertyName, delta);
-                        }
-                        break;
-                    case "Height":
-                        if (ClassUtils.isAssignable(node.getClass(), TextArea.class)) {
-                            Utilities.adjustSize(node, propertyName, delta);
-                        }
-                        break;
-                    default:
-                        node.prefHeight(-1);
-                        node.prefWidth(-1);
+                if (StringUtils.equalsIgnoreCase(propertyName, "Width")) {
+                    if (ClassUtils.isAssignable(node.getClass(), TextInputControl.class)) {
+                        Utilities.adjustSize(node, propertyName, delta);
+                    }
+                } else if (StringUtils.equalsIgnoreCase(propertyName, "Height")) {
+                    if (ClassUtils.isAssignable(node.getClass(), TextArea.class)) {
+                        Utilities.adjustSize(node, propertyName, delta);
+                    }
                 }
             }
         }

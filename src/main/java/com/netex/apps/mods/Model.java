@@ -21,7 +21,13 @@ import javafx.collections.ObservableList;
 public class Model {
 
     private static final String BLANK = "";
-    private static final FileExtension[] COMMON_FILE_EXTENSION = {new FileExtension("Text File", ".text"), new FileExtension("ASCII Text File", ".txt"), new FileExtension("Comma Separated Values", ".csv"), new FileExtension("Microsoft Excel", ".xls"), new FileExtension("Office Open XML Workbook", ".xlsx")};
+    private static final FileExtension[] COMMON_FILE_EXTENSION = {
+            new FileExtension("Text File", ".text"),
+            new FileExtension("ASCII Text File", ".txt"),
+            new FileExtension("Comma Separated Values", ".csv"),
+            new FileExtension("Microsoft Excel", ".xls"),
+            new FileExtension("Office Open XML Workbook", ".xlsx")
+    };
     private StringProperty title;
     private StringProperty srcPath;
     private StringProperty srcNamedAs;

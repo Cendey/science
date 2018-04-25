@@ -7,10 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 
 public class Main extends Application {
@@ -34,24 +32,7 @@ public class Main extends Application {
         }
     }
 
-
     public static void main(String[] args) {
         launch(args);
-    }
-
-    private StageStyle configStageStyle() {
-        StageStyle stageStyle = StageStyle.DECORATED;
-        List<String> unnamedParams = getParameters().getUnnamed();
-        if (unnamedParams.size() > 0) {
-            String stageStyleParam = unnamedParams.get(0);
-            if (stageStyleParam.equalsIgnoreCase("transparent")) {
-                stageStyle = StageStyle.TRANSPARENT;
-            } else if (stageStyleParam.equalsIgnoreCase("undecorated")) {
-                stageStyle = StageStyle.UNDECORATED;
-            } else if (stageStyleParam.equalsIgnoreCase("utility")) {
-                stageStyle = StageStyle.UTILITY;
-            }
-        }
-        return stageStyle;
     }
 }
