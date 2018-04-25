@@ -173,8 +173,9 @@
                     </font>
                 </CheckBox>
                 <ChoiceBox fx:id="cboDestFileFormat" prefHeight="25.0" prefWidth="241.0"
-                           style="-fx-background-color: #efdecd;" GridPane.columnIndex="4" GridPane.columnSpan="2"
-                           GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.vgrow="NEVER"/>
+                           style="-fx-background-color: #efdecd; -fx-text-fill: #ace5ee; -fx-font-size: 8pt;"
+                           GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.hgrow="NEVER" GridPane.rowIndex="4"
+                           GridPane.vgrow="NEVER"/>
             </children>
         </GridPane>
     </children>
