@@ -189,6 +189,7 @@ public class Controller implements Initializable {
     }
 
     private void createMessageDialog(String message) {
+        //http://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning Dialog");
         alert.setHeaderText("Look, a Warning Dialog");
