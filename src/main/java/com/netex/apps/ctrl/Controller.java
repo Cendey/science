@@ -199,6 +199,7 @@ public class Controller implements Initializable {
         );
     }
 
+    //http://fxexperience.com/controlsfx/
     private void createMessageDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning Dialog");
