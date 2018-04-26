@@ -1,6 +1,7 @@
 package com.netex.apps.util;
 
 import javafx.util.Pair;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>Title: science</p>
@@ -22,6 +25,9 @@ import java.util.Optional;
  * @date 04/19/2018
  */
 public class Utilities {
+
+    public static final String FILENAME_PATTERN = "\\.\\d+$";
+    public static final Pattern PATTERN = Pattern.compile(FILENAME_PATTERN);
 
     public static <E> void adjustSize(E node, String propertyName, double delta) {
         Class<?> clazz = node.getClass();
@@ -97,7 +103,7 @@ public class Utilities {
                         }
                     }
                 } else {
-                    System.err.println(String.format("Not file found in %s!", directory.getName()));
+                    System.err.println(String.format("No file found in %s!", directory.getName()));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
@@ -109,10 +115,22 @@ public class Utilities {
     }
 
     public static String rename(String srcPath, String prefix) {
-        String fileName = null;
-        if (StringUtils.isNotEmpty(prefix)) {
-        } else {
-
+        String fileName = null, suffix = null;
+        if (StringUtils.isNotEmpty(srcPath)) {
+            srcPath = srcPath.trim();
+            Matcher matcher = PATTERN.matcher(srcPath);
+            if (matcher.matches()) {
+                suffix = matcher.group();
+            }
+            if (StringUtils.isNotEmpty(prefix)) {
+                if (StringUtils.isNotEmpty(suffix)) {
+                    fileName = prefix.concat(suffix);
+                } else {
+                    fileName = prefix;
+                }
+            } else {
+                fileName = FilenameUtils.getName(srcPath);
+            }
         }
         return fileName;
     }
