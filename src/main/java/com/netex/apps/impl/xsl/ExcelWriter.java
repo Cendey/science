@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +32,10 @@ public class ExcelWriter implements Writer {
 
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
-
+        final Path path = Paths.get(filePath);
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
         // Create a Workbook
         try (Workbook workbook = create(filePath)) {
             if (workbook == null) return;

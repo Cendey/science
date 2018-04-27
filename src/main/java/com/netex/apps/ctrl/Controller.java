@@ -311,7 +311,7 @@ public class Controller implements Initializable {
                 filesInfo -> filesInfo.forEach(
                         file -> {
                             String srcFilePath = model.getSrcPath();
-                            String nameAs = model.getSrcNamedAs();
+                            String nameAs = model.getSrcFuzzyName();
                             String destFilePath = Utilities.compose(file, model.getDestPath());
                             String nameTo = model.getDestNamedTo();
                             String destFileType = cboDestFileFormat.getValue().getExtension();

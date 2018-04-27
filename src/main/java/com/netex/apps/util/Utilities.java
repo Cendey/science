@@ -49,7 +49,7 @@ public class Utilities {
                 if (level == 0) {
                     path = directory;
                 } else {
-                    String srcPath = source.getPath();
+                    String srcPath = source.getParent();
                     if (StringUtils.isNotEmpty(srcPath)) {
                         String[] parents = StringUtils.split(srcPath, File.separator);
                         StringBuilder builder = new StringBuilder(directory);
@@ -57,7 +57,6 @@ public class Utilities {
                             builder.append(File.separator).append(parents[i]);
                         }
                         path = builder.toString();
-
                     } else {
                         System.err.println("Source file path is empty!");
                     }

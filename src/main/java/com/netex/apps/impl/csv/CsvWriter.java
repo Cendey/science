@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -34,8 +35,12 @@ public class CsvWriter implements Writer {
                 String[] headers = (String[]) dataInfo.getKey().toArray();
                 csvFormat = csvFormat.withHeader(headers);
             }
+            final Path path = Paths.get(filePath);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
             try (BufferedWriter writer = Files
-                    .newBufferedWriter(Paths.get(filePath), Charset.forName("utf-8"),
+                    .newBufferedWriter(path, Charset.forName("utf-8"),
                             StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND); CSVPrinter csvPrinter = new CSVPrinter(
                     writer, csvFormat)) {
                 for (List<Object> csvRecord : dataInfo.getValue()) {
