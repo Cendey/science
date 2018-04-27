@@ -33,7 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static javafx.application.Platform.exit;
 
@@ -266,55 +269,41 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
-        classifier = new ParallelGroup(prepare(), 1);
-        try {
-            List<Future<List<String>>> result = classifier.classify();
-            Runnable runnable = () -> Optional.of(result).ifPresent(
-                    futures -> {
-                        StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
-                        futures.forEach(future -> {
-                                    if (future.isDone()) {
-                                        try {
-                                            future.get().forEach(builder::append);
-                                        } catch (InterruptedException | ExecutionException e) {
-                                            System.err.println(e.getCause().getMessage());
+        ExecutorService executorService = Executors.newSingleThreadExecutor(Thread::new);
+        Runnable runnable = () -> {
+            classifier = new ParallelGroup(prepare(), 1);
+            try {
+                List<Future<List<String>>> result = classifier.classify();
+                Optional.of(result).ifPresent(
+                        futures -> {
+                            StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
+                            futures.forEach(future -> {
+                                        if (future.isDone()) {
+                                            try {
+                                                future.get().forEach(builder::append);
+                                            } catch (InterruptedException | ExecutionException e) {
+                                                System.err.println(e.getCause().getMessage());
+                                            }
                                         }
                                     }
-                                }
-                        );
-                        model.setLogInfo("");
-                        model.setLogInfo(builder.toString());
-                    }
-            );
-
-            ExecutorService executorService = Executors.newSingleThreadExecutor(Thread::new);
-            executorService.submit(runnable);
-            executorService.shutdown();
-
-        } catch (InterruptedException e) {
-            System.err.println(e.getCause().getMessage());
-        } finally {
-            classifier.destroy();
-        }
+                            );
+                            model.setLogInfo("");
+                            model.setLogInfo(builder.toString());
+                        }
+                );
+            } catch (InterruptedException e) {
+                System.err.println(e.getCause().getMessage());
+            } finally {
+                classifier.destroy();
+            }
+        };
+        executorService.submit(runnable);
+        executorService.shutdown();
     }
 
     @NotNull
     private List<TaskMeta> prepare() {
-        Callable<List<Pair<File, Integer>>> callable = () -> Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
-        ExecutorService service = Executors.newSingleThreadExecutor(Thread::new);
-        Future<List<Pair<File, Integer>>> future = service.submit(callable);
-        List<Pair<File, Integer>> lstFilesInfo = null;
-        if (future.isDone()) {
-            try {
-                lstFilesInfo = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                System.err.println(e.getCause().getMessage());
-            } finally {
-                if (!service.isShutdown()) {
-                    service.shutdown();
-                }
-            }
-        }
+        List<Pair<File, Integer>> lstFilesInfo = Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
         List<TaskMeta> lstTask = new ArrayList<>();
         Optional.ofNullable(lstFilesInfo).ifPresent(
                 filesInfo -> filesInfo.forEach(
