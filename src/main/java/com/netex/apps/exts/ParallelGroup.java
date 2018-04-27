@@ -31,7 +31,7 @@ public class ParallelGroup {
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, Thread::new);
     }
 
-    public List<Future<List<String>>> classify() {
+    public List<Future<List<String>>> classify() throws InterruptedException {
         int length = tasks.size() / numThreads;
         int startIndex = 0, endIndex = length;
 
@@ -48,6 +48,7 @@ public class ParallelGroup {
             Future<List<String>> future = executor.submit(task);
             result.add(future);
         }
+        endController.await();
         return result;
     }
 

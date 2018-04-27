@@ -35,16 +35,9 @@ public class GroupTask implements Callable<List<String>> {
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
             TaskMeta meta = tasks.get(index);
-            if (meta.getBatch()) {
-                List<String> temp = Conversion
-                    .convert(meta.getSrcPath(), meta.getNameAs(), meta.getDestPath(), meta.getNameTo(), meta.getType(),
-                        meta.getHeader());
-                if (temp != null && temp.size() > 0) result.addAll(temp);
-            } else {
-                List<String> temp = Conversion
-                    .convert(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
-                if (temp != null && temp.size() > 0) result.addAll(temp);
-            }
+            List<String> temp = Conversion
+                .convert(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
+            if (temp != null && temp.size() > 0) result.addAll(temp);
         }
         endController.countDown();
         return result;
