@@ -75,8 +75,8 @@ public class Utilities {
         if (directory.exists()) {
             if (directory.isDirectory()) {
                 Optional.ofNullable(directory.listFiles((file, pattern) -> file.getName().contains(fileName)))
-                    .ifPresent(matchedFiles -> Arrays.stream(matchedFiles).map(file -> new Pair<>(file, 1))
-                        .forEachOrdered(listFiles::add));
+                        .ifPresent(matchedFiles -> Arrays.stream(matchedFiles).map(file -> new Pair<>(file, 1))
+                                .forEachOrdered(listFiles::add));
             } else if (directory.isFile()) {
                 listFiles.add(new Pair<>(directory, 0));
             }
@@ -86,24 +86,25 @@ public class Utilities {
         return listFiles;
     }
 
-    public static List<Pair<File, Integer>> listAll(File directory, String fileName, Integer level) {
+    public static List<Pair<File, Integer>> listAll(File directory, String fileName, int level) {
         final List<Pair<File, Integer>> lstFiles = new ArrayList<>();
         if (directory.exists()) {
             if (directory.isDirectory()) {
-                File[] files =
-                    directory.listFiles((file, pattern) -> file.isDirectory() || file.getName().contains(fileName));
+                File[] files = directory.listFiles((file, pattern) -> {
+                    File temp = new File(file.getPath() + File.separator + pattern);
+                    return temp.isDirectory() || (temp.isFile() && pattern.contains(fileName));
+                });
                 if (files != null && files.length > 0) {
                     for (File file : files) {
                         if (file.isDirectory()) {
-                            level++;
-                            List<Pair<File, Integer>> temp = listAll(file, fileName, level);
+                            List<Pair<File, Integer>> temp = listAll(file, fileName, level + 1);
                             Optional.of(temp).ifPresent(lstFiles::addAll);
                         } else {
                             lstFiles.add(new Pair<>(file, level));
                         }
                     }
                 } else {
-                    System.err.println(String.format("No file found in %s!", directory.getName()));
+                    System.err.println(String.format("No file found in directory %s, which name like %s!", directory.getName(), fileName));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
