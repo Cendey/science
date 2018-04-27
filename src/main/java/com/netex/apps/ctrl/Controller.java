@@ -1,7 +1,9 @@
 package com.netex.apps.ctrl;
 
 import com.google.common.io.Files;
+import com.netex.apps.exts.ParallelGroup;
 import com.netex.apps.meta.FileExtension;
+import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
 import javafx.beans.property.StringProperty;
@@ -28,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import opennlp.tools.util.StringUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -35,9 +38,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static javafx.application.Platform.exit;
 
@@ -64,6 +72,7 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private Model model;
+    private ParallelGroup classifier;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -269,12 +278,54 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
+        List<Pair<File, Integer>> lstFilesInfo =
+            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
+        List<TaskMeta> lstTask = new ArrayList<>();
+        Optional.of(lstFilesInfo).ifPresent(filesInfo -> filesInfo.forEach(file -> {
+            String srcFilePath = model.getSrcPath();
+            String nameAs = model.getSrcNamedAs();
+            String destFilePath = Utilities.compose(file, model.getDestPath());
+            String nameTo = model.getDestNamedTo();
+            String destFileType = cboDestFileFormat.getValue().getExtension();
+            Boolean header = model.isIsWithHeader();
+            lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
+        }));
+        classifier = new ParallelGroup(lstTask, 1);
+        try {
+            List<Future<List<String>>> result = classifier.classify();
+            Runnable runnable = () -> {
+                Optional.of(result).ifPresent(futures -> {
+                        StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
+                        futures.forEach(future -> {
+                                try {
+                                    future.get().forEach(builder::append);
+                                } catch (InterruptedException | ExecutionException e) {
+                                    System.err.println(e.getCause().getMessage());
+                                }
+                            }
+                        );
+                        model.setLogInfo("");
+                        model.setLogInfo(builder.toString());
+                    }
+                );
+            };
 
+            ExecutorService executorService = Executors.newSingleThreadExecutor(Thread::new);
+            executorService.submit(runnable);
+            executorService.shutdown();
+
+        } catch (InterruptedException e) {
+            System.err.println(e.getCause().getMessage());
+        } finally {
+            classifier.destroy();
+        }
     }
 
     @SuppressWarnings(value = {"unused"})
     public void cancelWork(ActionEvent keyEvent) {
-
+        if (classifier != null) {
+            classifier.destroy();
+        }
     }
 
     @SuppressWarnings(value = {"unused"})
