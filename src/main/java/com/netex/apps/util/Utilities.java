@@ -63,7 +63,8 @@ public class Utilities {
                     }
                 }
             } else {
-                System.err.println("The directory to which save file, is empty!");
+                path = source.getPath();
+                System.out.println("The directory to save file is same as source file directory!");
             }
         }
         return path;

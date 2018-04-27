@@ -18,7 +18,6 @@ public class TaskMeta {
     private String nameTo;
     private String type;
     private Boolean header;
-    private Boolean batch;
 
     public TaskMeta(String srcPath, String destPath, String type, Boolean header) {
         this.srcPath = srcPath;
@@ -28,25 +27,21 @@ public class TaskMeta {
     }
 
     public TaskMeta(
-        String srcPath, String nameAs, String destPath, String type, Boolean header, Boolean batch) {
+        String srcPath, String nameAs, String destPath, String type, Boolean header) {
         this.srcPath = srcPath;
         this.nameAs = nameAs;
         this.destPath = destPath;
         this.type = type;
         this.header = header;
-        this.batch = batch;
     }
 
-    public TaskMeta(
-        String srcPath, String nameAs, String destPath, String nameTo, String type, Boolean header,
-        Boolean batch) {
+    public TaskMeta(String srcPath, String nameAs, String destPath, String nameTo, String type, Boolean header) {
         this.srcPath = srcPath;
         this.nameAs = nameAs;
         this.destPath = destPath;
         this.nameTo = nameTo;
         this.type = type;
         this.header = header;
-        this.batch = batch;
     }
 
     public String getSrcPath() {
@@ -95,13 +90,5 @@ public class TaskMeta {
 
     public void setHeader(Boolean header) {
         this.header = header;
-    }
-
-    public Boolean getBatch() {
-        return batch;
-    }
-
-    public void setBatch(Boolean batch) {
-        this.batch = batch;
     }
 }
