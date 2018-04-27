@@ -90,7 +90,6 @@ public class Utilities {
         final List<Pair<File, Integer>> lstFiles = new ArrayList<>();
         if (directory.exists()) {
             if (directory.isDirectory()) {
-                level++;
                 File[] files =
                     directory.listFiles((file, pattern) -> file.isDirectory() || file.getName().contains(fileName));
                 if (files != null && files.length > 0) {

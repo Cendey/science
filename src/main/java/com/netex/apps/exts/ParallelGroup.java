@@ -4,10 +4,7 @@ import com.netex.apps.meta.TaskMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  * <p>Title: science</p>
@@ -53,6 +50,18 @@ public class ParallelGroup {
     }
 
     public void destroy() {
-        executor.shutdown();
+        try {
+            System.out.println("Attempt to shutdown executor!");
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            System.out.println("Tasks interrupted!");
+        } finally {
+            if (!executor.isTerminated()) {
+                System.out.println("Cancel non-finished tasks!");
+            }
+            executor.shutdownNow();
+            System.out.println("Shutdown finished!");
+        }
     }
 }
