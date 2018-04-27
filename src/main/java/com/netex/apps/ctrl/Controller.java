@@ -269,6 +269,7 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
+        btnStart.setDisable(true);
         ExecutorService executorService = Executors.newSingleThreadExecutor(Thread::new);
         Runnable runnable = () -> {
             classifier = new ParallelGroup(prepare(), 1);
@@ -299,6 +300,7 @@ public class Controller implements Initializable {
         };
         executorService.submit(runnable);
         executorService.shutdown();
+        btnStart.setDisable(false);
     }
 
     @NotNull
@@ -325,6 +327,9 @@ public class Controller implements Initializable {
     public void cancelWork(ActionEvent keyEvent) {
         if (classifier != null) {
             classifier.destroy();
+        }
+        if (btnStart.isDisabled()) {
+            btnStart.setDisable(false);
         }
     }
 
