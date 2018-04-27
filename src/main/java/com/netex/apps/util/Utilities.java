@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
  */
 public class Utilities {
 
-    public static final String FILENAME_PATTERN = "\\.\\d+$";
-    public static final Pattern PATTERN = Pattern.compile(FILENAME_PATTERN);
+    private static final String FILENAME_PATTERN = "\\.\\d+$";
+    private static final Pattern PATTERN = Pattern.compile(FILENAME_PATTERN);
 
     public static <E> void adjustSize(E node, String propertyName, double delta) {
         Class<?> clazz = node.getClass();
@@ -40,7 +40,7 @@ public class Utilities {
         }
     }
 
-    public static String assamble(Pair<File, Integer> sourceFile, String directory) {
+    public static String compose(Pair<File, Integer> sourceFile, String directory) {
         String path = null;
         if (sourceFile != null) {
             File source = sourceFile.getKey();

@@ -28,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import opennlp.tools.util.StringUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -268,6 +269,8 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
+        List<Pair<File, Integer>> lstFilesInfo =
+            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
 
     }
 
