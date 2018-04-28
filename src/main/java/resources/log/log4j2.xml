@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--https://logging.apache.org/log4j/2.0/faq.html-->
 <configuration name="log4j2" status="warn" strict="true" monitorInterval="10">
     <properties>
         <Property name="environment.target">Dev</Property>
