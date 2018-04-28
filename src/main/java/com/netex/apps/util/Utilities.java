@@ -3,6 +3,8 @@ package com.netex.apps.util;
 import javafx.util.Pair;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +28,8 @@ import java.util.regex.Pattern;
  */
 public class Utilities {
 
+    private static final Logger logger = LogManager.getLogger(Utilities.class);
+
     private static final String FILENAME_PATTERN = "\\.\\d+$";
     private static final Pattern PATTERN = Pattern.compile(FILENAME_PATTERN);
 
@@ -36,7 +40,7 @@ public class Utilities {
             Method writer = clazz.getMethod("setPref" + propertyName, double.class);
             writer.invoke(node, Double.class.cast(reader.invoke(node)) + delta);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            System.err.println(e.getCause().getMessage());
+            logger.error(e.getCause().getMessage());
         }
     }
 
@@ -58,12 +62,12 @@ public class Utilities {
                         }
                         path = builder.toString();
                     } else {
-                        System.err.println("Source file path is empty!");
+                        logger.warn("Source file path is empty!");
                     }
                 }
             } else {
                 path = source.getPath();
-                System.out.println("The directory to save file is same as source file directory!");
+                logger.warn("The directory to save file is same as source file directory!");
             }
         }
         return path;
@@ -80,7 +84,7 @@ public class Utilities {
                 listFiles.add(new Pair<>(directory, 0));
             }
         } else {
-            System.err.println(String.format("%s is not exists, please double check!", directory.getName()));
+            logger.error(String.format("%s is not exists, please double check!", directory.getName()));
         }
         return listFiles;
     }
@@ -103,14 +107,14 @@ public class Utilities {
                         }
                     }
                 } else {
-                    System.err.println(String
+                    logger.error(String
                         .format("No file found in directory %s, which name like %s!", directory.getName(), fileName));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
             }
         } else {
-            System.err.println(String.format("%s is not exists, please double check!", directory.getName()));
+            logger.error(String.format("%s is not exists, please double check!", directory.getName()));
         }
         return lstFiles;
     }

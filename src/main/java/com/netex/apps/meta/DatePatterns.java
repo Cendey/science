@@ -1,11 +1,17 @@
 package com.netex.apps.meta;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 
 public class DatePatterns {
+
+    private static final Logger logger = LogManager.getLogger(DatePatterns.class);
+
     public final static String[] DATE_PATTERNS = {
             "yyyy.MM.dd G 'at' HH:mm:ss z",
             "EEE, MMM d, ''yy",
@@ -72,6 +78,7 @@ public class DatePatterns {
             buildFormatter().parse(date);
             return true;
         } catch (DateTimeParseException e) {
+            logger.error(e.getCause().getMessage());
             return false;
         }
     }

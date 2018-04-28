@@ -1,6 +1,8 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.concurrent.TimeUnit;
  * @date 04/27/2018
  */
 public class ParallelGroup {
+
+    private static final Logger logger = LogManager.getLogger(ParallelGroup.class);
 
     private ThreadPoolExecutor executor;
     private List<TaskMeta> tasks;
@@ -57,17 +61,17 @@ public class ParallelGroup {
     public void destroy() {
         Optional.ofNullable(executor).ifPresent((service) -> {
             try {
-                System.out.println("Attempt to shutdown executor!");
+                logger.info("Attempt to shutdown executor!");
                 service.shutdown();
                 service.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                System.out.println("Tasks interrupted!");
+                logger.error("Tasks interrupted!");
             } finally {
                 if (!service.isTerminated()) {
-                    System.out.println("Cancel non-finished tasks!");
+                    logger.info("Cancel non-finished tasks!");
                 }
                 service.shutdownNow();
-                System.out.println("Shutdown finished!");
+                logger.info("Shutdown finished!");
             }
         });
     }

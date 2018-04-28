@@ -11,6 +11,8 @@ import net.sf.jmimemagic.MagicMatch;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -18,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 class FactoryBuilder {
+
+    private static final Logger logger = LogManager.getLogger(FactoryBuilder.class);
 
     static Factory create(String filePath) {
         Factory factory = null;
@@ -41,10 +45,10 @@ class FactoryBuilder {
                             factory = new ExcelFactory();
                             break;
                         default:
-                            System.err.println(String.format("The file type: {%s} is not support now!", fileType));
+                            logger.error(String.format("The file type: {%s} is not support now!", fileType));
                     }
                 } catch (MagicException | MagicParseException | MagicMatchNotFoundException e) {
-                    System.err.println(e.getCause().getMessage());
+                    logger.error(e.getCause().getMessage());
                 }
             }
         }
@@ -68,7 +72,7 @@ class FactoryBuilder {
                     factory = new ExcelFactory();
                     break;
                 default:
-                    System.err.println(String.format("The file type: {%s} is not support now!", fileFormat));
+                    logger.error(String.format("The file type: {%s} is not support now!", fileFormat));
             }
         }
         return factory;

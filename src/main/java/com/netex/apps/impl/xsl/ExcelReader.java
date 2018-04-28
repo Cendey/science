@@ -2,6 +2,8 @@ package com.netex.apps.impl.xsl;
 
 import com.netex.apps.intf.Reader;
 import javafx.util.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -28,8 +30,11 @@ import java.util.List;
  */
 public class ExcelReader implements Reader {
 
+    private static final Logger logger = LogManager.getLogger(ExcelReader.class);
+
     @Override
-    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader) throws IOException {
+    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
+        throws IOException {
         final List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
 
         // Creating a Workbook from an Excel file (.xls or .xlsx)
@@ -62,7 +67,7 @@ public class ExcelReader implements Reader {
                 result.add(sheetRecord);
             });
         } catch (InvalidFormatException e) {
-            e.printStackTrace();
+            logger.error(e.getCause().getMessage());
         }
         return result;
     }

@@ -5,6 +5,8 @@ import com.netex.apps.intf.Reader;
 import com.netex.apps.intf.Writer;
 import com.netex.apps.util.Utilities;
 import javafx.util.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,8 @@ import java.util.Optional;
  */
 class Worker {
 
+    private static final Logger logger = LogManager.getLogger(Worker.class);
+
     //For single file conversion
     static List<String> perform(String srcPath, String destPath, String nameTo, String type, Boolean withHeader) {
         List<String> result = new ArrayList<>();
@@ -38,13 +42,13 @@ class Worker {
                     try {
                         writer.write(file, destPath + File.separator + destFileName + type);
                     } catch (IOException e) {
-                        System.err.println(e.getCause().getMessage());
+                        logger.error(e.getCause().getMessage());
                     }
                     result.add(destFileName);
                 }
             ));
         } catch (IOException e) {
-            System.err.println(e.getCause().getMessage());
+            logger.error(e.getCause().getMessage());
         }
         return result;
     }

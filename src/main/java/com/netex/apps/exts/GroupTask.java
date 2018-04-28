@@ -1,6 +1,8 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class GroupTask implements Callable<List<String>> {
 
+    private static final Logger logger = LogManager.getLogger(GroupTask.class);
+
     private int startIndex, endIndex;
     private List<TaskMeta> tasks;
     private CountDownLatch endController;
@@ -33,6 +37,7 @@ public class GroupTask implements Callable<List<String>> {
 
     @Override
     public List<String> call() {
+        logger.info("File conversion is scheduled now!");
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
             TaskMeta meta = tasks.get(index);

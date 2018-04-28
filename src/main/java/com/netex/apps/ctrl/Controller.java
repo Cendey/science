@@ -33,7 +33,8 @@ import javafx.util.Pair;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.net.URL;
@@ -47,6 +48,8 @@ import java.util.concurrent.Future;
 import static javafx.application.Platform.exit;
 
 public class Controller implements Initializable {
+
+    private static final Logger logger = LogManager.getLogger(Controller.class);
 
     private static final String FROM_SOURCE = "source";
     private static final String FROM_TARGET = "target";
@@ -285,7 +288,7 @@ public class Controller implements Initializable {
                                 try {
                                     future.get().forEach(builder::append);
                                 } catch (InterruptedException | ExecutionException e) {
-                                    System.err.println(e.getCause().getMessage());
+                                    logger.error(e.getCause().getMessage());
                                 }
                             }
                         }
@@ -295,14 +298,13 @@ public class Controller implements Initializable {
                 }
             );
         } catch (InterruptedException e) {
-            System.err.println(e.getCause().getMessage());
+            logger.error(e.getCause().getMessage());
         } finally {
             classifier.destroy();
             btnStart.setDisable(false);
         }
     }
 
-    @NotNull
     private List<TaskMeta> prepare() {
         List<Pair<File, Integer>> lstFilesInfo =
             Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);

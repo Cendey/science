@@ -7,7 +7,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -15,9 +19,14 @@ import java.util.Optional;
 
 public class Main extends Application {
 
+    private static final Logger logger = LogManager.getLogger(Main.class);
+
     @Override
     public void start(Stage primaryStage) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        File config = new File("log/log4j2.xml");
+        context.setConfigLocation(config.toURI());
         URL resource = classLoader.getResource("configs/science.fxml");
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
@@ -25,7 +34,7 @@ public class Main extends Application {
             try {
                 root = fxmlLoader.load();
             } catch (IOException e) {
-                System.err.println(e.getCause().getMessage());
+                logger.error(e.getCause().getMessage());
             }
             final Scene scene = new Scene(root, 650, 400);
             primaryStage.setScene(scene);
