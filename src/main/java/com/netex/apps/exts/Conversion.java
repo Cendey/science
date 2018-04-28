@@ -33,56 +33,19 @@ class Conversion {
         Writer writer = writeFactory.createWriter();
         try {
             List<Pair<List<String>, List<List<Object>>>> contents = reader.read(srcPath, withHeader);
-            if (contents != null && contents.size() > 0) {
-                contents.forEach(file -> {
-                        String destFileName = Utilities.rename(srcPath, nameTo);
-                        try {
-                            writer.write(file, destPath + File.separator + destFileName + type);
-                        } catch (IOException e) {
-                            System.err.println(e.getCause().getMessage());
-                        }
-                        result.add(destFileName);
+            Optional.ofNullable(contents).ifPresent(data -> data.forEach(file -> {
+                    String destFileName = Utilities.rename(srcPath, nameTo);
+                    try {
+                        writer.write(file, destPath + File.separator + destFileName + type);
+                    } catch (IOException e) {
+                        System.err.println(e.getCause().getMessage());
                     }
-                );
-            }
+                    result.add(destFileName);
+                }
+            ));
         } catch (IOException e) {
             System.err.println(e.getCause().getMessage());
         }
-        return result;
-    }
-
-    //For batch file(s) conversion
-    static List<String> convert(
-        String srcPath, String nameAs, String destPath, String nameTo, String type, Boolean withHeader) {
-        File directory = new File(srcPath);
-        List<Pair<File, Integer>> lstFiles = Utilities.listAll(directory, nameAs, 0);
-        List<String> result = new ArrayList<>();
-        Optional.of(lstFiles).ifPresent(files -> files.forEach(file -> {
-            String path = Utilities.compose(file, destPath);
-            String destFileName = Utilities.rename(srcPath, nameTo);
-            String destFilePath = path + File.separator + destFileName + type;
-            Factory readFactory = FactoryBuilder.create(srcPath);
-            Factory writeFactory = FactoryBuilder.build(type);
-            Reader reader = readFactory.createReader();
-            Writer writer = writeFactory.createWriter();
-            try {
-                List<Pair<List<String>, List<List<Object>>>> contents =
-                    reader.read(file.getKey().getPath(), withHeader);
-                if (contents != null && contents.size() > 0) {
-                    contents.forEach(data -> {
-                            try {
-                                writer.write(data, destFilePath);
-                            } catch (IOException e) {
-                                System.err.println(e.getCause().getMessage());
-                            }
-                            result.add(destFilePath);
-                        }
-                    );
-                }
-            } catch (IOException e) {
-                System.err.println(e.getCause().getMessage());
-            }
-        }));
         return result;
     }
 }

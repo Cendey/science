@@ -24,7 +24,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -74,7 +73,6 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private Model model;
-    private ParallelGroup classifier;
     private ExecutorService executorService;
 
     public void setStage(Stage stage) {
@@ -190,6 +188,7 @@ public class Controller implements Initializable {
     private void addTextChangeListener(TextField instance, String toolTips) {
         instance.tooltipProperty().setValue(new Tooltip(toolTips));
         instance.textProperty().addListener((observable, oldItem, newItem) -> {
+            available(instance);
             if (newItem != null && !newItem.equals(oldItem)) {
                 instance.setText(newItem);
             }
@@ -221,27 +220,23 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    public void available(InputMethodEvent inputMethodEvent) {
-        final Object source = inputMethodEvent.getSource();
-        if (ClassUtils.isAssignable(source.getClass(), TextField.class)) {
-            TextField instance = TextField.class.cast(source);
-            StringProperty property = instance.textProperty();
-            final File path = new File(property.getValue().trim());
-            if (instance.equals(srcPath)) {
-                handleFilePath(instance, path, FROM_SOURCE);
-            } else if (instance.equals(txtFuzzySrcFileName)) {
-                handlePrefixFileName(instance, property, FROM_SOURCE);
-            } else if (instance.equals(destPath)) {
-                handleFilePath(instance, path, FROM_TARGET);
-            } else if (instance.equals(txtDestPrefixName)) {
-                handlePrefixFileName(instance, property, FROM_TARGET);
-            }
+    private void available(TextField instance) {
+        StringProperty property = instance.textProperty();
+        final File path = new File(property.getValue().trim());
+        if (instance.equals(srcPath)) {
+            handleFilePath(instance, path, FROM_SOURCE);
+        } else if (instance.equals(txtFuzzySrcFileName)) {
+            handlePrefixFileName(instance, property, FROM_SOURCE);
+        } else if (instance.equals(destPath)) {
+            handleFilePath(instance, path, FROM_TARGET);
+        } else if (instance.equals(txtDestPrefixName)) {
+            handlePrefixFileName(instance, property, FROM_TARGET);
         }
+
     }
 
     private void handlePrefixFileName(TextField instance, StringProperty property, String from) {
-        String name = FilenameUtils.normalize(property.getValue());
-        Optional.of(StringUtils.equalsIgnoreCase(property.getValue(), name)).ifPresent(decision -> {
+        Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
             if (decision) instance.setStyle("-fx-text-fill: GREEN");
             else {
                 createMessageDialog(String.format("%s%s%s", "This is not a valid prefix of ", from, " file name!"));
@@ -282,9 +277,9 @@ public class Controller implements Initializable {
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
         btnStart.setDisable(true);
-        executorService = Executors.newSingleThreadExecutor(Thread::new);
+        executorService = Executors.newSingleThreadExecutor();
         Runnable runnable = () -> {
-            classifier = new ParallelGroup(prepare(), 1);
+            ParallelGroup classifier = new ParallelGroup(prepare(), 1);
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(
@@ -308,10 +303,10 @@ public class Controller implements Initializable {
                 System.err.println(e.getCause().getMessage());
             } finally {
                 classifier.destroy();
+                btnStart.setDisable(false);
             }
         };
         executorService.submit(runnable);
-        btnStart.setDisable(false);
     }
 
     @NotNull
@@ -337,7 +332,6 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void cancelWork(ActionEvent keyEvent) {
-        Optional.ofNullable(classifier).ifPresent(group -> classifier.destroy());
         cancel();
         if (btnStart.isDisabled()) {
             btnStart.setDisable(false);

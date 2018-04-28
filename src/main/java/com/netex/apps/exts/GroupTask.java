@@ -4,6 +4,7 @@ import com.netex.apps.meta.TaskMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
@@ -37,7 +38,7 @@ public class GroupTask implements Callable<List<String>> {
             TaskMeta meta = tasks.get(index);
             List<String> temp = Conversion
                 .convert(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
-            if (temp != null && temp.size() > 0) result.addAll(temp);
+            Optional.ofNullable(temp).ifPresent(result::addAll);
         }
         endController.countDown();
         return result;
