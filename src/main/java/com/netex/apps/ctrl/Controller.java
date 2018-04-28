@@ -43,10 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static javafx.application.Platform.exit;
 
@@ -73,7 +70,8 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private Model model;
-    private ExecutorService executorService;
+
+    private ParallelGroup classifier;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -277,36 +275,32 @@ public class Controller implements Initializable {
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
         btnStart.setDisable(true);
-        executorService = Executors.newSingleThreadExecutor();
-        Runnable runnable = () -> {
-            ParallelGroup classifier = new ParallelGroup(prepare(), 1);
-            try {
-                List<Future<List<String>>> result = classifier.classify();
-                Optional.of(result).ifPresent(
-                    futures -> {
-                        StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
-                        futures.forEach(future -> {
-                                if (future.isDone()) {
-                                    try {
-                                        future.get().forEach(builder::append);
-                                    } catch (InterruptedException | ExecutionException e) {
-                                        System.err.println(e.getCause().getMessage());
-                                    }
+        classifier = new ParallelGroup(prepare(), 1);
+        try {
+            List<Future<List<String>>> result = classifier.classify();
+            Optional.of(result).ifPresent(
+                futures -> {
+                    StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
+                    futures.forEach(future -> {
+                            if (future.isDone()) {
+                                try {
+                                    future.get().forEach(builder::append);
+                                } catch (InterruptedException | ExecutionException e) {
+                                    System.err.println(e.getCause().getMessage());
                                 }
                             }
-                        );
-                        model.setLogInfo("");
-                        model.setLogInfo(builder.toString());
-                    }
-                );
-            } catch (InterruptedException e) {
-                System.err.println(e.getCause().getMessage());
-            } finally {
-                classifier.destroy();
-                btnStart.setDisable(false);
-            }
-        };
-        executorService.submit(runnable);
+                        }
+                    );
+                    model.setLogInfo("");
+                    model.setLogInfo(builder.toString());
+                }
+            );
+        } catch (InterruptedException e) {
+            System.err.println(e.getCause().getMessage());
+        } finally {
+            classifier.destroy();
+            btnStart.setDisable(false);
+        }
     }
 
     @NotNull
@@ -339,21 +333,7 @@ public class Controller implements Initializable {
     }
 
     private void cancel() {
-        Optional.ofNullable(executorService).ifPresent(executor -> {
-            try {
-                System.out.println("Attempt to shutdown executor!");
-                executor.shutdown();
-                executor.awaitTermination(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                System.err.println("Task interrupted!");
-            } finally {
-                if (!executor.isTerminated()) {
-                    System.err.println("Cancel non-finished tasks!");
-                }
-                executor.shutdownNow();
-                System.out.println("Shutdown finished!");
-            }
-        });
+        Optional.ofNullable(classifier).ifPresent(ParallelGroup::destroy);
     }
 
     @SuppressWarnings(value = {"unused"})
