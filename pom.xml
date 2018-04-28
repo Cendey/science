@@ -33,6 +33,12 @@
             <artifactId>poi</artifactId>
             <version>3.17</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-collections4</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
@@ -41,6 +47,12 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.17</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
@@ -56,38 +68,35 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-app -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-app</artifactId>
-            <version>1.17</version>
             <scope>compile</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.17</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>24.1-jre</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.sf.jmimemagic/jmimemagic -->
+        <dependency>
+            <groupId>net.sf.jmimemagic</groupId>
+            <artifactId>jmimemagic</artifactId>
+            <version>0.1.5</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.poi</groupId>
-                    <artifactId>poi</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.poi</groupId>
-                    <artifactId>poi-ooxml</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

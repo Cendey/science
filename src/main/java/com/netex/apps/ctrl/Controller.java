@@ -30,7 +30,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import opennlp.tools.util.StringUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -291,7 +290,7 @@ public class Controller implements Initializable {
                             }
                         }
                     );
-                    model.setLogInfo("");
+                    model.setLogInfo(StringUtils.EMPTY);
                     model.setLogInfo(builder.toString());
                 }
             );
@@ -340,8 +339,15 @@ public class Controller implements Initializable {
     public void validate(ActionEvent actionEvent) {
         if (cbxIndicatorForBatch.isSelected()) {
             txtFuzzySrcFileName.setEditable(true);
-            srcPath.textProperty().setValue(StringUtils.EMPTY);
-            destPath.textProperty().setValue(StringUtils.EMPTY);
+            final StringProperty srcPathProperty = srcPath.textProperty();
+            if (!Files.isDirectory().apply(new File(srcPathProperty.getValue()))) {
+                srcPathProperty.setValue(StringUtils.EMPTY);
+            }
+
+            final StringProperty destPathProperty = destPath.textProperty();
+            if (!Files.isDirectory().apply(new File(destPathProperty.getValue()))) {
+                destPathProperty.setValue(StringUtils.EMPTY);
+            }
 
             stage.titleProperty().setValue("Batch Files Conversion");
         } else {
@@ -400,7 +406,7 @@ public class Controller implements Initializable {
     @SuppressWarnings(value = {"unused"})
     public void chooseSrcFuzzyName(MouseEvent actionEvent) {
         if (txtFuzzySrcFileName.isEditable() && actionEvent.getClickCount() == 2) {
-            if (StringUtil.isEmpty(txtFuzzySrcFileName.textProperty().getValue())) {
+            if (StringUtils.isEmpty(txtFuzzySrcFileName.textProperty().getValue())) {
                 fuzzyFileName(System.getProperty("user.home"), txtFuzzySrcFileName);
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());

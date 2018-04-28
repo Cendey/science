@@ -5,19 +5,19 @@ import com.netex.apps.impl.csv.CsvFactory;
 import com.netex.apps.impl.txt.TextFactory;
 import com.netex.apps.impl.xsl.ExcelFactory;
 import com.netex.apps.intf.Factory;
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatch;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.Tika;
-import org.apache.tika.detect.TypeDetector;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 class FactoryBuilder {
-
-    private static Tika tika = new Tika(new TypeDetector());
 
     static Factory create(String filePath) {
         Factory factory = null;
@@ -26,7 +26,8 @@ class FactoryBuilder {
             File file = new File(path.toUri());
             if (file.isFile()) {
                 try {
-                    String fileType = tika.detect(file);
+                    MagicMatch match = Magic.getMagicMatch(file, false);
+                    String fileType = match.getMimeType();
                     switch (fileType) {
                         case "text/plain":
                         case "application/octet-stream":
@@ -42,8 +43,8 @@ class FactoryBuilder {
                         default:
                             System.err.println(String.format("The file type: {%s} is not support now!", fileType));
                     }
-                } catch (IOException e) {
-                    System.out.println(e.getCause().getMessage());
+                } catch (MagicException | MagicParseException | MagicMatchNotFoundException e) {
+                    System.err.println(e.getCause().getMessage());
                 }
             }
         }
