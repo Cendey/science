@@ -5,16 +5,14 @@ import com.netex.apps.impl.csv.CsvFactory;
 import com.netex.apps.impl.txt.TextFactory;
 import com.netex.apps.impl.xsl.ExcelFactory;
 import com.netex.apps.intf.Factory;
-import net.sf.jmimemagic.Magic;
-import net.sf.jmimemagic.MagicException;
-import net.sf.jmimemagic.MagicMatch;
-import net.sf.jmimemagic.MagicMatchNotFoundException;
-import net.sf.jmimemagic.MagicParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tika.Tika;
+import org.apache.tika.detect.TypeDetector;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,15 +21,21 @@ class FactoryBuilder {
 
     private static final Logger logger = LogManager.getLogger(FactoryBuilder.class);
 
+    private static final Tika parser = new Tika(new TypeDetector());
+
     static Factory create(String filePath) {
         Factory factory = null;
         Path path = Paths.get(filePath);
         if (Files.exists(path)) {
             File file = new File(path.toUri());
             if (file.isFile()) {
+                String fileType = null;
                 try {
-                    MagicMatch match = Magic.getMagicMatch(file, false);
-                    String fileType = match.getMimeType();
+                    fileType = parser.detect(file);
+                } catch (IOException e) {
+                    logger.error(e.getCause().getMessage());
+                }
+                if (StringUtils.isNotEmpty(fileType)) {
                     switch (fileType) {
                         case "text/plain":
                         case "application/octet-stream":
@@ -45,10 +49,8 @@ class FactoryBuilder {
                             factory = new ExcelFactory();
                             break;
                         default:
-                            logger.error(String.format("The file type: {%s} is not support now!", fileType));
+                            logger.error(String.format("The file type: {%s} is unknown!", fileType));
                     }
-                } catch (MagicException | MagicParseException | MagicMatchNotFoundException e) {
-                    logger.error(e.getCause().getMessage());
                 }
             }
         }

@@ -24,8 +24,8 @@ public class TextWriter implements Writer {
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         final Path path = Paths.get(filePath);
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
+        if (!Files.exists(path.getParent())) {
+            Files.createDirectories(path.getParent());
         }
 
         Optional.ofNullable(dataInfo).ifPresent(datInfo -> {

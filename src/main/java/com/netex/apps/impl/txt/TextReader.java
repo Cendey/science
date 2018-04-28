@@ -2,16 +2,14 @@ package com.netex.apps.impl.txt;
 
 
 import com.netex.apps.intf.Reader;
-import com.netex.apps.meta.DatePatterns;
 import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +21,8 @@ public class TextReader implements Reader {
     @Override
     public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader) throws IOException {
         List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
-        try (BufferedReader crunchBufferReader = Files.newBufferedReader(Paths.get(filePath))) {
-            Stream<String> lines = crunchBufferReader.lines();
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
+            Stream<String> lines = reader.lines();
             List<List<Object>> contents = new ArrayList<>();
             if (isFileWithHeader) {
                 int rowNum = 0;
@@ -48,14 +46,12 @@ public class TextReader implements Reader {
     private List<Object> parse(String line) {
         final List<Object> data = new ArrayList<>();
         Arrays.stream(line.split("\t")).forEach(item -> {
-            if (NumberUtils.isParsable(item.trim())) {
-                data.add(Double.parseDouble(item.trim()));
-            } else if (DatePatterns.isParsable(item.trim())) {
-                try {
-                    data.add(DateUtils.parseDate(item.trim(), DatePatterns.DATE_PATTERNS));
-                } catch (ParseException e) {
-                    System.out.println(e.getCause().getMessage());
-                    data.add(null);
+            final String value = item.trim();
+            if (StringUtils.isNotEmpty(value)) {
+                if (NumberUtils.isParsable(value)) {
+                    data.add(Double.parseDouble(value));
+                } else {
+                    data.add(item);
                 }
             } else {
                 data.add(item);

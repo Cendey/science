@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DatePatterns {
 
@@ -68,18 +70,27 @@ public class DatePatterns {
     private static DateTimeFormatter buildFormatter() {
         final DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
         Arrays.stream(DATE_PATTERNS).forEach(
-                pattern->builder.appendOptional(DateTimeFormatter.ofPattern(pattern))
+                pattern -> builder.appendOptional(DateTimeFormatter.ofPattern(pattern))
         );
         return builder.toFormatter();
     }
 
     public static boolean isParsable(String date) {
+        boolean result = true;
         try {
             buildFormatter().parse(date);
-            return true;
         } catch (DateTimeParseException e) {
             logger.error(e.getCause().getMessage());
-            return false;
+            result = false;
+        } finally {
+            return result;
         }
+    }
+
+    public static boolean isDate(String value) {
+        String pattern = "\\d{4}-[01]\\d-[0-3]\\d\\s[0-2]\\d((:[0-5]\\d)?){2}";
+        Pattern checker = Pattern.compile(pattern);
+        Matcher matcher = checker.matcher(value);
+        return matcher.find();
     }
 }

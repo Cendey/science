@@ -7,11 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * <p>Title: science</p>
@@ -39,11 +35,11 @@ public class ParallelGroup {
 
     public List<Future<List<String>>> classify() throws InterruptedException {
         int length = tasks.size() / numThreads;
-        int startIndex = 0, endIndex = length;
+        int startIndex = 0, endIndex = (length != 0 ? length : tasks.size());
 
         List<Future<List<String>>> result = new ArrayList<>();
         CountDownLatch endController = new CountDownLatch(numThreads);
-        for (int i = 0; i < numThreads; i++) {
+        for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
             GroupTask task = new GroupTask(startIndex, endIndex, tasks, endController);
             startIndex = endIndex;
             if (i < numThreads - 2) {

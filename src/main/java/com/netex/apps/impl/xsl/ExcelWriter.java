@@ -6,14 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -39,8 +32,8 @@ public class ExcelWriter implements Writer {
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         final Path path = Paths.get(filePath);
-        if (!Files.exists(path)) {
-            Files.createDirectories(path);
+        if (!Files.exists(path.getParent())) {
+            Files.createDirectories(path.getParent());
         }
         // Create a Workbook
         try (Workbook workbook = create(filePath)) {
@@ -91,7 +84,7 @@ public class ExcelWriter implements Writer {
                 if (colData != null) {
                     Class<?> dataClass = colData.getClass();
                     if (ClassUtils.isAssignable(dataClass, String.class)) {
-                        cell.setCellValue(String.class.cast(colData));
+                        cell.setCellValue(String.valueOf(colData));
                     } else if (ClassUtils.isAssignable(dataClass, Double.class, true)) {
                         cell.setCellValue(Double.class.cast(colData));
                     } else if (ClassUtils.isAssignable(dataClass, Date.class)) {
@@ -126,9 +119,9 @@ public class ExcelWriter implements Writer {
     private Workbook create(String filePath) {
         String extension = FilenameUtils.getExtension(filePath);
         Workbook workbook;
-        if (StringUtils.equals(extension, ".xlsx")) {
+        if (StringUtils.equals(extension, "xlsx")) {
             workbook = new XSSFWorkbook();     // new HSSFWorkbook() for generating `.xls` file
-        } else if (StringUtils.equals(extension, ".xls")) {
+        } else if (StringUtils.equals(extension, "xls")) {
             workbook = new HSSFWorkbook();
         } else {
             System.err.println("Invalid file name!");

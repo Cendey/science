@@ -36,8 +36,8 @@ public class CsvWriter implements Writer {
                 csvFormat = csvFormat.withHeader(headers);
             }
             final Path path = Paths.get(filePath);
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
+            if (!Files.exists(path.getParent())) {
+                Files.createDirectories(path.getParent());
             }
             try (BufferedWriter writer = Files
                     .newBufferedWriter(path, Charset.forName("utf-8"),
