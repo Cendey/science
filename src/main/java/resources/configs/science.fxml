@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.152"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
