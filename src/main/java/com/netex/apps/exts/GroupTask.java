@@ -36,8 +36,8 @@ public class GroupTask implements Callable<List<String>> {
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
             TaskMeta meta = tasks.get(index);
-            List<String> temp = Conversion
-                .convert(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
+            List<String> temp = Worker
+                .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
             Optional.ofNullable(temp).ifPresent(result::addAll);
         }
         endController.countDown();

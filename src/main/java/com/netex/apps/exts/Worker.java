@@ -14,7 +14,7 @@ import java.util.Optional;
 
 /**
  * <p>Title: science</p>
- * <p>Description: com.netex.apps.exts.Conversion</p>
+ * <p>Description: com.netex.apps.exts.Worker</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *
@@ -22,10 +22,10 @@ import java.util.Optional;
  * @version 1.0
  * @date 04/27/2018
  */
-class Conversion {
+class Worker {
 
     //For single file conversion
-    static List<String> convert(String srcPath, String destPath, String nameTo, String type, Boolean withHeader) {
+    static List<String> perform(String srcPath, String destPath, String nameTo, String type, Boolean withHeader) {
         List<String> result = new ArrayList<>();
         Factory readFactory = FactoryBuilder.create(srcPath);
         Factory writeFactory = FactoryBuilder.build(type);
