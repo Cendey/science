@@ -2,7 +2,7 @@ package com.netex.apps.ctrl;
 
 import com.google.common.io.Files;
 import com.netex.apps.exts.ParallelGroup;
-import com.netex.apps.meta.FileExtension;
+import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
@@ -13,7 +13,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -37,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static javafx.application.Platform.exit;
 
@@ -51,7 +62,7 @@ public class Controller implements Initializable {
     public Label lblSrcFile;
     public TextField destPath;
     public Button btnDestPath;
-    public ChoiceBox<FileExtension> cboDestFileFormat;
+    public ChoiceBox<FileExtensions> cboDestFileFormat;
     public TextField txtFuzzySrcFileName;
     public Button btnStart;
     public Button btnCancel;
@@ -64,6 +75,7 @@ public class Controller implements Initializable {
     private Stage stage;
     private Model model;
     private ParallelGroup classifier;
+    private ExecutorService executorService;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -77,28 +89,28 @@ public class Controller implements Initializable {
         model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
         String tipsForSrc = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+            .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(srcPath, tipsForSrc);
         addFileListener(srcPath);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         String tipsForSrcFuzzyName =
-                "Specify the source file name to match, which is only available for batch files conversion.\n"
-                        .concat("In single file conversion, the source name to matched will be ignored!");
+            "Specify the source file name to match, which is only available for batch files conversion.\n"
+                .concat("In single file conversion, the source name to matched will be ignored!");
         addTextChangeListener(txtFuzzySrcFileName, tipsForSrcFuzzyName);
         txtFuzzySrcFileName.setEditable(false);
         destPath.textProperty().bindBidirectional(model.destPathProperty());
         String tipsForDestPath = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+            .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
         addTextChangeListener(destPath, tipsForDestPath);
         addFileListener(destPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
         String tipsForDestPrefixName =
-                "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
-                        .concat("In single file conversion, the target prefix file name is optional!");
+            "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
+                .concat("In single file conversion, the target prefix file name is optional!");
         addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
-        cboDestFileFormat.setConverter(new FileExtension.FileExtensionConvert());
+        cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         textareaLogInfo.textProperty().bindBidirectional(model.logInfoProperty());
     }
@@ -186,16 +198,16 @@ public class Controller implements Initializable {
 
     private void addFileListener(TextField instance) {
         instance.textProperty().addListener(
-                (observable, oldItem, newItem) -> {
-                    if (newItem != null) {
-                        File file = new File(newItem.trim());
-                        if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                            instance.setStyle("-fx-text-fill: GREEN");
-                        } else {
-                            instance.setStyle("-fx-text-fill: RED");
-                        }
+            (observable, oldItem, newItem) -> {
+                if (newItem != null) {
+                    File file = new File(newItem.trim());
+                    if ((file.isFile() || file.isDirectory()) && file.exists()) {
+                        instance.setStyle("-fx-text-fill: GREEN");
+                    } else {
+                        instance.setStyle("-fx-text-fill: RED");
                     }
                 }
+            }
         );
     }
 
@@ -270,27 +282,27 @@ public class Controller implements Initializable {
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
         btnStart.setDisable(true);
-        ExecutorService executorService = Executors.newSingleThreadExecutor(Thread::new);
+        executorService = Executors.newSingleThreadExecutor(Thread::new);
         Runnable runnable = () -> {
             classifier = new ParallelGroup(prepare(), 1);
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(
-                        futures -> {
-                            StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
-                            futures.forEach(future -> {
-                                        if (future.isDone()) {
-                                            try {
-                                                future.get().forEach(builder::append);
-                                            } catch (InterruptedException | ExecutionException e) {
-                                                System.err.println(e.getCause().getMessage());
-                                            }
-                                        }
+                    futures -> {
+                        StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
+                        futures.forEach(future -> {
+                                if (future.isDone()) {
+                                    try {
+                                        future.get().forEach(builder::append);
+                                    } catch (InterruptedException | ExecutionException e) {
+                                        System.err.println(e.getCause().getMessage());
                                     }
-                            );
-                            model.setLogInfo("");
-                            model.setLogInfo(builder.toString());
-                        }
+                                }
+                            }
+                        );
+                        model.setLogInfo("");
+                        model.setLogInfo(builder.toString());
+                    }
                 );
             } catch (InterruptedException e) {
                 System.err.println(e.getCause().getMessage());
@@ -299,38 +311,55 @@ public class Controller implements Initializable {
             }
         };
         executorService.submit(runnable);
-        executorService.shutdown();
         btnStart.setDisable(false);
     }
 
     @NotNull
     private List<TaskMeta> prepare() {
-        List<Pair<File, Integer>> lstFilesInfo = Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
+        List<Pair<File, Integer>> lstFilesInfo =
+            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
         List<TaskMeta> lstTask = new ArrayList<>();
         Optional.ofNullable(lstFilesInfo).ifPresent(
-                filesInfo -> filesInfo.forEach(
-                        file -> {
-                            String srcFilePath = model.getSrcPath();
-                            String nameAs = model.getSrcFuzzyName();
-                            String destFilePath = Utilities.compose(file, model.getDestPath());
-                            String nameTo = model.getDestNamedTo();
-                            String destFileType = cboDestFileFormat.getValue().getExtension();
-                            Boolean header = model.isIsWithHeader();
-                            lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
-                        }
-                )
+            filesInfo -> filesInfo.forEach(
+                pair -> {
+                    String srcFilePath = pair.getKey().getPath();
+                    String nameAs = model.getSrcFuzzyName();
+                    String destFilePath = Utilities.compose(pair, model.getDestPath());
+                    String nameTo = model.getDestRenameTo();
+                    String destFileType = cboDestFileFormat.getValue().getExtension();
+                    Boolean header = model.isIsWithHeader();
+                    lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
+                }
+            )
         );
         return lstTask;
     }
 
     @SuppressWarnings(value = {"unused"})
     public void cancelWork(ActionEvent keyEvent) {
-        if (classifier != null) {
-            classifier.destroy();
-        }
+        Optional.ofNullable(classifier).ifPresent(group -> classifier.destroy());
+        cancel();
         if (btnStart.isDisabled()) {
             btnStart.setDisable(false);
         }
+    }
+
+    private void cancel() {
+        Optional.ofNullable(executorService).ifPresent(executor -> {
+            try {
+                System.out.println("Attempt to shutdown executor!");
+                executor.shutdown();
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                System.err.println("Task interrupted!");
+            } finally {
+                if (!executor.isTerminated()) {
+                    System.err.println("Cancel non-finished tasks!");
+                }
+                executor.shutdownNow();
+                System.out.println("Shutdown finished!");
+            }
+        });
     }
 
     @SuppressWarnings(value = {"unused"})
@@ -366,14 +395,14 @@ public class Controller implements Initializable {
             fileChooser.setTitle("View File");
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
-                    .addAll(
-                            new FileChooser.ExtensionFilter("All", "*.*"),
-                            new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
-                            new FileChooser.ExtensionFilter("Normal text file", "*.txt", "*.text"),
-                            new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
-                            new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
-                            new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
-                    );
+                .addAll(
+                    new FileChooser.ExtensionFilter("All", "*.*"),
+                    new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
+                    new FileChooser.ExtensionFilter("Normal text file", "*.txt", "*.text"),
+                    new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
+                    new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
+                    new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
+                );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }
@@ -391,7 +420,7 @@ public class Controller implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Files", "*.*"));
         File file = fileChooser.showOpenDialog(stage);
         Optional.ofNullable(file)
-                .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
+            .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
     }
 
     @SuppressWarnings(value = {"unused"})

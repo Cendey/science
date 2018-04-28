@@ -27,8 +27,8 @@ class Conversion {
     //For single file conversion
     static List<String> convert(String srcPath, String destPath, String nameTo, String type, Boolean withHeader) {
         List<String> result = new ArrayList<>();
-        Factory readFactory = AbstractFactory.create(srcPath);
-        Factory writeFactory = AbstractFactory.build(type);
+        Factory readFactory = FactoryBuilder.create(srcPath);
+        Factory writeFactory = FactoryBuilder.build(type);
         Reader reader = readFactory.createReader();
         Writer writer = writeFactory.createWriter();
         try {
@@ -61,8 +61,8 @@ class Conversion {
             String path = Utilities.compose(file, destPath);
             String destFileName = Utilities.rename(srcPath, nameTo);
             String destFilePath = path + File.separator + destFileName + type;
-            Factory readFactory = AbstractFactory.create(srcPath);
-            Factory writeFactory = AbstractFactory.build(type);
+            Factory readFactory = FactoryBuilder.create(srcPath);
+            Factory writeFactory = FactoryBuilder.build(type);
             Reader reader = readFactory.createReader();
             Writer writer = writeFactory.createWriter();
             try {

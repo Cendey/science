@@ -2,7 +2,7 @@ package com.netex.apps.impl.txt;
 
 
 import com.netex.apps.intf.Reader;
-import com.netex.apps.meta.Formats;
+import com.netex.apps.meta.DatePatterns;
 import javafx.util.Pair;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -50,9 +50,9 @@ public class TextReader implements Reader {
         Arrays.stream(line.split("\t")).forEach(item -> {
             if (NumberUtils.isParsable(item.trim())) {
                 data.add(Double.parseDouble(item.trim()));
-            } else if (Formats.isParsable(item.trim())) {
+            } else if (DatePatterns.isParsable(item.trim())) {
                 try {
-                    data.add(DateUtils.parseDate(item.trim(), Formats.DATE_PATTERNS));
+                    data.add(DateUtils.parseDate(item.trim(), DatePatterns.DATE_PATTERNS));
                 } catch (ParseException e) {
                     System.out.println(e.getCause().getMessage());
                     data.add(null);

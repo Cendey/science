@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class AbstractFactory {
+class FactoryBuilder {
 
     private static Tika tika = new Tika(new TypeDetector());
 
@@ -29,6 +29,7 @@ class AbstractFactory {
                     String fileType = tika.detect(file);
                     switch (fileType) {
                         case "text/plain":
+                        case "application/octet-stream":
                             factory = new TextFactory();
                             break;
                         case "text/csv":

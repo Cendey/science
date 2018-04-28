@@ -8,18 +8,25 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource("configs/science.fxml");
-        if (resource != null) {
+        Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
-            Parent root = fxmlLoader.load();
+            Parent root = null;
+            try {
+                root = fxmlLoader.load();
+            } catch (IOException e) {
+                System.err.println(e.getCause().getMessage());
+            }
             final Scene scene = new Scene(root, 650, 400);
             primaryStage.setScene(scene);
             URL imageUrl = classLoader.getResource("picture/office.png");
@@ -29,7 +36,7 @@ public class Main extends Application {
             controller.setStage(primaryStage);
             primaryStage.setResizable(true);
             primaryStage.show();
-        }
+        });
     }
 
     public static void main(String[] args) {

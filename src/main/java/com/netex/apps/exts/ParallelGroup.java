@@ -4,7 +4,12 @@ import com.netex.apps.meta.TaskMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>Title: science</p>
@@ -43,25 +48,29 @@ public class ParallelGroup {
                 endIndex = tasks.size();
             }
             Future<List<String>> future = executor.submit(task);
-            result.add(future);
+            if (future.isDone()) {
+                result.add(future);
+            }
         }
         endController.await();
         return result;
     }
 
     public void destroy() {
-        try {
-            System.out.println("Attempt to shutdown executor!");
-            executor.shutdown();
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            System.out.println("Tasks interrupted!");
-        } finally {
-            if (!executor.isTerminated()) {
-                System.out.println("Cancel non-finished tasks!");
+        Optional.ofNullable(executor).ifPresent((service) -> {
+            try {
+                System.out.println("Attempt to shutdown executor!");
+                service.shutdown();
+                service.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                System.out.println("Tasks interrupted!");
+            } finally {
+                if (!service.isTerminated()) {
+                    System.out.println("Cancel non-finished tasks!");
+                }
+                service.shutdownNow();
+                System.out.println("Shutdown finished!");
             }
-            executor.shutdownNow();
-            System.out.println("Shutdown finished!");
-        }
+        });
     }
 }

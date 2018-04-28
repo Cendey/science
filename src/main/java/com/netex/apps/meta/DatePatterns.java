@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 
-public class Formats {
+public class DatePatterns {
     public final static String[] DATE_PATTERNS = {
             "yyyy.MM.dd G 'at' HH:mm:ss z",
             "EEE, MMM d, ''yy",
