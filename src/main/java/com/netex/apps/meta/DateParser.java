@@ -1,41 +1,21 @@
 package com.netex.apps.meta;
 
 
-import fj.F;
-import fj.data.Option;
-import fj.data.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static fj.Function.curry;
-import static fj.data.Option.*;
-import static fj.data.Stream.stream;
 
 public class DateParser {
 
     private static final Logger logger = LogManager.getLogger(DateParser.class);
 
-
-    public static F<String, F<String, Option<Date>>> parseDate =
-        curry((pattern, s) -> {
-            try {
-                return some(new SimpleDateFormat(pattern).parse(s));
-            } catch (ParseException e) {
-                return none();
-            }
-        });
-
-    public final static String[] DATE_PATTERNS = {
+    private final static String[] DATE_PATTERNS = {
         "yyyy.MM.dd G 'at' HH:mm:ss z",
         "EEE, MMM d, ''yy",
         "h:mm a",
@@ -114,9 +94,8 @@ public class DateParser {
         } catch (DateTimeParseException e) {
             logger.error(e.getCause().getMessage());
             result = false;
-        } finally {
-            return result;
         }
+        return result;
     }
 
     public static boolean isDate(String value) {
@@ -124,13 +103,5 @@ public class DateParser {
         Pattern checker = Pattern.compile(pattern);
         Matcher matcher = checker.matcher(value);
         return matcher.find();
-    }
-
-    public static Option<Option<Date>> parseWithPatterns(String s) {
-        return parseWithPatterns(s, stream(DATE_PATTERNS));
-    }
-
-    public static Option<Option<Date>> parseWithPatterns(String s, Stream<String> patterns) {
-        return stream(s).apply(patterns.map(parseDate)).find(isSome_());
     }
 }

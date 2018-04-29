@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.152"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.125"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -141,8 +141,8 @@
                 </Button>
                 <TextArea fx:id="textareaLogInfo" disable="true" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308" prefHeight="206.0" prefWidth="594.0"
-                          style="-fx-control-inner-background: #efdecd;" GridPane.columnSpan="6" GridPane.hgrow="NEVER"
-                          GridPane.rowIndex="5" GridPane.rowSpan="3">
+                          style="-fx-control-inner-background: #efdecd; -fx-text-fill: green; -fx-text-inner-color: purple;"
+                          GridPane.columnSpan="6" GridPane.hgrow="NEVER" GridPane.rowIndex="5" GridPane.rowSpan="3">
                     <font>
                         <Font name="Arial Bold Italic" size="12.0"/>
                     </font>

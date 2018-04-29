@@ -31,9 +31,6 @@ public class Utilities {
 
     private static final Logger logger = LogManager.getLogger(Utilities.class);
 
-    private static final String FILENAME_PATTERN = "\\.\\d+";
-    private static final Pattern PATTERN = Pattern.compile(FILENAME_PATTERN);
-
     public static <E> void adjustSize(E node, String propertyName, double delta) {
         Class<?> clazz = node.getClass();
         try {
@@ -78,7 +75,11 @@ public class Utilities {
         final List<Pair<File, Integer>> listFiles = new ArrayList<>();
         if (directory.exists()) {
             if (directory.isDirectory()) {
-                Optional.ofNullable(directory.listFiles((file, pattern) -> file.getName().contains(fileName)))
+                Optional.ofNullable(directory.listFiles((file, pattern) -> {
+                        File temp = new File(file.getPath() + File.separator + pattern);
+                        return temp.isFile() && pattern.contains(fileName);
+                    })
+                )
                     .ifPresent(matchedFiles -> Arrays.stream(matchedFiles).map(file -> new Pair<>(file, 1))
                         .forEachOrdered(listFiles::add));
             } else if (directory.isFile()) {
@@ -141,21 +142,22 @@ public class Utilities {
     }
 
     public static boolean isValidName(String text) {
-        Pattern pattern = Pattern.compile(
-            "# Match a valid Windows filename (unspecified file system).          \n" +
-                "^                                # Anchor to start of string.        \n" +
-                "(?!                              # Assert filename is not: CON, PRN, \n" +
-                "  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
-                "    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
-                "    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
-                "  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
-                "  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
-                "  $                              # and end of string                 \n" +
-                ")                                # End negative lookahead assertion. \n" +
-                "[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
-                "[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
-                "$                                # Anchor to end of string.            ",
-            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
+        @SuppressWarnings("StringBufferReplaceableByString") StringBuilder mode =
+            new StringBuilder("# Match a valid Windows filename (unspecified file system).          \n")
+                .append("^                                # Anchor to start of string.        \n")
+                .append("(?!                              # Assert filename is not: CON, PRN, \n")
+                .append("  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n")
+                .append("    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n")
+                .append("    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n")
+                .append("  )                              # LPT6, LPT7, LPT8, and LPT9...     \n")
+                .append("  (?:\\.[^.]*)?                  # followed by optional extension    \n")
+                .append("  $                              # and end of string                 \n")
+                .append(")                                # End negative lookahead assertion. \n")
+                .append("[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n")
+                .append("[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n")
+                .append("$                                # Anchor to end of string.            ");
+        Pattern pattern =
+            Pattern.compile(mode.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
     }
