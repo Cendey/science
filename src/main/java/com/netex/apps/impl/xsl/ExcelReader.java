@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,37 +39,41 @@ public class ExcelReader implements Reader {
         throws IOException {
         final List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
 
-        // Creating a Workbook from an Excel file (.xls or .xlsx)
-        try (final Workbook workbook = WorkbookFactory.create(new File(filePath))) {
-            // Retrieving the number of sheets in the Workbook
-            System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+        if (Files.isReadable(Paths.get(filePath))) {
+            // Creating a Workbook from an Excel file (.xls or .xlsx)
+            try (final Workbook workbook = WorkbookFactory.create(new File(filePath))) {
+                // Retrieving the number of sheets in the Workbook
+                System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
 
-            workbook.forEach(sheet -> {
-                List<String> sheetHeader = new ArrayList<>();
-                List<List<Object>> sheetData = new ArrayList<>();
-                sheet.forEach(row -> {
-                    int rowNum = row.getRowNum();
-                    if (isFileWithHeader) {
-                        // Skip header row
-                        if (rowNum != 0) {
+                workbook.forEach(sheet -> {
+                    List<String> sheetHeader = new ArrayList<>();
+                    List<List<Object>> sheetData = new ArrayList<>();
+                    sheet.forEach(row -> {
+                        int rowNum = row.getRowNum();
+                        if (isFileWithHeader) {
+                            // Skip header row
+                            if (rowNum != 0) {
+                                List<Object> rowData = new ArrayList<>();
+                                row.forEach(cell -> rowData.add(parse(workbook, cell)));
+                                sheetData.add(rowData);
+                            } else {
+                                Row headerRow = sheet.getRow(rowNum);
+                                headerRow.forEach(cell -> sheetHeader.add(cell.getStringCellValue()));
+                            }
+                        } else {
                             List<Object> rowData = new ArrayList<>();
                             row.forEach(cell -> rowData.add(parse(workbook, cell)));
                             sheetData.add(rowData);
-                        } else {
-                            Row headerRow = sheet.getRow(rowNum);
-                            headerRow.forEach(cell -> sheetHeader.add(cell.getStringCellValue()));
                         }
-                    } else {
-                        List<Object> rowData = new ArrayList<>();
-                        row.forEach(cell -> rowData.add(parse(workbook, cell)));
-                        sheetData.add(rowData);
-                    }
+                    });
+                    Pair<List<String>, List<List<Object>>> sheetRecord = new Pair<>(sheetHeader, sheetData);
+                    result.add(sheetRecord);
                 });
-                Pair<List<String>, List<List<Object>>> sheetRecord = new Pair<>(sheetHeader, sheetData);
-                result.add(sheetRecord);
-            });
-        } catch (InvalidFormatException e) {
-            logger.error(e.getCause().getMessage());
+            } catch (InvalidFormatException e) {
+                logger.error(e.getCause().getMessage());
+            }
+        } else {
+            logger.warn(String.format("%s is not readable or have no authorize to access!", filePath));
         }
         return result;
     }

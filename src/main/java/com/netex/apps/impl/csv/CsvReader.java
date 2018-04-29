@@ -4,10 +4,13 @@ import com.netex.apps.intf.Reader;
 import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,42 +27,49 @@ import java.util.List;
  */
 public class CsvReader implements Reader {
 
+    private final static Logger logger = LogManager.getLogger(CsvReader.class);
+
     @Override
     public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
-            throws IOException {
-        List<Pair<List<String>, List<List<Object>>>> result;
+        throws IOException {
+        List<Pair<List<String>, List<List<Object>>>> result = null;
         CSVFormat csvFormat = CSVFormat.DEFAULT;
         if (isFileWithHeader) csvFormat.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim();
-        try (java.io.Reader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8);
-             CSVParser csvParser = new CSVParser(reader, csvFormat)
-        ) {
-            result = new ArrayList<>();
-            if (isFileWithHeader) {
-                List<String> lstHeader = new ArrayList<>();
-                List<List<Object>> lstData = new ArrayList<>();
-                csvParser.forEach((csvRecord) -> {
-                    long recNum = csvRecord.getRecordNumber();
-                    // Collect csv real data skip header portion
-                    if (recNum != 0) {
+        final Path path = Paths.get(filePath);
+        if (Files.exists(path) && Files.isReadable(path)) {
+            try (java.io.Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+                 CSVParser csvParser = new CSVParser(reader, csvFormat)
+            ) {
+                result = new ArrayList<>();
+                if (isFileWithHeader) {
+                    List<String> lstHeader = new ArrayList<>();
+                    List<List<Object>> lstData = new ArrayList<>();
+                    csvParser.forEach((csvRecord) -> {
+                        long recNum = csvRecord.getRecordNumber();
+                        // Collect csv real data skip header portion
+                        if (recNum != 0) {
+                            List<Object> data = new ArrayList<>();
+                            lstHeader.forEach((header) -> data.add(csvRecord.get(header)));
+                            lstData.add(data);
+                        } else {
+                            csvRecord.forEach(lstHeader::add);
+                        }
+                    });
+                    Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(lstHeader, lstData);
+                    result.add(csvSheet);
+                } else {
+                    List<List<Object>> lstData = new ArrayList<>();
+                    csvParser.forEach((csvRecord) -> {
                         List<Object> data = new ArrayList<>();
-                        lstHeader.forEach((header) -> data.add(csvRecord.get(header)));
+                        csvRecord.forEach(data::add);
                         lstData.add(data);
-                    } else {
-                        csvRecord.forEach(lstHeader::add);
-                    }
-                });
-                Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(lstHeader, lstData);
-                result.add(csvSheet);
-            } else {
-                List<List<Object>> lstData = new ArrayList<>();
-                csvParser.forEach((csvRecord) -> {
-                    List<Object> data = new ArrayList<>();
-                    csvRecord.forEach(data::add);
-                    lstData.add(data);
-                });
-                Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(null, lstData);
-                result.add(csvSheet);
+                    });
+                    Pair<List<String>, List<List<Object>>> csvSheet = new Pair<>(null, lstData);
+                    result.add(csvSheet);
+                }
             }
+        } else {
+            logger.warn(String.format("%s is not exist or not readable!", filePath));
         }
         return result;
     }

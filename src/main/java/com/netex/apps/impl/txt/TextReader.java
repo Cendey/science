@@ -5,6 +5,8 @@ import com.netex.apps.intf.Reader;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,27 +20,34 @@ import java.util.stream.Stream;
 
 public class TextReader implements Reader {
 
+    private final static Logger logger = LogManager.getLogger(TextReader.class);
+
     @Override
-    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader) throws IOException {
+    public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
+        throws IOException {
         List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
-            Stream<String> lines = reader.lines();
-            List<List<Object>> contents = new ArrayList<>();
-            if (isFileWithHeader) {
-                int rowNum = 0;
-                List<String> header = new ArrayList<>();
-                for (String line : lines.collect(Collectors.toList())) {
-                    if (rowNum++ == 0) {
-                        header.addAll(Arrays.asList(line.split("\t")));
-                    } else {
-                        contents.add(parse(line));
+        if (Files.isReadable(Paths.get(filePath))) {
+            try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
+                Stream<String> lines = reader.lines();
+                List<List<Object>> contents = new ArrayList<>();
+                if (isFileWithHeader) {
+                    int rowNum = 0;
+                    List<String> header = new ArrayList<>();
+                    for (String line : lines.collect(Collectors.toList())) {
+                        if (rowNum++ == 0) {
+                            header.addAll(Arrays.asList(line.split("\t")));
+                        } else {
+                            contents.add(parse(line));
+                        }
                     }
+                    result.add(new Pair<>(header, contents));
+                } else {
+                    lines.forEach(line -> contents.add(parse(line)));
+                    result.add(new Pair<>(null, contents));
                 }
-                result.add(new Pair<>(header, contents));
-            } else {
-                lines.forEach(line -> contents.add(parse(line)));
-                result.add(new Pair<>(null, contents));
             }
+        } else {
+            logger.warn("%s is not readable or have no authorize to access!");
         }
         return result;
     }

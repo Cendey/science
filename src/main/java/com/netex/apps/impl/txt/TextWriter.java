@@ -24,20 +24,25 @@ public class TextWriter implements Writer {
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         final Path path = Paths.get(filePath);
-        if (!Files.exists(path.getParent())) {
-            Files.createDirectories(path.getParent());
-        }
-
-        Optional.ofNullable(dataInfo).ifPresent(datInfo -> {
-            try (final PrintWriter writer = new PrintWriter(
-                Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
-                Optional.ofNullable(dataInfo.getKey())
-                    .ifPresent(header -> writer.println(header.stream().collect(Collectors.joining("\t"))));
-                Optional.ofNullable(dataInfo.getValue()).ifPresent(data -> data.forEach(
-                    row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t")))));
-            } catch (IOException e) {
-                logger.error(e.getCause().getMessage());
+        final Path parent = path.getParent();
+        if (Files.isWritable(parent)) {
+            if (!Files.exists(parent)) {
+                Files.createDirectories(parent);
             }
-        });
+
+            Optional.ofNullable(dataInfo).ifPresent(datInfo -> {
+                try (final PrintWriter writer = new PrintWriter(
+                    Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
+                    Optional.ofNullable(dataInfo.getKey())
+                        .ifPresent(header -> writer.println(header.stream().collect(Collectors.joining("\t"))));
+                    Optional.ofNullable(dataInfo.getValue()).ifPresent(data -> data.forEach(
+                        row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t")))));
+                } catch (IOException e) {
+                    logger.error(e.getCause().getMessage());
+                }
+            });
+        } else {
+            logger.warn(String.format("%s is not writable or have no authorize to write", parent));
+        }
     }
 }

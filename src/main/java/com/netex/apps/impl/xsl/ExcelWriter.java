@@ -5,8 +5,17 @@ import javafx.util.Pair;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -29,27 +38,34 @@ import java.util.List;
  */
 public class ExcelWriter implements Writer {
 
+    private final static Logger logger = LogManager.getLogger(ExcelWriter.class);
+
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         final Path path = Paths.get(filePath);
-        if (!Files.exists(path.getParent())) {
-            Files.createDirectories(path.getParent());
-        }
-        // Create a Workbook
-        try (Workbook workbook = create(filePath)) {
-            if (workbook == null) return;
-
-            // Create a Sheet
-            Sheet sheet = workbook.createSheet();
-
-            fillData(dataInfo, workbook, sheet);
-
-            resizeColumn(sheet);
-
-            // Write the output to a file
-            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
-                workbook.write(fileOut);
+        final Path parent = path.getParent();
+        if (Files.isWritable(parent)) {
+            if (!Files.exists(parent)) {
+                Files.createDirectories(parent);
             }
+            // Create a Workbook
+            try (Workbook workbook = create(filePath)) {
+                if (workbook == null) return;
+
+                // Create a Sheet
+                Sheet sheet = workbook.createSheet();
+
+                fillData(dataInfo, workbook, sheet);
+
+                resizeColumn(sheet);
+
+                // Write the output to a file
+                try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                    workbook.write(fileOut);
+                }
+            }
+        } else {
+            logger.warn(String.format("%s is not writable or have no authorize to write a file!", parent));
         }
     }
 
@@ -124,7 +140,7 @@ public class ExcelWriter implements Writer {
         } else if (StringUtils.equals(extension, "xls")) {
             workbook = new HSSFWorkbook();
         } else {
-            System.err.println("Invalid file name!");
+            logger.warn(String.format("Invalid file name: %s!", FilenameUtils.getName(filePath)));
             return null;
         }
         return workbook;

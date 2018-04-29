@@ -4,6 +4,8 @@ import com.netex.apps.intf.Writer;
 import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,6 +28,8 @@ import java.util.List;
  */
 public class CsvWriter implements Writer {
 
+    private final static Logger logger = LogManager.getLogger(CsvWriter.class);
+
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
         if (dataInfo != null) {
@@ -36,19 +40,25 @@ public class CsvWriter implements Writer {
                 csvFormat = csvFormat.withHeader(headers);
             }
             final Path path = Paths.get(filePath);
-            if (!Files.exists(path.getParent())) {
-                Files.createDirectories(path.getParent());
-            }
-            try (BufferedWriter writer = Files
-                    .newBufferedWriter(path, Charset.forName("utf-8"),
-                            StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND); CSVPrinter csvPrinter = new CSVPrinter(
-                    writer, csvFormat)) {
-                for (List<Object> csvRecord : dataInfo.getValue()) {
-                    csvPrinter.printRecord(csvRecord);
+            final Path parent = path.getParent();
+            if (Files.isWritable(parent)) {
+                if (!Files.exists(parent)) {
+                    Files.createDirectories(parent);
                 }
-                csvPrinter.flush();
+                try (BufferedWriter writer = Files
+                    .newBufferedWriter(path, Charset.forName("utf-8"),
+                        StandardOpenOption.CREATE_NEW,
+                        StandardOpenOption.APPEND); CSVPrinter csvPrinter = new CSVPrinter(
+                    writer, csvFormat)) {
+                    for (List<Object> csvRecord : dataInfo.getValue()) {
+                        csvPrinter.printRecord(csvRecord);
+                    }
+                    csvPrinter.flush();
+                }
+            } else {
+                logger.warn(
+                    String.format("%s is not writable or not have authorize to write in this directory!", parent));
             }
         }
-
     }
 }
