@@ -1,6 +1,7 @@
 package com.netex.apps.impl.csv;
 
 import com.netex.apps.intf.Writer;
+import com.netex.apps.util.Utilities;
 import javafx.util.Pair;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -39,11 +40,11 @@ public class CsvWriter implements Writer {
                 String[] headers = (String[]) dataInfo.getKey().toArray();
                 csvFormat = csvFormat.withHeader(headers);
             }
-            final Path path = Paths.get(filePath);
-            final Path parent = path.getParent();
+            final Path parent = Paths.get(Utilities.liveParent(filePath));
             if (Files.isWritable(parent)) {
-                if (!Files.exists(parent)) {
-                    Files.createDirectories(parent);
+                final Path path = Paths.get(filePath);
+                if (!Files.exists(path.getParent())) {
+                    Files.createDirectories(path.getParent());
                 }
                 try (BufferedWriter writer = Files
                     .newBufferedWriter(path, Charset.forName("utf-8"),

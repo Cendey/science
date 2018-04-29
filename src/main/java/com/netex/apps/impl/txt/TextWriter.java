@@ -2,6 +2,7 @@ package com.netex.apps.impl.txt;
 
 
 import com.netex.apps.intf.Writer;
+import com.netex.apps.util.Utilities;
 import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,16 +24,17 @@ public class TextWriter implements Writer {
 
     @Override
     public void write(Pair<List<String>, List<List<Object>>> dataInfo, String filePath) throws IOException {
-        final Path path = Paths.get(filePath);
-        final Path parent = path.getParent();
+        final Path parent = Paths.get(Utilities.liveParent(filePath));
         if (Files.isWritable(parent)) {
-            if (!Files.exists(parent)) {
-                Files.createDirectories(parent);
+            final Path path = Paths.get(filePath).getParent();
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
             }
 
             Optional.ofNullable(dataInfo).ifPresent(datInfo -> {
                 try (final PrintWriter writer = new PrintWriter(
-                    Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
+                    Files.newBufferedWriter(Paths.get(filePath), StandardCharsets.UTF_8,
+                        StandardOpenOption.CREATE_NEW))) {
                     Optional.ofNullable(dataInfo.getKey())
                         .ifPresent(header -> writer.println(header.stream().collect(Collectors.joining("\t"))));
                     Optional.ofNullable(dataInfo.getValue()).ifPresent(data -> data.forEach(

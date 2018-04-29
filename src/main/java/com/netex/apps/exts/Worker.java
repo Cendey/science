@@ -31,20 +31,21 @@ class Worker {
     //For single file conversion
     static List<String> perform(String srcPath, String destPath, String nameTo, String type, Boolean withHeader) {
         List<String> result = new ArrayList<>();
-        Factory readFactory = FactoryBuilder.create(srcPath);
-        Factory writeFactory = FactoryBuilder.build(type);
+        Factory readFactory = Facade.create(srcPath);
+        Factory writeFactory = Facade.build(type);
         Reader reader = readFactory.createReader();
         Writer writer = writeFactory.createWriter();
         try {
             List<Pair<List<String>, List<List<Object>>>> contents = reader.read(srcPath, withHeader);
             Optional.ofNullable(contents).ifPresent(data -> data.forEach(file -> {
                     String destFileName = Utilities.rename(srcPath, nameTo);
+                final String destFilePath = destPath + File.separator + destFileName + type;
                     try {
-                        writer.write(file, destPath + File.separator + destFileName + type);
+                        writer.write(file, destFilePath);
                     } catch (IOException e) {
                         logger.error(e.getCause().getMessage());
                     }
-                    result.add(destFileName);
+                result.add(String.format("%s%n", destFilePath));
                 }
             ));
         } catch (IOException e) {

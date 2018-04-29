@@ -5,6 +5,7 @@ import com.netex.apps.intf.Reader;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.validator.routines.DateValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +49,7 @@ public class TextReader implements Reader {
                 }
             }
         } else {
-            logger.warn("%s is not readable or have no authorize to access!");
+            logger.warn(String.format("%s is not readable or have no authorize to access!", filePath));
         }
         return result;
     }
@@ -60,7 +62,12 @@ public class TextReader implements Reader {
                 if (NumberUtils.isParsable(value)) {
                     data.add(Double.parseDouble(value));
                 } else {
-                    data.add(item);
+                    Date date = DateValidator.getInstance().validate(value);
+                    if (date != null) {
+                        data.add(date);
+                    } else {
+                        data.add(item);
+                    }
                 }
             } else {
                 data.add(item);

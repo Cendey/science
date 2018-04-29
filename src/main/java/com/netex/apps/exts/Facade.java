@@ -17,9 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class FactoryBuilder {
+class Facade {
 
-    private static final Logger logger = LogManager.getLogger(FactoryBuilder.class);
+    private static final Logger logger = LogManager.getLogger(Facade.class);
 
     private static final Tika parser = new Tika(new TypeDetector());
 
@@ -38,7 +38,6 @@ class FactoryBuilder {
                 if (StringUtils.isNotEmpty(fileType)) {
                     switch (fileType) {
                         case "text/plain":
-                        case "application/octet-stream":
                             factory = new TextFactory();
                             break;
                         case "text/csv":
@@ -49,7 +48,9 @@ class FactoryBuilder {
                             factory = new ExcelFactory();
                             break;
                         default:
-                            logger.error(String.format("The file type: {%s} is unknown!", fileType));
+                            factory = new TextFactory();
+                            logger.warn(String
+                                .format("The file type: {%s} is treated as plain text file to process!", fileType));
                     }
                 }
             }
