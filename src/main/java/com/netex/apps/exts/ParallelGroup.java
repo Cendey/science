@@ -42,7 +42,7 @@ public class ParallelGroup {
         for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
             GroupTask task = new GroupTask(startIndex, endIndex, tasks, endController);
             startIndex = endIndex;
-            if (i < numThreads - 2) {
+            if (i < numThreads - 1) {
                 endIndex = endIndex + length;
             } else {
                 endIndex = tasks.size();
