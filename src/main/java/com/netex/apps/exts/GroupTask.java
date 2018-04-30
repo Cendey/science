@@ -1,6 +1,7 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import com.netex.apps.meta.Workload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,12 +28,14 @@ public class GroupTask implements Callable<List<String>> {
     private int startIndex, endIndex;
     private List<TaskMeta> tasks;
     private CountDownLatch endController;
+    private Workload workload;
 
-    GroupTask(int startIndex, int endIndex, List<TaskMeta> tasks, CountDownLatch endController) {
+    GroupTask(int startIndex, int endIndex, List<TaskMeta> tasks, CountDownLatch endController, Workload workload) {
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.tasks = tasks;
         this.endController = endController;
+        this.workload = workload;
     }
 
     @Override
@@ -42,8 +45,9 @@ public class GroupTask implements Callable<List<String>> {
         for (int index = startIndex; index < endIndex; index++) {
             TaskMeta meta = tasks.get(index);
             List<String> temp = Worker
-                .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
+                    .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
             Optional.ofNullable(temp).ifPresent(result::addAll);
+            workload.increase();
         }
         endController.countDown();
         return result;

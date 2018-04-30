@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import com.netex.apps.exts.ParallelGroup;
 import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
+import com.netex.apps.meta.Workload;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
 import javafx.beans.property.StringProperty;
@@ -61,6 +62,7 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private Model model;
+    private final Workload workload = new Workload();
 
     private ParallelGroup classifier;
     private ExecutorService service;
@@ -101,6 +103,7 @@ public class Controller implements Initializable {
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         textareaLogInfo.textProperty().bindBidirectional(model.logInfoProperty());
+        progressIndicator.progressProperty().bind(workload.progressProperty());
     }
 
     private void addResizeListener() {
@@ -268,7 +271,9 @@ public class Controller implements Initializable {
     public void startWork(ActionEvent keyEvent) {
         Runnable runnable = () -> {
             btnStart.setDisable(true);
-            classifier = new ParallelGroup(prepare(), 1);
+            final List<TaskMeta> taskMetas = prepare();
+            workload.setTotal(taskMetas.size());
+            classifier = new ParallelGroup(taskMetas, workload, 1);
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(

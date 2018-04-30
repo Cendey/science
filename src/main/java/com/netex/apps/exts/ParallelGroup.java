@@ -1,6 +1,7 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import com.netex.apps.meta.Workload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,10 +26,12 @@ public class ParallelGroup {
 
     private ThreadPoolExecutor executor;
     private List<TaskMeta> tasks;
+    private Workload workload;
     private int numThreads;
 
-    public ParallelGroup(List<TaskMeta> tasks, int factor) {
+    public ParallelGroup(List<TaskMeta> tasks, Workload workload, int factor) {
         this.tasks = tasks;
+        this.workload = workload;
         this.numThreads = factor * (Runtime.getRuntime().availableProcessors());
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
     }
@@ -40,7 +43,7 @@ public class ParallelGroup {
         List<Future<List<String>>> result = new ArrayList<>();
         CountDownLatch endController = new CountDownLatch(numThreads);
         for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
-            GroupTask task = new GroupTask(startIndex, endIndex, tasks, endController);
+            GroupTask task = new GroupTask(startIndex, endIndex, tasks, endController, workload);
             startIndex = endIndex;
             if (i < numThreads - 1) {
                 endIndex = endIndex + length;

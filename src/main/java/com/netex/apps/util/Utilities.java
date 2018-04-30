@@ -76,12 +76,12 @@ public class Utilities {
         if (directory.exists()) {
             if (directory.isDirectory()) {
                 Optional.ofNullable(directory.listFiles((file, pattern) -> {
-                        File temp = new File(file.getPath() + File.separator + pattern);
-                        return temp.isFile() && pattern.contains(fileName);
-                    })
+                            File temp = new File(file.getPath() + File.separator + pattern);
+                            return temp.isFile() && pattern.contains(fileName);
+                        })
                 )
-                    .ifPresent(matchedFiles -> Arrays.stream(matchedFiles).map(file -> new Pair<>(file, 1))
-                        .forEachOrdered(listFiles::add));
+                        .ifPresent(matchedFiles -> Arrays.stream(matchedFiles).map(file -> new Pair<>(file, 1))
+                                .forEachOrdered(listFiles::add));
             } else if (directory.isFile()) {
                 listFiles.add(new Pair<>(directory, 0));
             }
@@ -110,7 +110,7 @@ public class Utilities {
                     }
                 } else {
                     logger.error(String
-                        .format("No file found in directory %s, which name like %s!", directory.getName(), fileName));
+                            .format("No file found in directory %s, which name like %s!", directory.getName(), fileName));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
@@ -143,28 +143,32 @@ public class Utilities {
 
     public static boolean isValidName(String text) {
         @SuppressWarnings("StringBufferReplaceableByString") StringBuilder mode =
-            new StringBuilder("# Match a valid Windows filename (unspecified file system).          \n")
-                .append("^                                # Anchor to start of string.        \n")
-                .append("(?!                              # Assert filename is not: CON, PRN, \n")
-                .append("  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n")
-                .append("    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n")
-                .append("    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n")
-                .append("  )                              # LPT6, LPT7, LPT8, and LPT9...     \n")
-                .append("  (?:\\.[^.]*)?                  # followed by optional extension    \n")
-                .append("  $                              # and end of string                 \n")
-                .append(")                                # End negative lookahead assertion. \n")
-                .append("[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n")
-                .append("[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n")
-                .append("$                                # Anchor to end of string.            ");
+                new StringBuilder("# Match a valid Windows filename (unspecified file system).          \n")
+                        .append("^                                # Anchor to start of string.        \n")
+                        .append("(?!                              # Assert filename is not: CON, PRN, \n")
+                        .append("  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n")
+                        .append("    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n")
+                        .append("    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n")
+                        .append("  )                              # LPT6, LPT7, LPT8, and LPT9...     \n")
+                        .append("  (?:\\.[^.]*)?                  # followed by optional extension    \n")
+                        .append("  $                              # and end of string                 \n")
+                        .append(")                                # End negative lookahead assertion. \n")
+                        .append("[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n")
+                        .append("[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n")
+                        .append("$                                # Anchor to end of string.            ");
         Pattern pattern =
-            Pattern.compile(mode.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
+                Pattern.compile(mode.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
     }
 
     public static String liveParent(String path) {
-        final File file = new File(path);
-        if (file.exists() && Files.isDirectory().apply(file)) return path;
-        else return liveParent(file.getParent());
+        String parent = path;
+        File file = new File(parent);
+        while (!file.exists() || !Files.isDirectory().apply(file)) {
+            parent = file.getParent();
+            file = new File(parent);
+        }
+        return parent;
     }
 }
