@@ -271,7 +271,7 @@ public class Controller implements Initializable {
         Runnable runnable = () -> {
             btnStart.setDisable(true);
             final List<TaskMeta> taskMetas = prepare();
-            classifier = new ParallelGroup(taskMetas, model, 1);
+            classifier = new ParallelGroup(taskMetas, 1);
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(
