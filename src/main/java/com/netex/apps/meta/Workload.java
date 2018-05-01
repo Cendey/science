@@ -28,6 +28,7 @@ public class Workload extends Task<String> {
 
     @Override
     protected String call() {
+//        http://java-buddy.blogspot.com.br/2014/08/bind-javafx-progressbarprogressproperty.html
         if (isCancelled()) {
             updateValue(String.format("Canceled at %d", System.currentTimeMillis()));
             return null; //ignored
