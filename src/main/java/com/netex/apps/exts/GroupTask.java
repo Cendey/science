@@ -1,7 +1,7 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
-import com.netex.apps.meta.Workload;
+import com.netex.apps.mods.Model;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,14 +28,14 @@ public class GroupTask implements Callable<List<String>> {
     private int startIndex, endIndex;
     private List<TaskMeta> tasks;
     private CountDownLatch endController;
-    private Workload workload;
+    private Model model;
 
-    GroupTask(int startIndex, int endIndex, List<TaskMeta> tasks, CountDownLatch endController, Workload workload) {
+    GroupTask(int startIndex, int endIndex, List<TaskMeta> tasks, CountDownLatch endController, Model model) {
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.tasks = tasks;
         this.endController = endController;
-        this.workload = workload;
+        this.model = model;
     }
 
     @Override
@@ -47,8 +47,9 @@ public class GroupTask implements Callable<List<String>> {
             List<String> temp = Worker
                     .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
             Optional.ofNullable(temp).ifPresent(result::addAll);
-            workload.increase();
         }
+        double current = model.getProcessProperty() + endIndex - startIndex;
+        model.setProcessProperty(current / tasks.size());
         endController.countDown();
         return result;
     }

@@ -1,10 +1,7 @@
 package com.netex.apps.mods;
 
 import com.netex.apps.meta.FileExtensions;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -22,11 +19,11 @@ public class Model {
 
     private static final String BLANK = "";
     private static final FileExtensions[] COMMON_FILE_EXTENSION = {
-        new FileExtensions("Text File", ".text"),
-        new FileExtensions("ASCII Text File", ".txt"),
-        new FileExtensions("Comma Separated Values", ".csv"),
-        new FileExtensions("Microsoft Excel", ".xls"),
-        new FileExtensions("Office Open XML Workbook", ".xlsx")
+            new FileExtensions("Text File", ".text"),
+            new FileExtensions("ASCII Text File", ".txt"),
+            new FileExtensions("Comma Separated Values", ".csv"),
+            new FileExtensions("Microsoft Excel", ".xls"),
+            new FileExtensions("Office Open XML Workbook", ".xlsx")
     };
     private StringProperty title;
     private StringProperty srcPath;
@@ -40,6 +37,7 @@ public class Model {
     private BooleanProperty isForBatch;
     private BooleanProperty isWithHeader;
     private StringProperty logInfo;
+    private DoubleProperty processProperty;
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
@@ -55,14 +53,15 @@ public class Model {
         this.logInfo = new SimpleStringProperty(BLANK);
         this.isForBatch = new SimpleBooleanProperty(false);
         this.isWithHeader = new SimpleBooleanProperty(false);
+        this.processProperty = new SimpleDoubleProperty(null, "progress", 0.0d);
     }
 
     public Model(
-        String title,
-        String srcPath, String srcNamedAs,
-        String srcFuzzyName, String srcFormat,
-        String destPath, String destNamedTo,
-        FileExtensions[] destFormat, String logInfo, Boolean isForBatch, Boolean isWithHeader) {
+            String title,
+            String srcPath, String srcNamedAs,
+            String srcFuzzyName, String srcFormat,
+            String destPath, String destNamedTo,
+            FileExtensions[] destFormat, String logInfo, Double init, Boolean isForBatch, Boolean isWithHeader) {
         this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
@@ -72,6 +71,7 @@ public class Model {
         this.destNamedTo = new SimpleStringProperty(destNamedTo);
         this.destFormat = FXCollections.observableArrayList(destFormat);
         this.logInfo = new SimpleStringProperty(logInfo);
+        this.processProperty = new SimpleDoubleProperty(null, "progress", init);
         this.isForBatch = new SimpleBooleanProperty(isForBatch);
         this.isWithHeader = new SimpleBooleanProperty(isWithHeader);
     }
@@ -190,6 +190,18 @@ public class Model {
 
     public void setLogInfo(String logInfo) {
         this.logInfo.set(logInfo);
+    }
+
+    public synchronized double getProcessProperty() {
+        return processProperty.get();
+    }
+
+    public DoubleProperty processPropertyProperty() {
+        return processProperty;
+    }
+
+    public synchronized void setProcessProperty(double processProperty) {
+        this.processProperty.set(processProperty);
     }
 
     public boolean isIsForBatch() {
