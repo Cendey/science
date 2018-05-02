@@ -4,9 +4,11 @@ import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Workload extends Task<String> {
+public class Workload extends Task<List<String>> {
     private final static Logger logger = LogManager.getLogger(Workload.class);
 
     private int total;
@@ -27,16 +29,20 @@ public class Workload extends Task<String> {
     }
 
     @Override
-    protected String call() {
+    protected List<String> call() {
 //        http://java-buddy.blogspot.com.br/2014/08/bind-javafx-progressbarprogressproperty.html
+        List<String> message = new ArrayList<>();
         if (isCancelled()) {
-            updateValue(String.format("Canceled at %d", System.currentTimeMillis()));
+            message.add(String.format("Canceled at %d", System.currentTimeMillis()));
+            updateValue(message);
             return null; //ignored
         }
         try {
             Thread.sleep(20);
         } catch (InterruptedException e) {
-            updateValue(String.format("Canceled at %d", System.currentTimeMillis()));
+            message.clear();
+            message.add(String.format("Canceled at %d", System.currentTimeMillis()));
+            updateValue(message);
             logger.error(e.getCause().getMessage());
             return null; //ignored
         }

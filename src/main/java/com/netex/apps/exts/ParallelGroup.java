@@ -7,7 +7,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>Title: science</p>
@@ -40,7 +44,7 @@ public class ParallelGroup {
         List<Future<List<String>>> result = new ArrayList<>();
         CountDownLatch endController = new CountDownLatch(numThreads);
         for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
-            GroupTask task = new GroupTask(startIndex, endIndex, tasks, endController);
+            GroupTask task = new GroupTask(tasks, endController, startIndex, endIndex);
             startIndex = endIndex;
             if (i < numThreads - 1) {
                 endIndex = endIndex + length;

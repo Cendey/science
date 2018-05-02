@@ -28,7 +28,7 @@ public class GroupTask implements Callable<List<String>> {
     private List<TaskMeta> tasks;
     private CountDownLatch endController;
 
-    GroupTask(int startIndex, int endIndex, List<TaskMeta> tasks, CountDownLatch endController) {
+    GroupTask(List<TaskMeta> tasks, CountDownLatch endController, int startIndex, int endIndex) {
         this.startIndex = startIndex;
         this.endIndex = endIndex;
         this.tasks = tasks;
@@ -42,7 +42,7 @@ public class GroupTask implements Callable<List<String>> {
         for (int index = startIndex; index < endIndex; index++) {
             TaskMeta meta = tasks.get(index);
             List<String> temp = Worker
-                    .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
+                .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
             Optional.ofNullable(temp).ifPresent(result::addAll);
         }
         endController.countDown();
