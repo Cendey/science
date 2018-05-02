@@ -24,6 +24,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -39,6 +40,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -457,5 +460,24 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+    private List<TreeItem<String>> buildLogInfo(List<String> lstFiles) {
+        List<TreeItem<String>> lstItems = new ArrayList<>();
+        StringProperty destPathProperty = destPath.textProperty();
+        String rootDirectory = destPathProperty.getValue();
+        TreeItem<String> rootItem = new TreeItem<>(rootDirectory);
+        Optional.ofNullable(lstFiles).ifPresent(paths -> {
+            paths.forEach(path -> {
+                Path parent = Paths.get(path).getParent();
+                if (parent.equals(Paths.get(rootDirectory))) {
+                    rootItem.getChildren().add(new TreeItem<>(Paths.get(path).getFileName().toString()));
+                } else {
+
+                }
+            });
+            logTreeViewer.setRoot(rootItem);
+        });
+        return lstItems;
     }
 }
