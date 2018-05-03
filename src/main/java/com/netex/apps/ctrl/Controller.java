@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -292,26 +291,11 @@ public class Controller implements Initializable {
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(
-                    futures -> {
-                        StringBuilder builder = new StringBuilder("The following file(s) are converted:\n");
-                        futures.forEach(future -> {
-                                if (future.isDone()) {
-                                    try {
-                                        future.get().forEach(builder::append);
-                                    } catch (InterruptedException | ExecutionException e) {
-                                        logger.error(e.getCause().getMessage());
-                                    }
-                                }
-                            }
-                        );
-                        model.setLogInfo(StringUtils.EMPTY);
-                        model.setLogInfo(builder.toString());
-                    }
+                    futures -> logTreeViewer.setRoot(createTree(new File(Paths.get(model.getDestPath()).toUri())))
                 );
             } catch (InterruptedException e) {
                 logger.error(e.getCause().getMessage());
             } finally {
-                logTreeViewer.setRoot(createTree(new File(Paths.get(model.getSrcPath()).toUri())));
                 classifier.destroy();
                 btnStart.setDisable(false);
             }

@@ -39,7 +39,6 @@ public class Model {
     private ObservableList<FileExtensions> destFormat;
     private BooleanProperty isForBatch;
     private BooleanProperty isWithHeader;
-    private StringProperty logInfo;
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
@@ -52,7 +51,6 @@ public class Model {
         this.destNamedTo = new SimpleStringProperty(BLANK);
         this.destRenameTo = new SimpleStringProperty(BLANK);
         this.destFormat = FXCollections.observableArrayList(COMMON_FILE_EXTENSION);
-        this.logInfo = new SimpleStringProperty(BLANK);
         this.isForBatch = new SimpleBooleanProperty(false);
         this.isWithHeader = new SimpleBooleanProperty(false);
     }
@@ -62,7 +60,7 @@ public class Model {
         String srcPath, String srcNamedAs,
         String srcFuzzyName, String srcFormat,
         String destPath, String destNamedTo,
-        FileExtensions[] destFormat, String logInfo, Boolean isForBatch, Boolean isWithHeader) {
+        FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
         this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
@@ -71,7 +69,6 @@ public class Model {
         this.destPath = new SimpleStringProperty(destPath);
         this.destNamedTo = new SimpleStringProperty(destNamedTo);
         this.destFormat = FXCollections.observableArrayList(destFormat);
-        this.logInfo = new SimpleStringProperty(logInfo);
         this.isForBatch = new SimpleBooleanProperty(isForBatch);
         this.isWithHeader = new SimpleBooleanProperty(isWithHeader);
     }
@@ -178,18 +175,6 @@ public class Model {
 
     public void setDestFormat(ObservableList<FileExtensions> destFormat) {
         this.destFormat = destFormat;
-    }
-
-    public String getLogInfo() {
-        return logInfo.get();
-    }
-
-    public StringProperty logInfoProperty() {
-        return logInfo;
-    }
-
-    public void setLogInfo(String logInfo) {
-        this.logInfo.set(logInfo);
     }
 
     public boolean isIsForBatch() {

@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/9.0.1"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.125"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -76,7 +76,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="26.0" minHeight="5.0" prefHeight="18.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
                 <Label fx:id="lblSrcFile" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
@@ -174,7 +174,7 @@
                            GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.hgrow="NEVER" GridPane.rowIndex="4"
                            GridPane.vgrow="NEVER"/>
                 <TreeView fx:id="logTreeViewer" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6"
-                          GridPane.rowIndex="5" GridPane.rowSpan="4"/>
+                          GridPane.rowIndex="5" GridPane.rowSpan="3"/>
             </children>
         </GridPane>
     </children>
