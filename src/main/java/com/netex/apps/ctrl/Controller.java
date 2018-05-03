@@ -26,6 +26,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
@@ -40,10 +41,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +58,7 @@ import static javafx.application.Platform.exit;
 public class Controller implements Initializable {
 
     private static final Logger logger = LogManager.getLogger(Controller.class);
+    private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
     private static final String FROM_SOURCE = "source";
     private static final String FROM_TARGET = "target";
@@ -75,7 +77,7 @@ public class Controller implements Initializable {
     public CheckBox cbxIndicatorForBatch;
     public TextField txtDestPrefixName;
     public CheckBox cbxNeedFileHeader;
-    public TreeView<String> logTreeViewer;
+    public TreeView<File> logTreeViewer;
 
     private Stage stage;
     private Model model;
@@ -309,6 +311,7 @@ public class Controller implements Initializable {
             } catch (InterruptedException e) {
                 logger.error(e.getCause().getMessage());
             } finally {
+                logTreeViewer.setRoot(createTree(new File(Paths.get(model.getSrcPath()).toUri())));
                 classifier.destroy();
                 btnStart.setDisable(false);
             }
@@ -462,22 +465,21 @@ public class Controller implements Initializable {
         }
     }
 
-    private List<TreeItem<String>> buildLogInfo(List<String> lstFiles) {
-        List<TreeItem<String>> lstItems = new ArrayList<>();
-        StringProperty destPathProperty = destPath.textProperty();
-        String rootDirectory = destPathProperty.getValue();
-        TreeItem<String> rootItem = new TreeItem<>(rootDirectory);
-        Optional.ofNullable(lstFiles).ifPresent(paths -> {
-            paths.forEach(path -> {
-                Path parent = Paths.get(path).getParent();
-                if (parent.equals(Paths.get(rootDirectory))) {
-                    rootItem.getChildren().add(new TreeItem<>(Paths.get(path).getFileName().toString()));
-                } else {
-
-                }
-            });
-            logTreeViewer.setRoot(rootItem);
-        });
-        return lstItems;
+    private TreeItem<File> createTree(File file) {
+        TreeItem<File> item = new TreeItem<>(file);
+        File[] children = file.listFiles();
+        if (children != null) {
+            for (File child : children) {
+                item.getChildren().add(createTree(child));
+            }
+            item.setGraphic(new ImageView(
+                Objects.requireNonNull(contextClassLoader.getResource("picture/folder.png")).
+                    toExternalForm()));
+        } else {
+            item.setGraphic(new ImageView(
+                Objects.requireNonNull(contextClassLoader.getResource("picture/text-x-generic.png")).
+                    toExternalForm()));
+        }
+        return item;
     }
 }
