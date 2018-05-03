@@ -112,7 +112,7 @@ public class Utilities {
                     }
                 } else {
                     logger.error(String
-                        .format("No file found in directory %s, which name like %s!", directory.getName(), fileName));
+                            .format("File not found in directory %s, which name like %s!", directory.getName(), fileName));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
