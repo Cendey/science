@@ -7,6 +7,8 @@ import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,7 +28,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -40,10 +44,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,6 +58,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static javafx.application.Platform.exit;
 
@@ -59,7 +66,7 @@ public class Controller implements Initializable {
 
     private static final Logger logger = LogManager.getLogger(Controller.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-
+    private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
     private static final String FROM_SOURCE = "source";
     private static final String FROM_TARGET = "target";
 
@@ -77,7 +84,13 @@ public class Controller implements Initializable {
     public CheckBox cbxIndicatorForBatch;
     public TextField txtDestPrefixName;
     public CheckBox cbxNeedFileHeader;
-    public TreeView<File> logTreeViewer;
+    public TreeTableView<File> logTreeViewer;
+    public ImageView appLogo;
+    public TreeTableColumn<File, String> nameColumn;
+    public TreeTableColumn<File, Long> sizeColumn;
+    public TreeTableColumn<File, Date> modifiedColumn;
+    public TreeTableColumn<File, String> typeColumn;
+
 
     private Stage stage;
     private Model model;
@@ -120,6 +133,40 @@ public class Controller implements Initializable {
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
+        appLogo.setImage(new Image(
+            Objects.requireNonNull(contextClassLoader.getResource("picture/conversion.png")).toExternalForm()));
+        centerImage(appLogo);
+        nameColumn.setCellValueFactory(
+            item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
+        sizeColumn.setCellValueFactory(
+            item -> new SimpleObjectProperty<>(Utilities.round(item.getValue().getValue().length()).longValue()));
+        modifiedColumn.setCellValueFactory(
+            item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
+        typeColumn.setCellValueFactory(
+            item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
+    }
+
+    private void centerImage(ImageView imageView) {
+        Image img = imageView.getImage();
+        if (img != null) {
+            double width, height;
+
+            double ratioX = imageView.getFitWidth() / img.getWidth();
+            double ratioY = imageView.getFitHeight() / img.getHeight();
+
+            double deduceCoEffect;
+            if (ratioX >= ratioY) {
+                deduceCoEffect = ratioY;
+            } else {
+                deduceCoEffect = ratioX;
+            }
+
+            width = img.getWidth() * deduceCoEffect;
+            height = img.getHeight() * deduceCoEffect;
+
+            imageView.setX((imageView.getFitWidth() - width) / 2);
+            imageView.setY((imageView.getFitHeight() - height) / 2);
+        }
     }
 
     private void addResizeListener() {
@@ -131,6 +178,7 @@ public class Controller implements Initializable {
             if (components != null && components.size() > 0) {
                 components.parallelStream().filter(Node::isResizable).forEach(node -> adjust(node, "Width", delta));
             }
+            logTreeViewer.getColumns().forEach(column -> logTreeViewer.resizeColumn(column, delta));
         });
 
         scene.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -294,7 +342,12 @@ public class Controller implements Initializable {
                 Optional.of(result).ifPresent(
                     futures -> Platform
                         .runLater(
-                            () -> logTreeViewer.setRoot(createTree(new File(Paths.get(model.getDestPath()).toUri()))))
+                            () -> {
+                                TreeItem<File> treeItem =
+                                    createTree(new File(Paths.get(model.getDestPath()).getRoot().toUri()));
+                                logTreeViewer.setRoot(treeItem);
+                            }
+                        )
                 );
             } catch (InterruptedException e) {
                 logger.error(e.getCause().getMessage());
@@ -456,9 +509,9 @@ public class Controller implements Initializable {
         TreeItem<File> item = new TreeItem<>(file);
         File[] children = file.listFiles();
         if (children != null) {
-            for (File child : children) {
-                item.getChildren().add(createTree(child));
-            }
+            Stream.of(children).filter(
+                child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
+                .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
                 Objects.requireNonNull(contextClassLoader.getResource("picture/folder.png")).
                     toExternalForm()));

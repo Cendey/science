@@ -31,7 +31,7 @@ public class Main extends Application {
             } catch (IOException e) {
                 logger.error(e.getCause().getMessage());
             }
-            final Scene scene = new Scene(root, 650, 400);
+            final Scene scene = new Scene(Objects.requireNonNull(root), 971, 600);
             primaryStage.setScene(scene);
             URL imageUrl = classLoader.getResource("picture/office.png");
             Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
