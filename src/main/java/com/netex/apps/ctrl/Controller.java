@@ -6,6 +6,7 @@ import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
 import com.netex.apps.util.Utilities;
+import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -291,7 +292,9 @@ public class Controller implements Initializable {
             try {
                 List<Future<List<String>>> result = classifier.classify();
                 Optional.of(result).ifPresent(
-                    futures -> logTreeViewer.setRoot(createTree(new File(Paths.get(model.getDestPath()).toUri())))
+                    futures -> Platform
+                        .runLater(
+                            () -> logTreeViewer.setRoot(createTree(new File(Paths.get(model.getDestPath()).toUri()))))
                 );
             } catch (InterruptedException e) {
                 logger.error(e.getCause().getMessage());
