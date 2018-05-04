@@ -1,6 +1,7 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
  * @version 1.0
  * @date 04/27/2018
  */
-public class GroupTask implements Callable<List<String>> {
+public class GroupTask extends Task<List<String>> implements Callable<List<String>> {
 
     private static final Logger logger = LogManager.getLogger(GroupTask.class);
 
@@ -44,6 +45,7 @@ public class GroupTask implements Callable<List<String>> {
             List<String> temp = Worker
                 .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
             Optional.ofNullable(temp).ifPresent(result::addAll);
+            updateProgress(index - startIndex + 1, endIndex - startIndex + 1);
         }
         endController.countDown();
         return result;

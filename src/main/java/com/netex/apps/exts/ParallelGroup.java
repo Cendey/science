@@ -1,12 +1,16 @@
 package com.netex.apps.exts;
 
 import com.netex.apps.meta.TaskMeta;
+import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.scene.control.ProgressBar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -37,23 +41,36 @@ public class ParallelGroup {
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
     }
 
-    public List<Future<List<String>>> classify() throws InterruptedException {
+    public List<Future<List<String>>> classify(ProgressBar progressBar) throws InterruptedException {
         int length = tasks.size() / numThreads;
         int startIndex = 0, endIndex = (length != 0 ? length : tasks.size());
-
+        int assignment = (length != 0 ? this.numThreads : 1);
         List<Future<List<String>>> result = new ArrayList<>();
         CountDownLatch endController = new CountDownLatch(numThreads);
+        DoubleBinding progress = null;
         for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
             GroupTask task = new GroupTask(tasks, endController, startIndex, endIndex);
+            DoubleBinding scaleProgress = task.progressProperty().divide(assignment);
+            if (progress == null) {
+                progress = scaleProgress;
+            } else {
+                progress = progress.add(scaleProgress);
+            }
             startIndex = endIndex;
             if (i < numThreads - 1) {
                 endIndex = endIndex + length;
             } else {
                 endIndex = tasks.size();
             }
-            Future<List<String>> future = executor.submit(task);
+            Future<List<String>> future = executor.submit((Callable<List<String>>) task);
             result.add(future);
+            task.setOnSucceeded(event -> {
+                Object value = event.getSource().getValue();
+                logger.info(value);
+            });
         }
+        DoubleBinding binding = progress;
+        Platform.runLater(() -> progressBar.progressProperty().bind(binding));
         endController.await();
         return result;
     }
