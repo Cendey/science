@@ -112,7 +112,7 @@ public class Utilities {
                     }
                 } else {
                     logger.error(String
-                            .format("File not found in directory %s, which name like %s!", directory.getName(), fileName));
+                        .format("File not found in directory %s, which name like %s!", directory.getName(), fileName));
                 }
             } else if (directory.isFile()) {
                 lstFiles.add(new Pair<>(directory, level));
@@ -175,7 +175,7 @@ public class Utilities {
     }
 
     public static BigDecimal round(Long number) {
-        RoundingMode mode = RoundingMode.CEILING;
+        RoundingMode mode = RoundingMode.UP;
         return BigDecimal.valueOf(number != null ? number / 1024 : 0).setScale(0, mode);
     }
 }
