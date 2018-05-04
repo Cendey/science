@@ -18,8 +18,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" xmlns="http://javafx.com/javafx/8.0.125"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.netex.apps.ctrl.Controller">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0"
+      xmlns="http://javafx.com/javafx/8.0.125" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -173,13 +174,13 @@
                 <ImageView fx:id="appLogo" fitHeight="50.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true"
                            style="-fx-image-alignment: CENTER;" GridPane.columnIndex="2" GridPane.columnSpan="2"
                            GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER"/>
-                <TreeTableView fx:id="logTreeViewer" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="6"
-                               GridPane.rowIndex="5" GridPane.rowSpan="4">
+                <TreeTableView fx:id="logTreeViewer" onMouseClicked="#openDirectoryOrFile" prefHeight="200.0"
+                               prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="5" GridPane.rowSpan="4">
                     <columns>
-                        <TreeTableColumn fx:id="nameColumn" prefWidth="465.0" text="Name"/>
-                        <TreeTableColumn fx:id="sizeColumn" minWidth="0.0" prefWidth="68.0" text="Size (KB)"/>
-                        <TreeTableColumn fx:id="modifiedColumn" prefWidth="104.0" text="Date modified"/>
-                        <TreeTableColumn fx:id="typeColumn" prefWidth="62.0" text="Type"/>
+                        <TreeTableColumn fx:id="nameColumn" prefWidth="638.0" text="Name"/>
+                        <TreeTableColumn fx:id="sizeColumn" minWidth="0.0" prefWidth="92.0" text="Size (KB)"/>
+                        <TreeTableColumn fx:id="modifiedColumn" prefWidth="182.0" text="Date modified"/>
+                        <TreeTableColumn fx:id="typeColumn" prefWidth="57.0" text="Type"/>
                     </columns>
                 </TreeTableView>
             </children>

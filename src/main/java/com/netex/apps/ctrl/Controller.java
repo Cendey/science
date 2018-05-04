@@ -45,7 +45,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -524,5 +526,31 @@ public class Controller implements Initializable {
                     toExternalForm()));
         }
         return item;
+    }
+
+    public void openDirectoryOrFile(MouseEvent mouseEvent) {
+        int clickCount = mouseEvent.getClickCount();
+        if (clickCount == 2) {
+            Desktop desktop = Desktop.getDesktop();
+
+            if (!Desktop.isDesktopSupported()) {
+                logger.error("Desktop is not supported in current OS!");
+            } else {
+                Object source = mouseEvent.getSource();
+                if (source != null && ClassUtils.isAssignable(TreeTableView.class, source.getClass())) {
+                    @SuppressWarnings("unchecked") TreeTableView<File> treeTableView = TreeTableView.class.cast(source);
+                    TreeItem<File> treeItem = treeTableView.getSelectionModel().selectedItemProperty().getValue();
+                    File file = treeItem.getValue();
+
+                    if (file.exists() && file.canExecute()) {
+                        try {
+                            desktop.open(file);
+                        } catch (IOException e) {
+                            logger.error(e.getCause().getMessage());
+                        }
+                    }
+                }
+            }
+        }
     }
 }
