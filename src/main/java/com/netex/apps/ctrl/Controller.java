@@ -83,7 +83,6 @@ public class Controller implements Initializable {
     public Button btnStart;
     public Button btnCancel;
     public ProgressBar progressIndicator;
-    //https://stackoverflow.com/questions/12986916/javafx-updating-progress-for-the-multiple-tasks
     public CheckBox cbxIndicatorForBatch;
     public TextField txtDestPrefixName;
     public CheckBox cbxNeedFileHeader;
