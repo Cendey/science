@@ -266,13 +266,7 @@ public class Controller implements Initializable {
                 (observable, oldItem, newItem) -> {
                     if (newItem != null) {
                         File file = new File(newItem.trim());
-                        if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
-                            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
-                        } else {
-                            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
-                            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
-                        }
+                        stylish(instance, (file.isFile() || file.isDirectory()) && file.exists());
                     }
                 }
         );
@@ -306,12 +300,10 @@ public class Controller implements Initializable {
     private void handlePrefixFileName(TextField instance, StringProperty property, String from) {
         Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
             if (decision) {
-                instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
-                instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+                stylish(instance, true);
             } else {
                 createMessageDialog(String.format("This is not a valid prefix of %s file name!", from));
-                instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
-                instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
+                stylish(instance, false);
                 instance.requestFocus();
             }
         });
@@ -321,24 +313,33 @@ public class Controller implements Initializable {
         if (cbxIndicatorForBatch.isSelected()) {
             Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
                 if (decision) {
-                    instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
-                    instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+                    stylish(instance, true);
                 } else {
                     createMessageDialog(String.format("This is not a valid %s directory!", from));
-                    instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
-                    instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
+                    stylish(instance, false);
                     instance.requestFocus();
                 }
             });
         } else {
             Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
-                if (decision) instance.getStyleClass().add("valid");
-                else {
+                if (decision) {
+                    stylish(instance, true);
+                } else {
                     createMessageDialog(String.format("This is not a valid %s file!", from));
-                    instance.getStyleClass().removeAll("valid");
+                    stylish(instance, false);
                     instance.requestFocus();
                 }
             });
+        }
+    }
+
+    private void stylish(TextField instance, boolean isValid) {
+        if (isValid) {
+            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
+            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+        } else {
+            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
+            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
         }
     }
 
