@@ -31,12 +31,14 @@ public class Main extends Application {
             } catch (IOException e) {
                 logger.error(e.getCause().getMessage());
             }
-            final Scene scene = new Scene(Objects.requireNonNull(root), 971, 600);
+            Scene scene = new Scene(Objects.requireNonNull(root), 971, 600);
+            URL css = classLoader.getResource("css/science.css");
+            scene.getStylesheets().add(Objects.requireNonNull(css).toExternalForm());
             primaryStage.setScene(scene);
             URL imageUrl = classLoader.getResource("picture/office.png");
             Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
             primaryStage.getIcons().add(icon);
-            final Controller controller = fxmlLoader.getController();
+            Controller controller = fxmlLoader.getController();
             controller.setStage(primaryStage);
             primaryStage.setResizable(true);
             primaryStage.show();

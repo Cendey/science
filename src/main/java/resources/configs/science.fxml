@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0"
-      xmlns="http://javafx.com/javafx/8.0.125" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0" styleClass="background"
+      xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.netex.apps.ctrl.Controller">
     <children>
         <MenuBar VBox.vgrow="NEVER">
@@ -88,6 +75,11 @@
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
+                    <styleClass>
+                        <String fx:value="label"/>
+                        <String fx:value="label-bright"/>
+                        <String fx:value="label-header"/>
+                    </styleClass>
                 </Label>
                 <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                            prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
@@ -100,6 +92,11 @@
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
+                    <styleClass>
+                        <String fx:value="label"/>
+                        <String fx:value="label-bright"/>
+                        <String fx:value="label-header"/>
+                    </styleClass>
                 </Label>
                 <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                            prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
@@ -112,12 +109,22 @@
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
+                    <styleClass>
+                        <String fx:value="label"/>
+                        <String fx:value="label-bright"/>
+                        <String fx:value="label-header"/>
+                    </styleClass>
                 </Label>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
                        prefWidth="77.0" text="Named As" GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
+                    <styleClass>
+                        <String fx:value="label"/>
+                        <String fx:value="label-bright"/>
+                        <String fx:value="label-header"/>
+                    </styleClass>
                 </Label>
                 <TextField fx:id="txtFuzzySrcFileName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0"
@@ -137,19 +144,24 @@
                         <Font name="Arial" size="12.0"/>
                     </font>
                 </Button>
-                <ProgressBar fx:id="progressIndicator" disable="true" maxHeight="1.7976931348623157E308"
-                             maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0.0"
-                             style="-fx-background-color: #fbcce7;" GridPane.columnSpan="2" GridPane.rowIndex="9"/>
+                <ProgressBar fx:id="progressIndicator" disable="true" maxHeight="5.0" maxWidth="240.0"
+                             prefHeight="5.0" prefWidth="240.0" progress="0.0" GridPane.columnSpan="2"
+                             GridPane.hgrow="NEVER" GridPane.rowIndex="9" GridPane.vgrow="NEVER"/>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
                        prefWidth="77.0" text="Renamed As" GridPane.rowIndex="4">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
+                    <styleClass>
+                        <String fx:value="label"/>
+                        <String fx:value="label-bright"/>
+                        <String fx:value="label-header"/>
+                    </styleClass>
                 </Label>
                 <CheckBox fx:id="cbxIndicatorForBatch" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#validate"
-                          prefHeight="25.0" prefWidth="62.0" style="-fx-background-color: #efdecd;" text="Batch?"
-                          GridPane.columnIndex="5" GridPane.rowIndex="2">
+                          prefHeight="25.0" prefWidth="62.0" text="Batch?" GridPane.columnIndex="5"
+                          GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -159,16 +171,14 @@
                            prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
                            GridPane.columnSpan="3" GridPane.rowIndex="4"/>
                 <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                          mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0"
-                          style="-fx-background-color: #efdecd;" text="Header?" GridPane.columnIndex="4"
-                          GridPane.rowIndex="2">
+                          mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="Header?"
+                          GridPane.columnIndex="4" GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                 </CheckBox>
                 <ChoiceBox fx:id="cboDestFileFormat" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="241.0"
-                           style="-fx-background-color: #efdecd; -fx-text-fill: #ace5ee; -fx-font-size: 8pt;"
                            GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="4"
                            GridPane.vgrow="NEVER"/>
                 <ImageView fx:id="appLogo" fitHeight="50.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true"
@@ -177,11 +187,17 @@
                 <TreeTableView fx:id="logTreeViewer" onMouseClicked="#openDirectoryOrFile" prefHeight="200.0"
                                prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="5" GridPane.rowSpan="4">
                     <columns>
-                        <TreeTableColumn fx:id="nameColumn" prefWidth="638.0" text="Name"/>
-                        <TreeTableColumn fx:id="sizeColumn" minWidth="0.0" prefWidth="92.0" text="Size (KB)"/>
-                        <TreeTableColumn fx:id="modifiedColumn" prefWidth="182.0" text="Date modified"/>
-                        <TreeTableColumn fx:id="typeColumn" prefWidth="57.0" text="Type"/>
+                        <TreeTableColumn fx:id="nameColumn" prefWidth="638.0" styleClass="column-header" text="Name"/>
+                        <TreeTableColumn fx:id="sizeColumn" minWidth="0.0" prefWidth="92.0" styleClass="column-header"
+                                         text="Size (KB)"/>
+                        <TreeTableColumn fx:id="modifiedColumn" prefWidth="182.0" styleClass="column-header"
+                                         text="Date modified"/>
+                        <TreeTableColumn fx:id="typeColumn" prefWidth="57.0" styleClass="column-header" text="Type"/>
                     </columns>
+                    <styleClass>
+                        <String fx:value="table-view"/>
+                        <String fx:value="column-header-background"/>
+                    </styleClass>
                 </TreeTableView>
             </children>
         </GridPane>

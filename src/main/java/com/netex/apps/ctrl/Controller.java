@@ -2,6 +2,7 @@ package com.netex.apps.ctrl;
 
 import com.google.common.io.Files;
 import com.netex.apps.exts.ParallelGroup;
+import com.netex.apps.meta.CSSMeta;
 import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
@@ -130,11 +131,28 @@ public class Controller implements Initializable {
         nameColumn.setCellValueFactory(
                 item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
         sizeColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) + 1));
+                item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) | 1));
         modifiedColumn.setCellValueFactory(
                 item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
         typeColumn.setCellValueFactory(
                 item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
+        progressIndicator.progressProperty().addListener((observable, oldValue, newValue) -> {
+            double progress = newValue == null ? 0 : newValue.doubleValue();
+            if (progress < 0.2) {
+                setBarStyleClass(progressIndicator, CSSMeta.RED_BAR);
+            } else if (progress < 0.4) {
+                setBarStyleClass(progressIndicator, CSSMeta.ORANGE_BAR);
+            } else if (progress < 0.6) {
+                setBarStyleClass(progressIndicator, CSSMeta.YELLOW_BAR);
+            } else {
+                setBarStyleClass(progressIndicator, CSSMeta.GREEN_BAR);
+            }
+        });
+    }
+
+    private void setBarStyleClass(ProgressBar bar, String barStyleClass) {
+        bar.getStyleClass().removeAll(CSSMeta.BAR_COLOR_STYLE_CLASSES);
+        bar.getStyleClass().add(barStyleClass);
     }
 
     private void centerImage(ImageView imageView) {
@@ -249,9 +267,11 @@ public class Controller implements Initializable {
                     if (newItem != null) {
                         File file = new File(newItem.trim());
                         if ((file.isFile() || file.isDirectory()) && file.exists()) {
-                            instance.setStyle("-fx-text-fill: GREEN");
+                            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
+                            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
                         } else {
-                            instance.setStyle("-fx-text-fill: RED");
+                            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
+                            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
                         }
                     }
                 }
@@ -285,10 +305,13 @@ public class Controller implements Initializable {
 
     private void handlePrefixFileName(TextField instance, StringProperty property, String from) {
         Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
-            if (decision) instance.setStyle("-fx-text-fill: GREEN");
-            else {
+            if (decision) {
+                instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
+                instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+            } else {
                 createMessageDialog(String.format("This is not a valid prefix of %s file name!", from));
-                instance.setStyle("-fx-text-fill: RED");
+                instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
+                instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
                 instance.requestFocus();
             }
         });
@@ -297,19 +320,22 @@ public class Controller implements Initializable {
     private void handleFilePath(TextField instance, File path, String from) {
         if (cbxIndicatorForBatch.isSelected()) {
             Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
-                if (decision) instance.setStyle("-fx-text-fill: GREEN");
-                else {
+                if (decision) {
+                    instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
+                    instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+                } else {
                     createMessageDialog(String.format("This is not a valid %s directory!", from));
-                    instance.setStyle("-fx-text-fill: RED");
+                    instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
+                    instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
                     instance.requestFocus();
                 }
             });
         } else {
             Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
-                if (decision) instance.setStyle("-fx-text-fill: GREEN");
+                if (decision) instance.getStyleClass().add("valid");
                 else {
                     createMessageDialog(String.format("This is not a valid %s file!", from));
-                    instance.setStyle("-fx-text-fill: RED");
+                    instance.getStyleClass().removeAll("valid");
                     instance.requestFocus();
                 }
             });
