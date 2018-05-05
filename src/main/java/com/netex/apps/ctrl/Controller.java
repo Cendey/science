@@ -508,7 +508,7 @@ public class Controller implements Initializable {
                     child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
                     .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource("picture/folder.png")).
+                    Objects.requireNonNull(contextClassLoader.getResource("picture/folder-modern.png")).
                             toExternalForm()));
         } else {
             item.setGraphic(new ImageView(
