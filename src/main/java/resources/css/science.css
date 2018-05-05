@@ -184,6 +184,11 @@
     -fx-border-radius: 10px;
 }
 
+.progress-bar > .bar {
+    -fx-background-insets: 1 1 2 1;
+    -fx-padding: 5px;
+}
+
 .green-bar {
     -fx-accent: green;
 }
