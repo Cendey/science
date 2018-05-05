@@ -31,15 +31,14 @@ public class CsvReader implements Reader {
 
     @Override
     public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
-        throws IOException {
+            throws IOException {
         List<Pair<List<String>, List<List<Object>>>> result = null;
         CSVFormat csvFormat = CSVFormat.DEFAULT;
         if (isFileWithHeader) csvFormat.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim();
         final Path path = Paths.get(filePath);
         if (Files.exists(path) && Files.isReadable(path)) {
             try (java.io.Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
-                 CSVParser csvParser = new CSVParser(reader, csvFormat)
-            ) {
+                 CSVParser csvParser = new CSVParser(reader, csvFormat)) {
                 result = new ArrayList<>();
                 if (isFileWithHeader) {
                     List<String> lstHeader = new ArrayList<>();

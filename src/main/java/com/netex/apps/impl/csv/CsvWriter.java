@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,11 +46,8 @@ public class CsvWriter implements Writer {
                 if (!Files.exists(path.getParent())) {
                     Files.createDirectories(path.getParent());
                 }
-                try (BufferedWriter writer = Files
-                    .newBufferedWriter(path, Charset.forName("utf-8"),
-                        StandardOpenOption.CREATE_NEW,
-                        StandardOpenOption.APPEND); CSVPrinter csvPrinter = new CSVPrinter(
-                    writer, csvFormat)) {
+                try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.APPEND);
+                     CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat)) {
                     for (List<Object> csvRecord : dataInfo.getValue()) {
                         csvPrinter.printRecord(csvRecord);
                     }
@@ -58,7 +55,7 @@ public class CsvWriter implements Writer {
                 }
             } else {
                 logger.warn(
-                    String.format("%s is not writable or not have authorize to write in this directory!", parent));
+                        String.format("%s is not writable or not have authorize to write in this directory!", parent));
             }
         }
     }

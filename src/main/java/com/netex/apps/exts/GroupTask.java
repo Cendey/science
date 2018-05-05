@@ -41,10 +41,7 @@ public class GroupTask extends Task<List<String>> implements Callable<List<Strin
         logger.info("File conversion is scheduled now!");
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
-            TaskMeta meta = tasks.get(index);
-            List<String> temp = Worker
-                .perform(meta.getSrcPath(), meta.getDestPath(), meta.getNameTo(), meta.getType(), meta.getHeader());
-            Optional.ofNullable(temp).ifPresent(result::addAll);
+            Optional.ofNullable(Worker.perform(tasks.get(index))).ifPresent(result::addAll);
             updateProgress(index - startIndex + 1, endIndex - startIndex + 1);
         }
         endController.countDown();

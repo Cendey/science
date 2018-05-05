@@ -32,13 +32,11 @@ public class TextWriter implements Writer {
             }
 
             Optional.ofNullable(dataInfo).ifPresent(datInfo -> {
-                try (final PrintWriter writer = new PrintWriter(
-                    Files.newBufferedWriter(Paths.get(filePath), StandardCharsets.UTF_8,
-                        StandardOpenOption.CREATE_NEW))) {
+                try (final PrintWriter writer = new PrintWriter(Files.newBufferedWriter(Paths.get(filePath), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW))) {
                     Optional.ofNullable(dataInfo.getKey())
-                        .ifPresent(header -> writer.println(header.stream().collect(Collectors.joining("\t"))));
+                            .ifPresent(header -> writer.println(header.stream().collect(Collectors.joining("\t"))));
                     Optional.ofNullable(dataInfo.getValue()).ifPresent(data -> data.forEach(
-                        row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t")))));
+                            row -> writer.println(row.stream().map(String::valueOf).collect(Collectors.joining("\t")))));
                 } catch (IOException e) {
                     logger.error(e.getCause().getMessage());
                 }

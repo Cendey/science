@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,10 +27,10 @@ public class TextReader implements Reader {
 
     @Override
     public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
-        throws IOException {
+            throws IOException {
         List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
         if (Files.isReadable(Paths.get(filePath))) {
-            try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
+            try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
                 Stream<String> lines = reader.lines();
                 List<List<Object>> contents = new ArrayList<>();
                 if (isFileWithHeader) {
