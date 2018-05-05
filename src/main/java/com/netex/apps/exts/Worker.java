@@ -30,7 +30,7 @@ class Worker {
     private static final Logger logger = LogManager.getLogger(Worker.class);
 
     //For single file conversion
-    static List<String> perform(TaskMeta taskMeta) {
+    static List<String> perform(final TaskMeta taskMeta) {
         List<String> result = new ArrayList<>();
         Boolean withHeader = taskMeta.getHeader();
         Factory readFactory = Facade.create(taskMeta.getSrcPath());
