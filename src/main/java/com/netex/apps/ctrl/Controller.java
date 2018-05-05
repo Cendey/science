@@ -13,6 +13,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -533,7 +534,9 @@ public class Controller implements Initializable {
 
                     if (file.exists() && file.canExecute()) {
                         try {
+                            stage.getScene().setCursor(Cursor.WAIT);
                             desktop.open(file);
+                            stage.getScene().setCursor(Cursor.DEFAULT);
                         } catch (IOException e) {
                             logger.error(e.getCause().getMessage());
                         }
