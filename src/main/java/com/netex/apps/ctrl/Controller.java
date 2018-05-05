@@ -41,7 +41,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
@@ -502,16 +501,11 @@ public class Controller implements Initializable {
 
     private TreeItem<File> createTree(File file) {
         TreeItem<File> item = new TreeItem<>(file);
-        Stream<Path> stream = null;
-        try {
-            stream = java.nio.file.Files.walk(file.toPath());
-        } catch (IOException e) {
-            logger.error(e.getCause().getMessage());
-        }
-        if (stream != null) {
-            stream.filter(
-                    path -> path.startsWith(model.getDestPath()) || Paths.get(model.getDestPath()).startsWith(path))
-                    .forEach(path -> item.getChildren().add(createTree(new File(path.toUri()))));
+        File[] children = file.listFiles();
+        if (children != null) {
+            Stream.of(children).filter(
+                    child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
+                    .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
                     Objects.requireNonNull(contextClassLoader.getResource("picture/folder.png")).
                             toExternalForm()));

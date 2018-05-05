@@ -10,12 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * <p>Title: science</p>
@@ -57,17 +52,13 @@ public class ParallelGroup {
                 progress = progress.add(scaleProgress);
             }
             startIndex = endIndex;
-            if (i < numThreads - 1) {
+            if (i < numThreads - 2) {
                 endIndex = endIndex + length;
             } else {
                 endIndex = tasks.size();
             }
             Future<List<String>> future = executor.submit((Callable<List<String>>) task);
             result.add(future);
-            task.setOnSucceeded(event -> {
-                Object value = event.getSource().getValue();
-                logger.info(value);
-            });
         }
         DoubleBinding binding = progress;
         Platform.runLater(() -> progressBar.progressProperty().bind(binding));
