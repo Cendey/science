@@ -185,8 +185,8 @@
 }
 
 .progress-bar > .bar {
-    -fx-background-insets: 1 1 2 1;
-    -fx-padding: 5px;
+    -fx-background-insets: 1 1 1 1;
+    -fx-padding: 2px;
 }
 
 .green-bar {
