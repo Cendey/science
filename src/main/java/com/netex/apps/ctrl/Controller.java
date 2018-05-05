@@ -41,6 +41,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
@@ -129,7 +130,7 @@ public class Controller implements Initializable {
         nameColumn.setCellValueFactory(
                 item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
         sizeColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>(Utilities.round(item.getValue().getValue().length()).longValue()));
+                item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) + 1));
         modifiedColumn.setCellValueFactory(
                 item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
         typeColumn.setCellValueFactory(
@@ -263,7 +264,7 @@ public class Controller implements Initializable {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning Dialog");
         alert.setHeaderText("Look, a Warning Dialog");
-        alert.setContentText(message + "\r\nBe Careful For The Next Step!");
+        alert.setContentText(String.format("%s%nBe Careful For The Next Step!", message));
         alert.showAndWait();
     }
 
@@ -286,7 +287,7 @@ public class Controller implements Initializable {
         Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
             if (decision) instance.setStyle("-fx-text-fill: GREEN");
             else {
-                createMessageDialog(String.format("%s%s%s", "This is not a valid prefix of ", from, " file name!"));
+                createMessageDialog(String.format("This is not a valid prefix of %s file name!", from));
                 instance.setStyle("-fx-text-fill: RED");
                 instance.requestFocus();
             }
@@ -298,7 +299,7 @@ public class Controller implements Initializable {
             Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
                 if (decision) instance.setStyle("-fx-text-fill: GREEN");
                 else {
-                    createMessageDialog(String.format("%s%s%s", "This is not a valid ", from, " directory!"));
+                    createMessageDialog(String.format("This is not a valid %s directory!", from));
                     instance.setStyle("-fx-text-fill: RED");
                     instance.requestFocus();
                 }
@@ -307,7 +308,7 @@ public class Controller implements Initializable {
             Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
                 if (decision) instance.setStyle("-fx-text-fill: GREEN");
                 else {
-                    createMessageDialog(String.format("%s%s%s", "This is not a valid ", from, " file!"));
+                    createMessageDialog(String.format("This is not a valid %s file!", from));
                     instance.setStyle("-fx-text-fill: RED");
                     instance.requestFocus();
                 }
@@ -501,11 +502,16 @@ public class Controller implements Initializable {
 
     private TreeItem<File> createTree(File file) {
         TreeItem<File> item = new TreeItem<>(file);
-        File[] children = file.listFiles();
-        if (children != null) {
-            Stream.of(children).filter(
-                    child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
-                    .forEach(child -> item.getChildren().add(createTree(child)));
+        Stream<Path> stream = null;
+        try {
+            stream = java.nio.file.Files.walk(file.toPath());
+        } catch (IOException e) {
+            logger.error(e.getCause().getMessage());
+        }
+        if (stream != null) {
+            stream.filter(
+                    path -> path.startsWith(model.getDestPath()) || Paths.get(model.getDestPath()).startsWith(path))
+                    .forEach(path -> item.getChildren().add(createTree(new File(path.toUri()))));
             item.setGraphic(new ImageView(
                     Objects.requireNonNull(contextClassLoader.getResource("picture/folder.png")).
                             toExternalForm()));

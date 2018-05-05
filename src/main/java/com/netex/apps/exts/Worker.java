@@ -41,7 +41,7 @@ class Worker {
             List<Pair<List<String>, List<List<Object>>>> contents = reader.read(taskMeta.getSrcPath(), withHeader);
             Optional.ofNullable(contents).ifPresent(data -> data.forEach(file -> {
                         String destFileName = Utilities.rename(taskMeta.getSrcPath(), taskMeta.getNameTo());
-                        final String destFilePath = taskMeta.getDestPath() + File.separator + destFileName + taskMeta.getType();
+                final String destFilePath = String.format("%s%s%s%s", taskMeta.getDestPath(), File.separator, destFileName, taskMeta.getType());
                         try {
                             writer.write(file, destFilePath);
                         } catch (IOException e) {

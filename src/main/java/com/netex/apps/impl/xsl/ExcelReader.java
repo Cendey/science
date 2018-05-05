@@ -5,13 +5,7 @@ import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +30,14 @@ public class ExcelReader implements Reader {
 
     @Override
     public List<Pair<List<String>, List<List<Object>>>> read(String filePath, Boolean isFileWithHeader)
-        throws IOException {
+            throws IOException {
         final List<Pair<List<String>, List<List<Object>>>> result = new ArrayList<>();
 
         if (Files.isReadable(Paths.get(filePath))) {
             // Creating a Workbook from an Excel file (.xls or .xlsx)
             try (final Workbook workbook = WorkbookFactory.create(new File(filePath))) {
                 // Retrieving the number of sheets in the Workbook
-                System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+                System.out.println(String.format("Workbook has %d Sheets :%n", workbook.getNumberOfSheets()));
 
                 workbook.forEach(sheet -> {
                     List<String> sheetHeader = new ArrayList<>();

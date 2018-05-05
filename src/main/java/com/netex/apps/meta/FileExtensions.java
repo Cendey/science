@@ -29,14 +29,14 @@ public class FileExtensions {
 
     @Override
     public String toString() {
-        return "[" + description + " : " + extension + "]";
+        return String.format("[%s : %s]", description, extension);
     }
 
     public static class FileExtensionConvert extends StringConverter<FileExtensions> {
 
         @Override
         public String toString(FileExtensions object) {
-            return object == null ? "[None]" : object.getDescription() + ": " + object.getExtension();
+            return object == null ? "[None]" : String.format("%s: %s", object.getDescription(), object.getExtension());
         }
 
         @Override
