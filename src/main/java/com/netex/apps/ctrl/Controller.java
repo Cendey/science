@@ -97,11 +97,11 @@ public class Controller implements Initializable {
         if (cbxIndicatorForBatch.isSelected()) {
             if (StringUtils.isEmpty(model.getSrcPath()) || !Files.isDirectory().apply(new File(model.getSrcPath()))) {
                 return Result.failure(Boolean.FALSE, "Source directory is required!");
-            } else if (StringUtils.isEmpty(model.getSrcNamedAs())) {
+            } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
                 return Result.failure(Boolean.FALSE, "Source file name to be matched is required!");
             } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory().apply(new File(model.getDestPath()))) {
                 return Result.failure(Boolean.FALSE, "Target directory is illegal!");
-            } else if (StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
+            } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
                 return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
             } else {
                 return Result.success(Boolean.TRUE, "Successfully!");
@@ -111,7 +111,7 @@ public class Controller implements Initializable {
                 return Result.failure(Boolean.FALSE, "Source file is required!");
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
                 return Result.failure(Boolean.FALSE, "Source file is illegal!");
-            } else if (StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
+            } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
                 return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
             } else {
                 return Result.success(Boolean.TRUE, "Successfully!");
