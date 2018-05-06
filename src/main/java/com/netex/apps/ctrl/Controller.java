@@ -2,6 +2,8 @@ package com.netex.apps.ctrl;
 
 import com.google.common.io.Files;
 import com.netex.apps.exts.ParallelGroup;
+import com.netex.apps.intf.Effect;
+import com.netex.apps.intf.Result;
 import com.netex.apps.meta.CSSMeta;
 import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
@@ -50,6 +52,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static javafx.application.Platform.exit;
@@ -89,6 +92,35 @@ public class Controller implements Initializable {
 
     private ParallelGroup classifier;
     private ExecutorService service;
+
+    private Function<Void, Result<Boolean, String>> validation = (Void) -> {
+        if (model.isIsForBatch()) {
+            if (StringUtils.isEmpty(model.getSrcPath()) || !Files.isDirectory().apply(new File(model.getSrcPath()))) {
+                return Result.failure(Boolean.FALSE, "Source directory is required!");
+            } else if (StringUtils.isEmpty(model.getSrcNamedAs())) {
+                return Result.failure(Boolean.FALSE, "Source file name to be matched is required!");
+            } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory().apply(new File(model.getDestPath()))) {
+                return Result.failure(Boolean.FALSE, "Target directory is illegal!");
+            } else if (StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
+            } else {
+                return Result.success(Boolean.TRUE, "Successfully!");
+            }
+        } else {
+            if (StringUtils.isEmpty(model.getSrcPath())) {
+                return Result.failure(Boolean.FALSE, "Source file is required!");
+            } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
+                return Result.failure(Boolean.FALSE, "Source file is illegal!");
+            } else if (StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
+            } else {
+                return Result.success(Boolean.TRUE, "Successfully!");
+            }
+        }
+    };
+
+    private Effect<Boolean, String> success = valid -> "Success";
+    private Effect<Boolean, String> failue = invalid -> "Failure";
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -276,9 +308,9 @@ public class Controller implements Initializable {
     private void createMessageDialog(String message) {
         //http://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning Dialog");
-        alert.setHeaderText("Look, a Warning Dialog");
-        alert.setContentText(String.format("%s%nBe Careful For The Next Step!", message));
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(String.format("%s!%n", message));
         alert.showAndWait();
     }
 
@@ -351,6 +383,7 @@ public class Controller implements Initializable {
 
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
+        if (!isReady()) return;
         Runnable runnable = () -> {
             btnStart.setDisable(true);
             logTreeViewer.setRoot(null);
@@ -571,5 +604,21 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+    private boolean isReady() {
+        boolean isReady;
+        if (model.isIsForBatch()) {
+            isReady = StringUtils.isNotEmpty(model.getSrcPath())
+                    && Files.isDirectory().apply(new File(model.getSrcPath()))
+                    && StringUtils.isNotEmpty(model.getSrcNamedAs())
+                    && (StringUtils.isNotEmpty(model.getDestPath()) && Files.isDirectory().apply(new File(model.getDestPath())) || StringUtils.isEmpty(model.getDestPath()))
+                    && StringUtils.isNotEmpty(cboDestFileFormat.getValue().getExtension());
+        } else {
+            isReady = StringUtils.isNotEmpty(model.getSrcPath())
+                    && Files.isFile().apply(new File(model.getSrcPath()))
+                    && StringUtils.isNotEmpty(cboDestFileFormat.getValue().getExtension());
+        }
+        return isReady;
     }
 }
