@@ -62,8 +62,6 @@ public class Controller implements Initializable {
     private static final Logger logger = LogManager.getLogger(Controller.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-    private static final String FROM_SOURCE = "source";
-    private static final String FROM_TARGET = "target";
 
     public MenuItem miExit;
     public TextField srcPath;
@@ -137,24 +135,22 @@ public class Controller implements Initializable {
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
         String tipsForSrc = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
                 .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
-        addTextChangeListener(srcPath, tipsForSrc);
-        addFileListener(srcPath);
+        addTooltip(srcPath, tipsForSrc);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         String tipsForSrcFuzzyName =
                 "Specify the source file name to match, which is only available for batch files conversion.\n"
                         .concat("In single file conversion, the source name to matched will be ignored!");
-        addTextChangeListener(txtFuzzySrcFileName, tipsForSrcFuzzyName);
+        addTooltip(txtFuzzySrcFileName, tipsForSrcFuzzyName);
         txtFuzzySrcFileName.setEditable(false);
         destPath.textProperty().bindBidirectional(model.destPathProperty());
         String tipsForDestPath = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
                 .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
-        addTextChangeListener(destPath, tipsForDestPath);
-        addFileListener(destPath);
+        addTooltip(destPath, tipsForDestPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
         String tipsForDestPrefixName =
                 "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
                         .concat("In single file conversion, the target prefix file name is optional!");
-        addTextChangeListener(txtDestPrefixName, tipsForDestPrefixName);
+        addTooltip(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
@@ -170,6 +166,10 @@ public class Controller implements Initializable {
                 item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
         typeColumn.setCellValueFactory(
                 item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
+        progress();
+    }
+
+    private void progress() {
         progressIndicator.progressProperty().addListener((observable, oldValue, newValue) -> {
             double progress = newValue == null ? 0 : newValue.doubleValue();
             if (progress < 0.2) {
@@ -285,22 +285,8 @@ public class Controller implements Initializable {
         }
     }
 
-    private void addTextChangeListener(TextField instance, String toolTips) {
+    private void addTooltip(TextField instance, String toolTips) {
         instance.tooltipProperty().setValue(new Tooltip(toolTips));
-        instance.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                available(instance);
-            }
-        });
-    }
-
-    private void addFileListener(TextField instance) {
-        instance.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue && !newValue) {
-                File file = new File(instance.getText());
-                stylish(instance, (file.isFile() || file.isDirectory()) && file.exists());
-            }
-        });
     }
 
     //http://fxexperience.com/controlsfx/
@@ -313,42 +299,40 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    private void available(TextField instance) {
-        StringProperty property = instance.textProperty();
-        final File path = new File(property.getValue().trim());
-        if (instance.equals(srcPath)) {
-            handleFilePath(instance, path, FROM_SOURCE);
-        } else if (instance.equals(txtFuzzySrcFileName)) {
-            handlePrefixFileName(instance, property, FROM_SOURCE);
-        } else if (instance.equals(destPath)) {
-            handleFilePath(instance, path, FROM_TARGET);
-        } else if (instance.equals(txtDestPrefixName)) {
-            handlePrefixFileName(instance, property, FROM_TARGET);
+    private void available(Node node) {
+        if (node instanceof TextField) {
+            TextField instance = TextField.class.cast(node);
+            StringProperty property = instance.textProperty();
+            final File path = new File(property.getValue().trim());
+            if (instance.equals(srcPath)) {
+                polish(instance, path);
+            } else if (instance.equals(txtFuzzySrcFileName)) {
+                polish(instance, property);
+            } else if (instance.equals(destPath)) {
+                polish(instance, path);
+            } else if (instance.equals(txtDestPrefixName)) {
+                polish(instance, property);
+            }
         }
-
     }
 
-    private void handlePrefixFileName(TextField instance, StringProperty property, String from) {
+    private void polish(TextField instance, StringProperty property) {
         Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
             if (decision) {
                 stylish(instance, true);
             } else {
-                showMessage(String.format("This is not a valid prefix of %s file name!", from));
                 stylish(instance, false);
-                instance.requestFocus();
             }
         });
     }
 
-    private void handleFilePath(TextField instance, File path, String from) {
+    private void polish(TextField instance, File path) {
         if (cbxIndicatorForBatch.isSelected()) {
             Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
                 if (decision) {
                     stylish(instance, true);
                 } else {
-                    showMessage(String.format("This is not a valid %s directory!", from));
                     stylish(instance, false);
-                    instance.requestFocus();
                 }
             });
         } else {
@@ -356,9 +340,7 @@ public class Controller implements Initializable {
                 if (decision) {
                     stylish(instance, true);
                 } else {
-                    showMessage(String.format("This is not a valid %s file!", from));
                     stylish(instance, false);
-                    instance.requestFocus();
                 }
             });
         }
@@ -367,18 +349,18 @@ public class Controller implements Initializable {
     private void stylish(TextField instance, boolean isValid) {
         final ObservableList<String> styleClass = instance.getStyleClass();
         if (isValid) {
-            while (styleClass.contains(CSSMeta.TEXT_FIELD_INVALID)) {
-                styleClass.remove(CSSMeta.TEXT_FIELD_INVALID);
+            while (styleClass.contains(CSSMeta.INVALID)) {
+                styleClass.remove(CSSMeta.INVALID);
             }
-            if (!styleClass.contains(CSSMeta.TEXT_FIELD_VALID)) {
-                styleClass.add(CSSMeta.TEXT_FIELD_VALID);
+            if (!styleClass.contains(CSSMeta.VALID)) {
+                styleClass.add(CSSMeta.VALID);
             }
         } else {
-            while (styleClass.contains(CSSMeta.TEXT_FIELD_VALID)) {
-                styleClass.remove(CSSMeta.TEXT_FIELD_VALID);
+            while (styleClass.contains(CSSMeta.VALID)) {
+                styleClass.remove(CSSMeta.VALID);
             }
-            if (!styleClass.contains(CSSMeta.TEXT_FIELD_INVALID)) {
-                styleClass.add(CSSMeta.TEXT_FIELD_INVALID);
+            if (!styleClass.contains(CSSMeta.INVALID)) {
+                styleClass.add(CSSMeta.INVALID);
             }
         }
     }
@@ -617,10 +599,14 @@ public class Controller implements Initializable {
     private boolean isReady() {
         Result<Node, String> result = validation.apply(model);
         result.bind(success, failure);
-        if (result.indicator() != null) {
+        Node indicator = result.indicator();
+        if (indicator != null) {
             showMessage(result.message());
-            result.indicator().requestFocus();
+            available(indicator);
+            indicator.requestFocus();
+        } else {
+            Stream.of(srcPath, txtFuzzySrcFileName, destPath, txtDestPrefixName).forEach(this::available);
         }
-        return result.indicator() == null;
+        return indicator == null;
     }
 }
