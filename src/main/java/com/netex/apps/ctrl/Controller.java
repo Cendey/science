@@ -93,7 +93,7 @@ public class Controller implements Initializable {
     private ParallelGroup classifier;
     private ExecutorService service;
 
-    private Function<Void, Result<Boolean, String>> validation = (Void) -> {
+    private Function<Model, Result<Boolean, String>> validation = (model) -> {
         if (model.isIsForBatch()) {
             if (StringUtils.isEmpty(model.getSrcPath()) || !Files.isDirectory().apply(new File(model.getSrcPath()))) {
                 return Result.failure(Boolean.FALSE, "Source directory is required!");
@@ -119,8 +119,8 @@ public class Controller implements Initializable {
         }
     };
 
-    private Effect<Boolean, String> success = valid -> "Success";
-    private Effect<Boolean, String> failue = invalid -> "Failure";
+    private Effect<Boolean> success = valid -> logger.info("All required check is passed!");
+    private Effect<Boolean> failure = invalid -> logger.error("All required check is failed!");
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -305,7 +305,7 @@ public class Controller implements Initializable {
     }
 
     //http://fxexperience.com/controlsfx/
-    private void createMessageDialog(String message) {
+    private void showMessage(String message) {
         //http://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning");
@@ -334,7 +334,7 @@ public class Controller implements Initializable {
             if (decision) {
                 stylish(instance, true);
             } else {
-                createMessageDialog(String.format("This is not a valid prefix of %s file name!", from));
+                showMessage(String.format("This is not a valid prefix of %s file name!", from));
                 stylish(instance, false);
                 instance.requestFocus();
             }
@@ -347,7 +347,7 @@ public class Controller implements Initializable {
                 if (decision) {
                     stylish(instance, true);
                 } else {
-                    createMessageDialog(String.format("This is not a valid %s directory!", from));
+                    showMessage(String.format("This is not a valid %s directory!", from));
                     stylish(instance, false);
                     instance.requestFocus();
                 }
@@ -357,7 +357,7 @@ public class Controller implements Initializable {
                 if (decision) {
                     stylish(instance, true);
                 } else {
-                    createMessageDialog(String.format("This is not a valid %s file!", from));
+                    showMessage(String.format("This is not a valid %s file!", from));
                     stylish(instance, false);
                     instance.requestFocus();
                 }
@@ -540,7 +540,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
                 if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
-                    createMessageDialog("Source file name is illegal.");
+                    showMessage("Source file name is illegal.");
                 }
             }
         }
@@ -554,7 +554,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
                 if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
-                    createMessageDialog("Target file name is illegal.");
+                    showMessage("Target file name is illegal.");
                 }
             }
         }
@@ -607,18 +607,9 @@ public class Controller implements Initializable {
     }
 
     private boolean isReady() {
-        boolean isReady;
-        if (model.isIsForBatch()) {
-            isReady = StringUtils.isNotEmpty(model.getSrcPath())
-                    && Files.isDirectory().apply(new File(model.getSrcPath()))
-                    && StringUtils.isNotEmpty(model.getSrcNamedAs())
-                    && (StringUtils.isNotEmpty(model.getDestPath()) && Files.isDirectory().apply(new File(model.getDestPath())) || StringUtils.isEmpty(model.getDestPath()))
-                    && StringUtils.isNotEmpty(cboDestFileFormat.getValue().getExtension());
-        } else {
-            isReady = StringUtils.isNotEmpty(model.getSrcPath())
-                    && Files.isFile().apply(new File(model.getSrcPath()))
-                    && StringUtils.isNotEmpty(cboDestFileFormat.getValue().getExtension());
-        }
-        return isReady;
+        Result<Boolean, String> result = validation.apply(model);
+        result.bind(success, failure);
+        showMessage(result.message());
+        return result.indicator();
     }
 }

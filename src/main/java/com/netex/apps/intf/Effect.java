@@ -1,5 +1,5 @@
 package com.netex.apps.intf;
 
-public interface Effect<T, V> {
-    V apply(T t);
+public interface Effect<T> {
+    void apply(T t);
 }
