@@ -1,7 +1,7 @@
 package com.netex.apps.intf;
 
 public interface Result<T, V> {
-    void bind(Effect<T> success, Effect<T> failure);
+    void bind(Effect<V> success, Effect<V> failure);
 
     T indicator();
 
@@ -36,8 +36,8 @@ public interface Result<T, V> {
         }
 
         @Override
-        public void bind(Effect<T> success, Effect<T> failure) {
-            success.apply(indicator);
+        public void bind(Effect<V> success, Effect<V> failure) {
+            success.apply(message);
         }
     }
 
@@ -56,8 +56,8 @@ public interface Result<T, V> {
         }
 
         @Override
-        public void bind(Effect<T> success, Effect<T> failure) {
-            failure.apply(indicator);
+        public void bind(Effect<V> success, Effect<V> failure) {
+            failure.apply(message);
         }
 
         public V message() {

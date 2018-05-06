@@ -93,34 +93,36 @@ public class Controller implements Initializable {
     private ParallelGroup classifier;
     private ExecutorService service;
 
-    private Function<Model, Result<Boolean, String>> validation = (model) -> {
+    private Function<Model, Result<Node, String>> validation = (model) -> {
         if (cbxIndicatorForBatch.isSelected()) {
-            if (StringUtils.isEmpty(model.getSrcPath()) || !Files.isDirectory().apply(new File(model.getSrcPath()))) {
-                return Result.failure(Boolean.FALSE, "Source directory is required!");
+            if (StringUtils.isEmpty(model.getSrcPath())) {
+                return Result.failure(srcPath, "Source directory is required!");
+            } else if (!Files.isDirectory().apply(new File(model.getSrcPath()))) {
+                return Result.failure(srcPath, "Source directory is not existed!");
             } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
-                return Result.failure(Boolean.FALSE, "Source file name to be matched is required!");
+                return Result.failure(txtFuzzySrcFileName, "The matched source file name is required!");
             } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory().apply(new File(model.getDestPath()))) {
-                return Result.failure(Boolean.FALSE, "Target directory is illegal!");
+                return Result.failure(destPath, "Target directory is not existed!");
             } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
+                return Result.failure(cboDestFileFormat, "Target file format is required!");
             } else {
-                return Result.success(Boolean.TRUE, "Successfully!");
+                return Result.success(null, "Successfully!");
             }
         } else {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(Boolean.FALSE, "Source file is required!");
+                return Result.failure(srcPath, "Source file is required!");
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
-                return Result.failure(Boolean.FALSE, "Source file is illegal!");
+                return Result.failure(srcPath, "Source file is not existed!");
             } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(Boolean.FALSE, "Please select the target file format or type!");
+                return Result.failure(cboDestFileFormat, "Target file format is required!");
             } else {
-                return Result.success(Boolean.TRUE, "Successfully!");
+                return Result.success(null, "Successfully!");
             }
         }
     };
 
-    private Effect<Boolean> success = valid -> logger.info("All required check is passed!");
-    private Effect<Boolean> failure = invalid -> logger.error("All required check is failed!");
+    private Effect<String> success = valid -> logger.info("All required check is passed!");
+    private Effect<String> failure = logger::error;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -607,11 +609,12 @@ public class Controller implements Initializable {
     }
 
     private boolean isReady() {
-        Result<Boolean, String> result = validation.apply(model);
+        Result<Node, String> result = validation.apply(model);
         result.bind(success, failure);
-        if (!result.indicator()) {
+        if (result.indicator() != null) {
             showMessage(result.message());
+            result.indicator().requestFocus();
         }
-        return result.indicator();
+        return result.indicator() == null;
     }
 }
