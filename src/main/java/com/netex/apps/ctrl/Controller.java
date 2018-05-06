@@ -389,9 +389,11 @@ public class Controller implements Initializable {
     public void startWork(ActionEvent keyEvent) {
         if (!isReady()) return;
         Runnable runnable = () -> {
-            btnStart.setDisable(true);
-            logTreeViewer.setRoot(null);
-            progressIndicator.progressProperty().unbind();
+            Platform.runLater(() -> {
+                btnStart.setDisable(true);
+                logTreeViewer.setRoot(null);
+                progressIndicator.progressProperty().unbind();
+            });
             final List<TaskMeta> taskMetas = prepare();
             classifier = new ParallelGroup(taskMetas, 1);
             try {
