@@ -10,12 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 /**
@@ -34,31 +29,35 @@ public class ParallelGroup {
 
     private ThreadPoolExecutor executor;
     private List<TaskMeta> tasks;
-    private int numThreads;
+    private int numCores;
 
     public ParallelGroup(List<TaskMeta> tasks, int factor) {
         this.tasks = tasks;
-        this.numThreads = factor * (Runtime.getRuntime().availableProcessors());
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads);
+        this.numCores = factor * (Runtime.getRuntime().availableProcessors());
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(tasks.size() / numCores > 1 ? numCores : 1);
     }
 
     public List<Future<List<String>>> classify(ProgressBar progressBar) throws InterruptedException {
-        int length = tasks.size() / numThreads;
-        int startIndex = 0, endIndex = (length != 0 ? length : tasks.size());
-        int assignment = (length != 0 ? this.numThreads : 1);
+        int length = tasks.size() / numCores;
+        int startIndex = 0, endIndex = length, counter = numCores;
+        if (length < 1) {
+            counter = 1;
+            endIndex = tasks.size();
+        }
+
         List<Future<List<String>>> result = new ArrayList<>();
-        CountDownLatch endController = new CountDownLatch(numThreads);
+        CountDownLatch endController = new CountDownLatch(counter);
         DoubleBinding progress = null;
-        for (int i = 0; i < numThreads && startIndex < endIndex; i++) {
+        for (int i = 0; i < counter; i++) {
             GroupTask task = new GroupTask(tasks, endController, startIndex, endIndex);
-            DoubleBinding scaleProgress = task.progressProperty().divide(assignment);
+            DoubleBinding scaleProgress = task.progressProperty().divide(counter);
             if (progress == null) {
                 progress = scaleProgress;
             } else {
                 progress = progress.add(scaleProgress);
             }
             startIndex = endIndex;
-            if (i < numThreads - 2) {
+            if (i < counter - 2) {
                 endIndex = endIndex + length;
             } else {
                 endIndex = tasks.size();

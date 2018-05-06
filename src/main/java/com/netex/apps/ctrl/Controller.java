@@ -133,23 +133,22 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
-        String tipsForSrc = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+        String tipsForSrc = "1. For batch conversion, choose a source directory.\n"
+                .concat("2. Or, choose a single file to conversion.");
         addTooltip(srcPath, tipsForSrc);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
         String tipsForSrcFuzzyName =
-                "Specify the source file name to match, which is only available for batch files conversion.\n"
-                        .concat("In single file conversion, the source name to matched will be ignored!");
+                "Specify a file name to match, system will find all those files which names are like that.\n"
+                        .concat("In single file conversion, it is not available!");
         addTooltip(txtFuzzySrcFileName, tipsForSrcFuzzyName);
         txtFuzzySrcFileName.setEditable(false);
         destPath.textProperty().bindBidirectional(model.destPathProperty());
-        String tipsForDestPath = "1. For batch operation, tick batch checkbox first, then choose a work directory.\n"
-                .concat("2. Or, choose a single file to conversion, you can ignore the source file name.");
+        String tipsForDestPath = "Please choose the directory which would store the conversion file(s).";
         addTooltip(destPath, tipsForDestPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
         String tipsForDestPrefixName =
-                "Specify the prefix file name to generate target files, which is only available for batch files conversion.\n"
-                        .concat("In single file conversion, the target prefix file name is optional!");
+                "The file name is optional, if specified, system will use it to name the conversion file;\n"
+                        .concat("otherwise the conversion file(s) name is as same as source file(s)!");
         addTooltip(txtDestPrefixName, tipsForDestPrefixName);
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
@@ -317,13 +316,18 @@ public class Controller implements Initializable {
     }
 
     private void polish(TextField instance, StringProperty property) {
-        Optional.of(Utilities.isValidName(property.getValue())).ifPresent(decision -> {
-            if (decision) {
-                stylish(instance, true);
-            } else {
-                stylish(instance, false);
-            }
-        });
+        final String name = property.getValue();
+        if (StringUtils.isNotEmpty(name)) {
+            Optional.of(Utilities.isValidName(name)).ifPresent(decision -> {
+                if (decision) {
+                    stylish(instance, true);
+                } else {
+                    stylish(instance, false);
+                }
+            });
+        } else {
+            stylish(instance, true);
+        }
     }
 
     private void polish(TextField instance, File path) {
@@ -336,13 +340,23 @@ public class Controller implements Initializable {
                 }
             });
         } else {
-            Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
-                if (decision) {
-                    stylish(instance, true);
-                } else {
-                    stylish(instance, false);
-                }
-            });
+            if (instance.equals(srcPath)) {
+                Optional.of(Files.isFile().apply(path)).ifPresent(decision -> {
+                    if (decision) {
+                        stylish(instance, true);
+                    } else {
+                        stylish(instance, false);
+                    }
+                });
+            } else if (instance.equals(destPath)) {
+                Optional.of(Files.isDirectory().apply(path)).ifPresent(decision -> {
+                    if (decision) {
+                        stylish(instance, true);
+                    } else {
+                        stylish(instance, false);
+                    }
+                });
+            }
         }
     }
 
@@ -382,20 +396,17 @@ public class Controller implements Initializable {
             classifier = new ParallelGroup(taskMetas, 1);
             try {
                 List<Future<List<String>>> result = classifier.classify(progressIndicator);
-                Optional.of(result).ifPresent(
-                        futures -> Platform
-                                .runLater(
-                                        () -> {
-                                            TreeItem<File> treeItem =
-                                                    createTree(new File(Paths.get(
-                                                            StringUtils.isNotEmpty(model.getDestPath()) ?
-                                                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
-                                            logTreeViewer.setRoot(treeItem);
-                                        }
-                                )
-                );
+                Optional.of(result).ifPresent(futures -> Platform.runLater(
+                        () -> {
+                            TreeItem<File> treeItem =
+                                    createTree(new File(Paths.get(
+                                            StringUtils.isNotEmpty(model.getDestPath()) ?
+                                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
+                            logTreeViewer.setRoot(treeItem);
+                        }
+                ));
             } catch (InterruptedException e) {
-                logger.error(e.getCause().getMessage());
+                logger.error("Task(s) interrupted exception!");
             } finally {
                 classifier.destroy();
                 btnStart.setDisable(false);

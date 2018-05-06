@@ -42,7 +42,7 @@ public class GroupTask extends Task<List<String>> implements Callable<List<Strin
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
             Optional.ofNullable(Worker.perform(tasks.get(index))).ifPresent(result::addAll);
-            updateProgress(index - startIndex + 1, endIndex - startIndex + 1);
+            updateProgress(index - startIndex + 1, endIndex - startIndex);
         }
         endController.countDown();
         return result;

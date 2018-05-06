@@ -44,12 +44,12 @@
 
 .valid {
     -fx-text-fill: green;
-    -fx-background-color: #2b2b2b;
+    -fx-border-color: #a9b7c6;
 }
 
 .invalid {
     -fx-text-fill: red;
-    -fx-background-color: yellow;
+    -fx-border-color: yellow;
 }
 
 .check-box {
