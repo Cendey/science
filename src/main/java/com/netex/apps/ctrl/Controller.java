@@ -94,7 +94,7 @@ public class Controller implements Initializable {
     private ExecutorService service;
 
     private Function<Model, Result<Boolean, String>> validation = (model) -> {
-        if (model.isIsForBatch()) {
+        if (cbxIndicatorForBatch.isSelected()) {
             if (StringUtils.isEmpty(model.getSrcPath()) || !Files.isDirectory().apply(new File(model.getSrcPath()))) {
                 return Result.failure(Boolean.FALSE, "Source directory is required!");
             } else if (StringUtils.isEmpty(model.getSrcNamedAs())) {
@@ -609,7 +609,9 @@ public class Controller implements Initializable {
     private boolean isReady() {
         Result<Boolean, String> result = validation.apply(model);
         result.bind(success, failure);
-        showMessage(result.message());
+        if (!result.indicator()) {
+            showMessage(result.message());
+        }
         return result.indicator();
     }
 }
