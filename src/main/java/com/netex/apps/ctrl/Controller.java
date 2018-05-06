@@ -287,23 +287,20 @@ public class Controller implements Initializable {
 
     private void addTextChangeListener(TextField instance, String toolTips) {
         instance.tooltipProperty().setValue(new Tooltip(toolTips));
-        instance.textProperty().addListener((observable, oldItem, newItem) -> {
-            available(instance);
-            if (newItem != null && !newItem.equals(oldItem)) {
-                instance.setText(newItem);
+        instance.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue && !newValue) {
+                available(instance);
             }
         });
     }
 
     private void addFileListener(TextField instance) {
-        instance.textProperty().addListener(
-                (observable, oldItem, newItem) -> {
-                    if (newItem != null) {
-                        File file = new File(newItem.trim());
-                        stylish(instance, (file.isFile() || file.isDirectory()) && file.exists());
-                    }
-                }
-        );
+        instance.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue && !newValue) {
+                File file = new File(instance.getText());
+                stylish(instance, (file.isFile() || file.isDirectory()) && file.exists());
+            }
+        });
     }
 
     //http://fxexperience.com/controlsfx/
@@ -368,12 +365,21 @@ public class Controller implements Initializable {
     }
 
     private void stylish(TextField instance, boolean isValid) {
+        final ObservableList<String> styleClass = instance.getStyleClass();
         if (isValid) {
-            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_INVALID);
-            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_VALID);
+            while (styleClass.contains(CSSMeta.TEXT_FIELD_INVALID)) {
+                styleClass.remove(CSSMeta.TEXT_FIELD_INVALID);
+            }
+            if (!styleClass.contains(CSSMeta.TEXT_FIELD_VALID)) {
+                styleClass.add(CSSMeta.TEXT_FIELD_VALID);
+            }
         } else {
-            instance.getStyleClass().remove(CSSMeta.TEXT_FIELD_VALID);
-            instance.getStyleClass().add(CSSMeta.TEXT_FIELD_INVALID);
+            while (styleClass.contains(CSSMeta.TEXT_FIELD_VALID)) {
+                styleClass.remove(CSSMeta.TEXT_FIELD_VALID);
+            }
+            if (!styleClass.contains(CSSMeta.TEXT_FIELD_INVALID)) {
+                styleClass.add(CSSMeta.TEXT_FIELD_INVALID);
+            }
         }
     }
 
