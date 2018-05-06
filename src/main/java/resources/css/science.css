@@ -2,6 +2,10 @@
     -fx-background-color: #2b2b2b;
 }
 
+.image-view {
+    -fx-image-alignment: CENTER;
+}
+
 .label {
     -fx-font-size: 12px;
     -fx-font-family: "Arial Bold";
@@ -27,6 +31,7 @@
 }
 
 .text-field {
+    -fx-alignment: CENTER-LEFT;
     -fx-font-size: 12px;
     -fx-font-family: "Arial Bold";
     -fx-text-fill: #a9b7c6;

@@ -82,8 +82,8 @@
                     </styleClass>
                 </Label>
                 <TextField fx:id="srcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
-                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1"/>
+                           prefHeight="25.0" prefWidth="453.0" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="1"/>
                 <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseSrcPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.rowIndex="1"/>
@@ -99,8 +99,8 @@
                     </styleClass>
                 </Label>
                 <TextField fx:id="destPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                           prefHeight="25.0" prefWidth="453.0" style="-fx-alignment: CENTER-LEFT;"
-                           GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="3"/>
+                           prefHeight="25.0" prefWidth="453.0" GridPane.columnIndex="1" GridPane.columnSpan="4"
+                           GridPane.rowIndex="3"/>
                 <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseDestPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.rowIndex="3"/>
@@ -128,8 +128,7 @@
                 </Label>
                 <TextField fx:id="txtFuzzySrcFileName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
-                           GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+                           prefWidth="281.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
                 <Button fx:id="btnStart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#startWork" prefHeight="25.0" prefWidth="61.0" text="Start"
                         GridPane.columnIndex="4" GridPane.rowIndex="9">
@@ -168,8 +167,7 @@
                 </CheckBox>
                 <TextField fx:id="txtDestPrefixName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseClicked="#chooseDestPrefixName" prefHeight="25.0"
-                           prefWidth="281.0" style="-fx-alignment: CENTER-LEFT;" GridPane.columnIndex="1"
-                           GridPane.columnSpan="3" GridPane.rowIndex="4"/>
+                           prefWidth="281.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
                 <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                           mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="Header?"
                           GridPane.columnIndex="4" GridPane.rowIndex="2">
@@ -182,8 +180,12 @@
                            GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="4"
                            GridPane.vgrow="NEVER"/>
                 <ImageView fx:id="appLogo" fitHeight="50.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true"
-                           style="-fx-image-alignment: CENTER;" GridPane.columnIndex="2" GridPane.columnSpan="2"
-                           GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER"/>
+                           GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER"
+                           GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER">
+                    <styleClass>
+                        <String fx:value="image-view"/>
+                    </styleClass>
+                </ImageView>
                 <TreeTableView fx:id="logTreeViewer" onMouseClicked="#openDirectoryOrFile" prefHeight="200.0"
                                prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="5" GridPane.rowSpan="4">
                     <columns>
