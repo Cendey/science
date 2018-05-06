@@ -388,12 +388,10 @@ public class Controller implements Initializable {
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
         if (!isReady()) return;
+        btnStart.setDisable(true);
+        logTreeViewer.setRoot(null);
+        progressIndicator.progressProperty().unbind();
         Runnable runnable = () -> {
-            Platform.runLater(() -> {
-                btnStart.setDisable(true);
-                logTreeViewer.setRoot(null);
-                progressIndicator.progressProperty().unbind();
-            });
             final List<TaskMeta> taskMetas = prepare();
             classifier = new ParallelGroup(taskMetas, 1);
             try {
