@@ -43,7 +43,7 @@
         <logger name="Console" level="info" additivity="false">
             <appenderref ref="Console"/>
         </logger>
-        <root level="error">
+        <root level="info">
             <appenderref ref="Console"/>
             <appenderref ref="Async"/>
         </root>
