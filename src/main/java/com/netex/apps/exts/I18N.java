@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 //https://www.sothawo.com/2016/09/how-to-implement-a-javafx-ui-where-the-language-can-be-changed-dynamically/
+//https://stackoverflow.com/questions/21171249/how-to-reload-the-screen-when-changing-languages-in-javafx
+//https://stackoverflow.com/questions/32464974/javafx-change-application-language-on-the-run
 public class I18N {
     /**
      * the current selected Locale.
