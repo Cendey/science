@@ -9,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +59,7 @@ public class ExcelWriter implements Writer {
                 // Create a Sheet
                 Sheet sheet = workbook.createSheet();
 
-                fillData(dataInfo, workbook, sheet);
+                fillData(reconstruct(dataInfo, workbook), workbook, sheet);
 
                 resizeColumn(sheet);
 
@@ -70,9 +73,9 @@ public class ExcelWriter implements Writer {
         }
     }
 
-    private void fillData(Pair<List<String>, List<List<Object>>> dataInfo, Workbook workbook, Sheet sheet) {
+    private void fillData(Pair<List<List<String>>, List<List<Object>>> dataInfo, Workbook workbook, Sheet sheet) {
         Integer rowNum = 0;
-        List<String> lstHeader = dataInfo.getKey();
+        List<List<String>> lstHeader = dataInfo.getKey();
         if (lstHeader != null && lstHeader.size() > 0) {
             CellStyle headerCellStyle = createHeadStyle(workbook);
 
@@ -81,34 +84,43 @@ public class ExcelWriter implements Writer {
 
             // Creating cells
             int column = 0;
-            for (String title : lstHeader) {
-                Cell cell = headerRow.createCell(column++);
-                cell.setCellValue(title);
-                cell.setCellStyle(headerCellStyle);
+            for (List<String> headers : lstHeader) {
+                for (String header : headers) {
+                    Cell cell = headerRow.createCell(column++);
+                    cell.setCellValue(header);
+                    cell.setCellStyle(headerCellStyle);
+                }
             }
         }
 
         CellStyle dateCellStyle = stylize(workbook);
 
-        List<List<Object>> lstData = dataInfo.getValue();
+        List<List<Object>> records = dataInfo.getValue();
         // Create Other rows and cells with data
 
-        for (List<Object> rowData : lstData) {
+        for (List<Object> line : records) {
             Row row = sheet.createRow(rowNum++);
             int columnNum = 0;
-            for (Object colData : rowData) {
-                Cell cell = row.createCell(columnNum++);
-                if (colData != null) {
-                    Class<?> dataClass = colData.getClass();
+            Cell cell;
+            for (Object item : line) {
+                if (item != null) {
+                    Class<?> dataClass = item.getClass();
                     if (ClassUtils.isAssignable(dataClass, String.class)) {
-                        cell.setCellValue(String.valueOf(colData));
+                        cell = row.createCell(columnNum++, CellType.STRING);
+                        cell.setCellValue(String.valueOf(item));
                     } else if (ClassUtils.isAssignable(dataClass, Double.class, true)) {
-                        cell.setCellValue(Double.class.cast(colData));
+                        cell = row.createCell(columnNum++, CellType.NUMERIC);
+                        cell.setCellValue(Double.class.cast(item));
                     } else if (ClassUtils.isAssignable(dataClass, Date.class)) {
-                        cell.setCellValue(Date.class.cast(colData));
+                        cell = row.createCell(columnNum++, CellType.NUMERIC);
+                        cell.setCellValue(Date.class.cast(item));
                         cell.setCellStyle(dateCellStyle);
                     } else if (ClassUtils.isAssignable(dataClass, Boolean.class, true)) {
-                        cell.setCellValue(Boolean.class.cast(colData));
+                        cell = row.createCell(columnNum++, CellType.BOOLEAN);
+                        cell.setCellValue(Boolean.class.cast(item));
+                    } else {
+                        cell = row.createCell(columnNum++, CellType.STRING);
+                        cell.setCellValue(String.valueOf(item));
                     }
                 }
             }
@@ -158,5 +170,97 @@ public class ExcelWriter implements Writer {
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
         return headerCellStyle;
+    }
+
+    private int limit(Workbook workbook) {
+        int columns = -1;
+        SpreadsheetVersion version = workbook.getSpreadsheetVersion();
+        switch (version) {
+            case EXCEL97:
+                columns = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+                break;
+            case EXCEL2007:
+                columns = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+                break;
+            default:
+                logger.error("Can't identify current excel version, file will be ignored!");
+        }
+        return columns;
+    }
+
+    private Pair<List<List<String>>, List<List<Object>>> reconstruct(
+        Pair<List<String>, List<List<Object>>> records, Workbook workbook) {
+        Pair<List<List<String>>, List<List<Object>>> result = null;
+        int boundary = limit(workbook);
+        if (records != null) {
+            List<List<String>> overview = null;
+            List<String> headers = records.getKey();
+            if (headers != null) {
+                overview = eachHeader(headers, boundary);
+            }
+
+            List<List<Object>> items = null;
+            List<List<Object>> data = records.getValue();
+            if (data != null && data.size() > 0) {
+                items = new ArrayList<>();
+                for (List<Object> row : data) {
+                    items.addAll(eachLine(row, boundary));
+                }
+            }
+            result = new Pair<>(overview, items);
+        }
+        return result;
+    }
+
+
+    private List<List<String>> eachHeader(List<String> headers, int boundary) {
+        List<List<String>> overview;
+        int size = headers.size();
+        overview = new ArrayList<>();
+        if (size > boundary) {
+            int segment = size / boundary + (size % boundary == 0 ? 0 : 1);
+            int start, end;
+            for (int counter = 0; counter < segment; counter++) {
+                start = counter * boundary;
+                if (counter != segment - 1) {
+                    end = start + boundary;
+                } else {
+                    end = size;
+                }
+                List<String> head = new ArrayList<>();
+                for (int index = start; index < end; index++) {
+                    head.add(headers.get(index));
+                }
+                overview.add(head);
+            }
+        } else {
+            overview.add(headers);
+        }
+        return overview;
+    }
+
+    private List<List<Object>> eachLine(List<Object> row, int boundary) {
+        List<List<Object>> overall = new ArrayList<>();
+        int size = row.size();
+        if (size > boundary) {
+            int segment = size / boundary + (size % boundary == 0 ? 0 : 1);
+            int start, end;
+            for (int counter = 0; counter < segment; counter++) {
+                start = counter * boundary;
+                if (counter != segment - 1) {
+                    end = start + boundary;
+                } else {
+                    end = size;
+                }
+                List<Object> item = new ArrayList<>();
+                for (int index = start; index < end; index++) {
+                    item.add(row.get(index));
+                }
+                overall.add(item);
+            }
+        } else {
+            overall.add(row);
+        }
+        return overall;
     }
 }
