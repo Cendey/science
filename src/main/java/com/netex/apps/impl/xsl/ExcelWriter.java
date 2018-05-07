@@ -191,7 +191,7 @@ public class ExcelWriter implements Writer {
     private Pair<List<List<String>>, List<List<Object>>> reconstruct(
         Pair<List<String>, List<List<Object>>> records, Workbook workbook) {
         Pair<List<List<String>>, List<List<Object>>> result = null;
-        int boundary = limit(workbook);
+        int boundary = limit(workbook) + 1;
         if (records != null) {
             List<List<String>> overview = null;
             List<String> headers = records.getKey();
