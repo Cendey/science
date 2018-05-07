@@ -32,7 +32,7 @@
         </rollingfile>
         <failover name="Failover" primary="RollingFile" retryInterval="60" ignoreExceptions="false">
             <failovers>
-                <appenderref ref="Console"/>
+                <appenderref ref="RollingFile"/>
             </failovers>
         </failover>
         <async name="Async" blocking="true" bufferSize="128">
@@ -43,7 +43,7 @@
         <logger name="Console" level="info" additivity="false">
             <appenderref ref="Console"/>
         </logger>
-        <root level="info">
+        <root level="error">
             <appenderref ref="Console"/>
             <appenderref ref="Async"/>
         </root>

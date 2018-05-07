@@ -1,10 +1,12 @@
 package com.netex.apps.exts;
 
+import com.google.common.base.Stopwatch;
 import com.netex.apps.meta.TaskMeta;
 import javafx.concurrent.Task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,12 +41,16 @@ public class GroupTask extends Task<List<String>> implements Callable<List<Strin
     @Override
     public List<String> call() {
         logger.info("File conversion is scheduled now!");
+        Stopwatch stopwatch = Stopwatch.createStarted();
         List<String> result = new ArrayList<>();
         for (int index = startIndex; index < endIndex; index++) {
             Optional.ofNullable(Worker.perform(tasks.get(index))).ifPresent(result::addAll);
             updateProgress(index - startIndex + 1, endIndex - startIndex);
         }
         endController.countDown();
+        stopwatch.stop();
+        Duration duration = stopwatch.elapsed();
+        logger.error(String.format("Time consumed: %d minutes", duration.toMinutes()));
         return result;
     }
 }
