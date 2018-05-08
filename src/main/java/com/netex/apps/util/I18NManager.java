@@ -1,4 +1,4 @@
-package com.netex.apps.exts;
+package com.netex.apps.util;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -9,13 +9,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 //https://www.sothawo.com/2016/09/how-to-implement-a-javafx-ui-where-the-language-can-be-changed-dynamically/
 //https://stackoverflow.com/questions/21171249/how-to-reload-the-screen-when-changing-languages-in-javafx
 //https://stackoverflow.com/questions/32464974/javafx-change-application-language-on-the-run
-public class I18N {
+public class I18NManager {
+
     /**
      * the current selected Locale.
      */
@@ -32,7 +37,8 @@ public class I18N {
      * @return List of Locale objects.
      */
     public static List<Locale> getSupportedLocales() {
-        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, Locale.GERMAN));
+        return new ArrayList<>(
+            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE));
     }
 
     /**

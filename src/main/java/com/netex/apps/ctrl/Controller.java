@@ -20,12 +20,19 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -41,13 +48,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -133,23 +144,12 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         model = new Model();
         srcPath.textProperty().bindBidirectional(model.srcPathProperty());
-        String tipsForSrc = "1. For batch conversion, choose a source directory.\n"
-                .concat("2. Or, choose a single file to conversion.");
-        addTooltip(srcPath, tipsForSrc);
         txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
-        String tipsForSrcFuzzyName =
-                "Specify a file name to match, system will find all those files which names are like that.\n"
-                        .concat("In single file conversion, it is not available!");
-        addTooltip(txtFuzzySrcFileName, tipsForSrcFuzzyName);
         txtFuzzySrcFileName.setEditable(false);
+
         destPath.textProperty().bindBidirectional(model.destPathProperty());
-        String tipsForDestPath = "Please choose the directory which would store the conversion file(s).";
-        addTooltip(destPath, tipsForDestPath);
         txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
-        String tipsForDestPrefixName =
-                "The file name is optional, if specified, system will use it to name the conversion file;\n"
-                        .concat("otherwise the conversion file(s) name is as same as source file(s)!");
-        addTooltip(txtDestPrefixName, tipsForDestPrefixName);
+
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
@@ -282,10 +282,6 @@ public class Controller implements Initializable {
                 return initDirectory(destination);
             }
         }
-    }
-
-    private void addTooltip(TextField instance, String toolTips) {
-        instance.tooltipProperty().setValue(new Tooltip(toolTips));
     }
 
     //http://fxexperience.com/controlsfx/

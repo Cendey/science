@@ -1,6 +1,7 @@
 package com.netex.apps.gui;
 
 import com.netex.apps.ctrl.Controller;
+import com.netex.apps.util.I18NManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class Main extends Application {
 
@@ -25,6 +27,7 @@ public class Main extends Application {
         URL resource = classLoader.getResource("configs/science.fxml");
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
+            fxmlLoader.setResources(ResourceBundle.getBundle("message.message", I18NManager.getDefaultLocale()));
             Parent root = null;
             try {
                 root = fxmlLoader.load();
