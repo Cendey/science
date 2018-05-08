@@ -86,7 +86,7 @@
             </rowConstraints>
             <children>
                 <Label fx:id="lblSrcFile" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                       prefHeight="25.0" prefWidth="77.0" style="&#10;" text="%lbl.source.path" GridPane.rowIndex="1">
+                       prefHeight="25.0" prefWidth="77.0" style="&#10;" text="%label.source.path" GridPane.rowIndex="1">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -100,18 +100,18 @@
                            prefHeight="25.0" prefWidth="453.0" GridPane.columnIndex="1" GridPane.columnSpan="4"
                            GridPane.rowIndex="1">
                     <tooltip>
-                        <Tooltip text="%tltp.source.path"/>
+                        <Tooltip text="%tooltip.source.path"/>
                     </tooltip>
                 </TextField>
                 <Button fx:id="btnSrcPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseSrcPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.rowIndex="1">
                     <tooltip>
-                        <Tooltip text="%tltp.choose.source.path"/>
+                        <Tooltip text="%tooltip.choose.source.path"/>
                     </tooltip>
                 </Button>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0"
-                       prefWidth="77.0" text="%lbl.target.path" GridPane.rowIndex="3">
+                       prefWidth="77.0" text="%label.target.path" GridPane.rowIndex="3">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -125,18 +125,18 @@
                            prefHeight="25.0" prefWidth="453.0" GridPane.columnIndex="1" GridPane.columnSpan="4"
                            GridPane.rowIndex="3">
                     <tooltip>
-                        <Tooltip text="%tltp.target.path"/>
+                        <Tooltip text="%tooltip.target.path"/>
                     </tooltip>
                 </TextField>
                 <Button fx:id="btnDestPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#chooseDestPath" prefHeight="25.0" prefWidth="61.0" text="..."
                         GridPane.columnIndex="5" GridPane.rowIndex="3">
                     <tooltip>
-                        <Tooltip text="%tltp.choose.target.path"/>
+                        <Tooltip text="%tooltip.choose.target.path"/>
                     </tooltip>
                 </Button>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
-                       prefWidth="84.0" text="%lbl.target.format" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                       prefWidth="84.0" text="%label.target.format" GridPane.columnIndex="4" GridPane.rowIndex="4">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -147,7 +147,7 @@
                     </styleClass>
                 </Label>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
-                       prefWidth="77.0" text="%lbl.source.fuzzy.name" GridPane.rowIndex="2">
+                       prefWidth="77.0" text="%label.source.fuzzy.name" GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -161,12 +161,12 @@
                            maxWidth="1.7976931348623157E308" onMouseClicked="#chooseSrcFuzzyName" prefHeight="25.0"
                            prefWidth="281.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
                     <tooltip>
-                        <Tooltip text="%tltp.name.to.match"/>
+                        <Tooltip text="%tooltip.name.to.match"/>
                     </tooltip>
                 </TextField>
                 <Button fx:id="btnStart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#startWork" prefHeight="25.0" prefWidth="61.0"
-                        text="%btn.work.start" GridPane.columnIndex="4" GridPane.rowIndex="9">
+                        text="%button.work.start" GridPane.columnIndex="4" GridPane.rowIndex="9">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -176,7 +176,7 @@
                 </Button>
                 <Button fx:id="btnCancel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                         mnemonicParsing="false" onAction="#cancelWork" prefHeight="25.0" prefWidth="61.0"
-                        text="%btn.work.cancel" GridPane.columnIndex="5" GridPane.rowIndex="9">
+                        text="%button.work.cancel" GridPane.columnIndex="5" GridPane.rowIndex="9">
                     <font>
                         <Font name="Arial" size="12.0"/>
                     </font>
@@ -188,7 +188,7 @@
                              prefWidth="240.0" progress="0.0" GridPane.columnSpan="2" GridPane.hgrow="NEVER"
                              GridPane.rowIndex="9" GridPane.vgrow="NEVER"/>
                 <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0"
-                       prefWidth="77.0" text="%lbl.target.renamed.to" GridPane.rowIndex="4">
+                       prefWidth="77.0" text="%label.target.renamed.to" GridPane.rowIndex="4">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
@@ -200,37 +200,37 @@
                 </Label>
                 <CheckBox fx:id="cbxIndicatorForBatch" maxHeight="1.7976931348623157E308"
                           maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#validate"
-                          prefHeight="25.0" prefWidth="62.0" text="%cbx.batch.operator" GridPane.columnIndex="5"
+                          prefHeight="25.0" prefWidth="62.0" text="%checkbox.batch.operator" GridPane.columnIndex="5"
                           GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                     <tooltip>
-                        <Tooltip text="%tltp.for.batch"/>
+                        <Tooltip text="%tooltip.for.batch"/>
                     </tooltip>
                 </CheckBox>
                 <TextField fx:id="txtDestPrefixName" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onMouseClicked="#chooseDestPrefixName" prefHeight="25.0"
                            prefWidth="281.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
                     <tooltip>
-                        <Tooltip text="%tltp.rename.target.file"/>
+                        <Tooltip text="%tooltip.rename.target.file"/>
                     </tooltip>
                 </TextField>
                 <CheckBox fx:id="cbxNeedFileHeader" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                          mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="%cbx.with.header"
+                          mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="%checkbox.with.header"
                           GridPane.columnIndex="4" GridPane.rowIndex="2">
                     <font>
                         <Font name="Arial Bold" size="12.0"/>
                     </font>
                     <tooltip>
-                        <Tooltip text="%tltp.with.header"/>
+                        <Tooltip text="%tooltip.with.header"/>
                     </tooltip>
                 </CheckBox>
                 <ChoiceBox fx:id="cboDestFileFormat" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="241.0"
                            GridPane.columnIndex="5" GridPane.hgrow="NEVER" GridPane.rowIndex="4" GridPane.vgrow="NEVER">
                     <tooltip>
-                        <Tooltip text="%tltp.target.file.format"/>
+                        <Tooltip text="%tooltip.target.file.format"/>
                     </tooltip>
                 </ChoiceBox>
                 <ImageView fx:id="appLogo" fitHeight="50.0" fitWidth="235.0" pickOnBounds="true" preserveRatio="true"
@@ -244,13 +244,13 @@
                                prefWidth="200.0" GridPane.columnSpan="6" GridPane.rowIndex="5" GridPane.rowSpan="4">
                     <columns>
                         <TreeTableColumn fx:id="nameColumn" prefWidth="638.0" styleClass="column-header"
-                                         text="%tbl.column.name"/>
+                                         text="%treetableview.column.name"/>
                         <TreeTableColumn fx:id="sizeColumn" maxWidth="92.0" minWidth="0.0" prefWidth="92.0"
-                                         styleClass="column-header" text="%tbl.column.size"/>
+                                         styleClass="column-header" text="%treetableview.column.size"/>
                         <TreeTableColumn fx:id="modifiedColumn" maxWidth="182.0" prefWidth="182.0"
-                                         styleClass="column-header" text="%tbl.column.modified.date"/>
+                                         styleClass="column-header" text="%treetableview.column.modified.date"/>
                         <TreeTableColumn fx:id="typeColumn" maxWidth="57.0" prefWidth="57.0" styleClass="column-header"
-                                         text="%tbl.column.type"/>
+                                         text="%treetableview.column.type"/>
                     </columns>
                     <styleClass>
                         <String fx:value="table-view"/>
