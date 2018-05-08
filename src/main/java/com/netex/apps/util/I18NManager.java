@@ -38,8 +38,10 @@ public class I18NManager {
      */
     public static List<Locale> getSupportedLocales() {
         return new ArrayList<>(
-            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE,
-                Locale.JAPAN, Locale.JAPANESE, Locale.KOREA));
+            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
+                Locale.SIMPLIFIED_CHINESE,
+                Locale.TRADITIONAL_CHINESE,
+                Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
     }
 
     /**
