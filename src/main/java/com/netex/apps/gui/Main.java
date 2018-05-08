@@ -1,6 +1,7 @@
 package com.netex.apps.gui;
 
 import com.netex.apps.ctrl.Controller;
+import com.netex.apps.meta.ConfigMeta;
 import com.netex.apps.util.I18NManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,10 +25,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL resource = classLoader.getResource("configs/science.fxml");
+        URL resource = classLoader.getResource(ConfigMeta.CONFIGS_SCIENCE_FXML);
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
-            fxmlLoader.setResources(ResourceBundle.getBundle("message.message", I18NManager.getDefaultLocale()));
+            fxmlLoader
+                .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGE_MESSAGE, I18NManager.getDefaultLocale()));
             Parent root = null;
             try {
                 root = fxmlLoader.load();
@@ -35,10 +37,10 @@ public class Main extends Application {
                 logger.error(e.getCause().getMessage());
             }
             Scene scene = new Scene(Objects.requireNonNull(root), 971, 600);
-            URL css = classLoader.getResource("css/science.css");
+            URL css = classLoader.getResource(ConfigMeta.CSS_SCIENCE_CSS);
             scene.getStylesheets().add(Objects.requireNonNull(css).toExternalForm());
             primaryStage.setScene(scene);
-            URL imageUrl = classLoader.getResource("picture/office.png");
+            URL imageUrl = classLoader.getResource(ConfigMeta.PICTURE_OFFICE_PNG);
             Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
             primaryStage.getIcons().add(icon);
             Controller controller = fxmlLoader.getController();

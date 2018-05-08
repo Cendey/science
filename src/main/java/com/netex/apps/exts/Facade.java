@@ -5,6 +5,7 @@ import com.netex.apps.impl.csv.CsvFactory;
 import com.netex.apps.impl.txt.TextFactory;
 import com.netex.apps.impl.xsl.ExcelFactory;
 import com.netex.apps.intf.Factory;
+import com.netex.apps.meta.ConfigMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,14 +38,14 @@ class Facade {
                 }
                 if (StringUtils.isNotEmpty(fileType)) {
                     switch (fileType) {
-                        case "text/plain":
+                        case ConfigMeta.TEXT_PLAIN:
                             factory = new TextFactory();
                             break;
-                        case "text/csv":
+                        case ConfigMeta.TEXT_CSV:
                             factory = new CsvFactory();
                             break;
-                        case "application/vnd.ms-excel":
-                        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                        case ConfigMeta.EXCEL97:
+                        case ConfigMeta.EXCEL2007:
                             factory = new ExcelFactory();
                             break;
                         default:

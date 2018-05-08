@@ -5,6 +5,7 @@ import com.netex.apps.exts.ParallelGroup;
 import com.netex.apps.intf.Effect;
 import com.netex.apps.intf.Result;
 import com.netex.apps.meta.CSSMeta;
+import com.netex.apps.meta.ConfigMeta;
 import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
@@ -105,32 +106,35 @@ public class Controller implements Initializable {
     private Function<Model, Result<Node, String>> validation = (model) -> {
         if (cbxIndicatorForBatch.isSelected()) {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, "Source directory is required!");
+                return Result.failure(srcPath, ConfigMeta.SOURCE_DIRECTORY_IS_REQUIRED);
             } else if (!Files.isDirectory().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, "Source directory is not existed!");
+                return Result.failure(srcPath, ConfigMeta.SOURCE_DIRECTORY_IS_NOT_EXISTED);
             } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
-                return Result.failure(txtFuzzySrcFileName, "The matched source file name is required!");
-            } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory().apply(new File(model.getDestPath()))) {
-                return Result.failure(destPath, "Target directory is not existed!");
-            } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(cboDestFileFormat, "Target file format is required!");
+                return Result.failure(txtFuzzySrcFileName, ConfigMeta.THE_MATCHED_SOURCE_FILE_NAME_IS_REQUIRED);
+            } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory()
+                .apply(new File(model.getDestPath()))) {
+                return Result.failure(destPath, ConfigMeta.TARGET_DIRECTORY_IS_NOT_EXISTED);
+            } else if (cboDestFileFormat.getValue() == null || StringUtils
+                .isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
             } else {
-                return Result.success(null, "Successfully!");
+                return Result.success(null, ConfigMeta.SUCCESSFULLY);
             }
         } else {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, "Source file is required!");
+                return Result.failure(srcPath, ConfigMeta.SOURCE_FILE_IS_REQUIRED);
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, "Source file is not existed!");
-            } else if (cboDestFileFormat.getValue() == null || StringUtils.isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(cboDestFileFormat, "Target file format is required!");
+                return Result.failure(srcPath, ConfigMeta.SOURCE_FILE_IS_NOT_EXISTED);
+            } else if (cboDestFileFormat.getValue() == null || StringUtils
+                .isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
             } else {
-                return Result.success(null, "Successfully!");
+                return Result.success(null, ConfigMeta.SUCCESSFULLY);
             }
         }
     };
 
-    private Effect<String> success = valid -> logger.info("All required check is passed!");
+    private Effect<String> success = valid -> logger.info(ConfigMeta.ALL_REQUIRED_CHECK_IS_PASSED);
     private Effect<String> failure = logger::error;
 
     public void setStage(Stage stage) {
@@ -155,16 +159,17 @@ public class Controller implements Initializable {
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         appLogo.setImage(new Image(
-                Objects.requireNonNull(contextClassLoader.getResource("picture/conversion.png")).toExternalForm()));
+            Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_CONVERSION_PNG))
+                .toExternalForm()));
         centerImage(appLogo);
         nameColumn.setCellValueFactory(
-                item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
+            item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
         sizeColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) | 1));
+            item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) | 1));
         modifiedColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
+            item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
         typeColumn.setCellValueFactory(
-                item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
+            item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
         progress();
     }
 
@@ -218,7 +223,8 @@ public class Controller implements Initializable {
             double delta = newValue.doubleValue() - oldValue.doubleValue();
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
-                components.parallelStream().filter(Node::isResizable).forEach(node -> adjust(node, "Width", delta));
+                components.parallelStream().filter(Node::isResizable)
+                    .forEach(node -> adjust(node, ConfigMeta.WIDTH, delta));
             }
             logTreeViewer.getColumns().forEach(column -> logTreeViewer.resizeColumn(column, delta));
         });
@@ -227,7 +233,8 @@ public class Controller implements Initializable {
             double delta = newValue.doubleValue() - oldValue.doubleValue();
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
-                components.parallelStream().filter(Node::isResizable).forEach(node -> adjust(node, "Height", delta));
+                components.parallelStream().filter(Node::isResizable)
+                    .forEach(node -> adjust(node, ConfigMeta.HEIGHT, delta));
             }
         });
     }
@@ -242,11 +249,11 @@ public class Controller implements Initializable {
                 }
             } else {
                 //Adjust orientation only for TextField.class or TextArea.class
-                if (StringUtils.equalsIgnoreCase(propertyName, "Width")) {
+                if (StringUtils.equalsIgnoreCase(propertyName, ConfigMeta.WIDTH)) {
                     if (ClassUtils.isAssignable(node.getClass(), TextInputControl.class)) {
                         Utilities.adjustSize(node, propertyName, delta);
                     }
-                } else if (StringUtils.equalsIgnoreCase(propertyName, "Height")) {
+                } else if (StringUtils.equalsIgnoreCase(propertyName, ConfigMeta.HEIGHT)) {
                     if (ClassUtils.isAssignable(node.getClass(), TextArea.class)) {
                         Utilities.adjustSize(node, propertyName, delta);
                     }
@@ -256,7 +263,7 @@ public class Controller implements Initializable {
     }
 
     private String initDirectory(String fullFilePath) {
-        if (fullFilePath == null || fullFilePath.trim().length() == 0) return System.getProperty("user.home");
+        if (fullFilePath == null || fullFilePath.trim().length() == 0) return System.getProperty(ConfigMeta.USER_HOME);
 
         String destination;
         File targetFile = new File(fullFilePath);
@@ -288,7 +295,7 @@ public class Controller implements Initializable {
     private void showMessage(String message) {
         //http://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning");
+        alert.setTitle(ConfigMeta.WARNING);
         alert.setHeaderText(null);
         alert.setContentText(String.format("%s!%n", message));
         alert.showAndWait();
@@ -393,16 +400,16 @@ public class Controller implements Initializable {
             try {
                 List<Future<List<String>>> result = classifier.classify(progressIndicator);
                 Optional.of(result).ifPresent(futures -> Platform.runLater(
-                        () -> {
-                            TreeItem<File> treeItem =
-                                    createTree(new File(Paths.get(
-                                            StringUtils.isNotEmpty(model.getDestPath()) ?
-                                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
-                            logTreeViewer.setRoot(treeItem);
-                        }
+                    () -> {
+                        TreeItem<File> treeItem =
+                            createTree(new File(Paths.get(
+                                StringUtils.isNotEmpty(model.getDestPath()) ?
+                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
+                        logTreeViewer.setRoot(treeItem);
+                    }
                 ));
             } catch (InterruptedException e) {
-                logger.error("Task(s) interrupted exception!");
+                logger.error(ConfigMeta.TASK_S_INTERRUPTED_EXCEPTION);
             } finally {
                 classifier.destroy();
                 btnStart.setDisable(false);
@@ -415,20 +422,20 @@ public class Controller implements Initializable {
 
     private List<TaskMeta> prepare() {
         List<Pair<File, Integer>> lstFilesInfo =
-                Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
+            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
         List<TaskMeta> lstTask = new ArrayList<>();
         Optional.ofNullable(lstFilesInfo).ifPresent(
-                filesInfo -> filesInfo.forEach(
-                        pair -> {
-                            String srcFilePath = pair.getKey().getPath();
-                            String nameAs = model.getSrcFuzzyName();
-                            String destFilePath = Utilities.compose(pair, model.getDestPath());
-                            String nameTo = model.getDestRenameTo();
-                            String destFileType = cboDestFileFormat.getValue().getExtension();
-                            Boolean header = model.isIsWithHeader();
-                            lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
-                        }
-                )
+            filesInfo -> filesInfo.forEach(
+                pair -> {
+                    String srcFilePath = pair.getKey().getPath();
+                    String nameAs = model.getSrcFuzzyName();
+                    String destFilePath = Utilities.compose(pair, model.getDestPath());
+                    String nameTo = model.getDestRenameTo();
+                    String destFileType = cboDestFileFormat.getValue().getExtension();
+                    Boolean header = model.isIsWithHeader();
+                    lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
+                }
+            )
         );
         return lstTask;
     }
@@ -446,17 +453,17 @@ public class Controller implements Initializable {
 
         Optional.ofNullable(service).ifPresent((service) -> {
             try {
-                logger.info("Attempt to shutdown outer executor!");
+                logger.info(ConfigMeta.ATTEMPT_TO_SHUTDOWN_OUTER_EXECUTOR);
                 service.shutdown();
                 service.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                logger.error("Outer tasks interrupted!");
+                logger.error(ConfigMeta.OUTER_TASKS_INTERRUPTED);
             } finally {
                 if (!service.isTerminated()) {
-                    logger.info("Cancel non-finished outer tasks!");
+                    logger.info(ConfigMeta.CANCEL_NON_FINISHED_OUTER_TASKS);
                 }
                 service.shutdownNow();
-                logger.info("Shutdown outer thread finished!");
+                logger.info(ConfigMeta.SHUTDOWN_OUTER_THREAD_FINISHED);
             }
         });
     }
@@ -474,11 +481,10 @@ public class Controller implements Initializable {
             if (!Files.isDirectory().apply(new File(destPathProperty.getValue()))) {
                 destPathProperty.setValue(StringUtils.EMPTY);
             }
-
-            stage.titleProperty().setValue("Batch Files Conversion");
+            stage.titleProperty().setValue(ConfigMeta.BATCH_FILES_CONVERSION);
         } else {
             txtFuzzySrcFileName.setEditable(false);
-            stage.titleProperty().setValue("Single File Conversion");
+            stage.titleProperty().setValue(ConfigMeta.SINGLE_FILE_CONVERSION);
         }
     }
 
@@ -492,23 +498,25 @@ public class Controller implements Initializable {
         String workDirectory = initDirectory(receiver.getText() != null ? receiver.getText().trim() : null);
         if (isForBatch || needDirectory) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("View Directory");
+            directoryChooser.setTitle(ConfigMeta.VIEW_DIRECTORY);
             directoryChooser.setInitialDirectory(new File(workDirectory));
             File parent = directoryChooser.showDialog(stage);
             Optional.ofNullable(parent).ifPresent(directory -> receiver.textProperty().setValue(directory.getPath()));
         } else {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("View File");
+            fileChooser.setTitle(ConfigMeta.VIEW_FILE);
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
-                    .addAll(
-                            new FileChooser.ExtensionFilter("All", "*.*"),
-                            new FileChooser.ExtensionFilter("Files", "*.txt", "*.csv", "*.xls", "*.xlsx"),
-                            new FileChooser.ExtensionFilter("Normal text file", "*.txt", "*.text"),
-                            new FileChooser.ExtensionFilter("Comma Separated Values text file", "*.csv"),
-                            new FileChooser.ExtensionFilter("Microsoft Excel Spreadsheet", "*.xls"),
-                            new FileChooser.ExtensionFilter("Office Open XML Workbook", "*.xlsx")
-                    );
+                .addAll(
+                    new FileChooser.ExtensionFilter(ConfigMeta.ALL, ConfigMeta.ALL_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.TEXT_TYPE, ConfigMeta.CSV_TYPE,
+                        ConfigMeta.XLS97_TYPE, ConfigMeta.XLSX07_TYPE),
+                    new FileChooser.ExtensionFilter(
+                        ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ACII_TEXT_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ConfigMeta.CSV_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.XLS97_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.XLSX07_TYPE)
+                );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }
@@ -521,23 +529,23 @@ public class Controller implements Initializable {
 
     private void fuzzyFileName(String initDirectory, TextField instance) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("View File");
+        fileChooser.setTitle(ConfigMeta.VIEW_FILE);
         fileChooser.setInitialDirectory(new File(initDirectory));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Files", "*.*"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.ALL_TYPE));
         File file = fileChooser.showOpenDialog(stage);
         Optional.ofNullable(file)
-                .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
+            .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
     }
 
     @SuppressWarnings(value = {"unused"})
     public void chooseSrcFuzzyName(MouseEvent actionEvent) {
         if (txtFuzzySrcFileName.isEditable() && actionEvent.getClickCount() == 2) {
             if (StringUtils.isEmpty(txtFuzzySrcFileName.textProperty().getValue())) {
-                fuzzyFileName(System.getProperty("user.home"), txtFuzzySrcFileName);
+                fuzzyFileName(System.getProperty(ConfigMeta.USER_HOME), txtFuzzySrcFileName);
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
                 if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
-                    showMessage("Source file name is illegal.");
+                    showMessage(ConfigMeta.SOURCE_FILE_NAME_IS_ILLEGAL);
                 }
             }
         }
@@ -547,11 +555,11 @@ public class Controller implements Initializable {
     public void chooseDestPrefixName(MouseEvent actionEvent) {
         if (actionEvent.getClickCount() == 2) {
             if (StringUtils.isEmpty(txtDestPrefixName.textProperty().getValue())) {
-                fuzzyFileName(System.getProperty("user.home"), txtDestPrefixName);
+                fuzzyFileName(System.getProperty(ConfigMeta.USER_HOME), txtDestPrefixName);
             } else {
                 String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
                 if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
-                    showMessage("Target file name is illegal.");
+                    showMessage(ConfigMeta.TARGET_FILE_NAME_IS_ILLEGAL);
                 }
             }
         }
@@ -562,15 +570,15 @@ public class Controller implements Initializable {
         File[] children = file.listFiles();
         if (children != null) {
             Stream.of(children).filter(
-                    child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
-                    .forEach(child -> item.getChildren().add(createTree(child)));
+                child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
+                .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource("picture/folder-modern.png")).
-                            toExternalForm()));
+                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_FOLDER_MODERN_PNG)).
+                    toExternalForm()));
         } else {
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource("picture/text-x-generic.png")).
-                            toExternalForm()));
+                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_TEXT_X_GENERIC_PNG)).
+                    toExternalForm()));
         }
         return item;
     }
@@ -581,7 +589,7 @@ public class Controller implements Initializable {
             Desktop desktop = Desktop.getDesktop();
 
             if (!Desktop.isDesktopSupported()) {
-                logger.error("Desktop is not supported in current OS!");
+                logger.error(ConfigMeta.DESKTOP_IS_NOT_SUPPORTED_IN_CURRENT_OS);
             } else {
                 Object source = mouseEvent.getSource();
                 if (source != null && ClassUtils.isAssignable(TreeTableView.class, source.getClass())) {
