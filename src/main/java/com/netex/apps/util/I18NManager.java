@@ -6,14 +6,11 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 //https://www.sothawo.com/2016/09/how-to-implement-a-javafx-ui-where-the-language-can-be-changed-dynamically/
@@ -38,10 +35,10 @@ public class I18NManager {
      */
     public static List<Locale> getSupportedLocales() {
         return new ArrayList<>(
-            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
-                Locale.SIMPLIFIED_CHINESE,
-                Locale.TRADITIONAL_CHINESE,
-                Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
+                Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
+                        Locale.SIMPLIFIED_CHINESE,
+                        Locale.TRADITIONAL_CHINESE,
+                        Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
     }
 
     /**
@@ -113,7 +110,7 @@ public class I18NManager {
     }
 
     /**
-     * creates a bound Button for the given resourcebundle key
+     * creates a bound Button for the given resource bundle key
      *
      * @param key  ResourceBundle key
      * @param args optional arguments for the message
@@ -126,7 +123,7 @@ public class I18NManager {
     }
 
     /**
-     * creates a bound Tooltip for the given resourcebundle key
+     * creates a bound Tooltip for the given resource bundle key
      *
      * @param key  ResourceBundle key
      * @param args optional arguments for the message
@@ -136,5 +133,18 @@ public class I18NManager {
         Tooltip tooltip = new Tooltip();
         tooltip.textProperty().bind(createStringBinding(key, args));
         return tooltip;
+    }
+
+    /**
+     * creates a bound MenuItem for the given resource bundle key
+     *
+     * @param key  ResourceBundle key
+     * @param args optional arguments for the message
+     * @return MenuItem
+     */
+    public static MenuItem menuItemForKey(final String key, final Object... args) {
+        MenuItem menuItem = new MenuItem();
+        menuItem.textProperty().bind(createStringBinding(key, args));
+        return menuItem;
     }
 }

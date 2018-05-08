@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import java.lang.String?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0" styleClass="background"
       xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.netex.apps.ctrl.Controller">
@@ -54,6 +39,23 @@
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" text="%menu.item.select.all"/>
                         <MenuItem mnemonicParsing="false" text="%menu.item.unselete.all"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <Menu mnemonicParsing="false" text="%menu.languages">
+                            <items>
+                                <MenuItem fx:id="menuItemForEnglish" mnemonicParsing="false" onAction="#shiftToEnglish"
+                                          text="%menu.item.english"/>
+                                <MenuItem fx:id="menuItemForGerman" mnemonicParsing="false" onAction="#shiftForGerman"
+                                          text="%menu.item.german"/>
+                                <MenuItem fx:id="menuItemForJapanese" mnemonicParsing="false"
+                                          onAction="#shiftForJapanese" text="%menu.item.japanese"/>
+                                <MenuItem fx:id="menuItemForKorean" mnemonicParsing="false" onAction="#shiftForKorean"
+                                          text="%menu.item.korean"/>
+                                <MenuItem fx:id="menuItemForSimpleChinese" mnemonicParsing="false"
+                                          onAction="#shiftForSimpleChinese" text="%menu.item.simple.chinese"/>
+                                <MenuItem fx:id="menuItemForTraditionalChinese" mnemonicParsing="false"
+                                          onAction="#shiftForTraditionalChinese" text="%menu.item.traditional.chinese"/>
+                            </items>
+                        </Menu>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">

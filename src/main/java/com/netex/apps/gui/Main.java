@@ -29,7 +29,7 @@ public class Main extends Application {
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
             fxmlLoader
-                .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGE_MESSAGE, I18NManager.getDefaultLocale()));
+                    .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, I18NManager.getDefaultLocale()));
             Parent root = null;
             try {
                 root = fxmlLoader.load();
@@ -45,6 +45,7 @@ public class Main extends Application {
             primaryStage.getIcons().add(icon);
             Controller controller = fxmlLoader.getController();
             controller.setStage(primaryStage);
+            controller.setFxmlLoader(fxmlLoader);
             primaryStage.setResizable(true);
             primaryStage.show();
         });

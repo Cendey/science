@@ -13,7 +13,7 @@ package com.netex.apps.meta;
 public class ConfigMeta {
 
     public static final String CONFIGS_SCIENCE_FXML = "configs/science.fxml";
-    public static final String MESSAGE_MESSAGE = "message.message";
+    public static final String MESSAGES_MESSAGE = "messages.message";
     public static final String CSS_SCIENCE_CSS = "css/science.css";
     public static final String PICTURE_OFFICE_PNG = "picture/office.png";
     public static final String SOURCE_DIRECTORY_IS_REQUIRED = "Source directory is required!";
