@@ -54,23 +54,6 @@
                         <SeparatorMenuItem mnemonicParsing="false"/>
                         <MenuItem mnemonicParsing="false" text="%menu.item.select.all"/>
                         <MenuItem mnemonicParsing="false" text="%menu.item.unselete.all"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <Menu mnemonicParsing="false" text="%menu.languages">
-                            <items>
-                                <MenuItem fx:id="menuItemForEnglish" mnemonicParsing="false" onAction="#shiftToEnglish"
-                                          text="%menu.item.english"/>
-                                <MenuItem fx:id="menuItemForGerman" mnemonicParsing="false" onAction="#shiftForGerman"
-                                          text="%menu.item.german"/>
-                                <MenuItem fx:id="menuItemForJapanese" mnemonicParsing="false"
-                                          onAction="#shiftForJapanese" text="%menu.item.japanese"/>
-                                <MenuItem fx:id="menuItemForKorean" mnemonicParsing="false" onAction="#shiftForKorean"
-                                          text="%menu.item.korean"/>
-                                <MenuItem fx:id="menuItemForSimpleChinese" mnemonicParsing="false"
-                                          onAction="#shiftForSimpleChinese" text="%menu.item.simple.chinese"/>
-                                <MenuItem fx:id="menuItemForTraditionalChinese" mnemonicParsing="false"
-                                          onAction="#shiftForTraditionalChinese" text="%menu.item.traditional.chinese"/>
-                            </items>
-                        </Menu>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">
@@ -262,11 +245,11 @@
                     <columns>
                         <TreeTableColumn fx:id="nameColumn" prefWidth="638.0" styleClass="column-header"
                                          text="%treetableview.column.name"/>
-                        <TreeTableColumn fx:id="sizeColumn" maxWidth="92.0" minWidth="0.0" prefWidth="92.0"
-                                         styleClass="column-header" text="%treetableview.column.size"/>
-                        <TreeTableColumn fx:id="modifiedColumn" maxWidth="182.0" prefWidth="182.0"
-                                         styleClass="column-header" text="%treetableview.column.modified.date"/>
-                        <TreeTableColumn fx:id="typeColumn" maxWidth="57.0" prefWidth="57.0" styleClass="column-header"
+                        <TreeTableColumn fx:id="sizeColumn" minWidth="0.0" prefWidth="92.0" styleClass="column-header"
+                                         text="%treetableview.column.size"/>
+                        <TreeTableColumn fx:id="modifiedColumn" prefWidth="182.0" styleClass="column-header"
+                                         text="%treetableview.column.modified.date"/>
+                        <TreeTableColumn fx:id="typeColumn" prefWidth="57.0" styleClass="column-header"
                                          text="%treetableview.column.type"/>
                     </columns>
                     <styleClass>

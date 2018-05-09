@@ -1,7 +1,6 @@
 package cn.com.nettex.apps.ctrl;
 
 import cn.com.nettex.apps.exts.ParallelGroup;
-import cn.com.nettex.apps.i18n.I18NManager;
 import cn.com.nettex.apps.intf.Effect;
 import cn.com.nettex.apps.intf.Result;
 import cn.com.nettex.apps.meta.CSSMeta;
@@ -58,7 +57,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -97,12 +95,6 @@ public class Controller implements Initializable {
     public TreeTableColumn<File, Long> sizeColumn;
     public TreeTableColumn<File, Date> modifiedColumn;
     public TreeTableColumn<File, String> typeColumn;
-    public MenuItem menuItemForEnglish;
-    public MenuItem menuItemForGerman;
-    public MenuItem menuItemForJapanese;
-    public MenuItem menuItemForKorean;
-    public MenuItem menuItemForSimpleChinese;
-    public MenuItem menuItemForTraditionalChinese;
 
 
     private Stage stage;
@@ -630,48 +622,5 @@ public class Controller implements Initializable {
             Stream.of(srcPath, txtFuzzySrcFileName, destPath, txtDestPrefixName).forEach(this::available);
         }
         return indicator == null;
-    }
-
-    /**
-     * sets the given Locale in the I18N class and keeps count of the number of switches.
-     *
-     * @param locale the new local to set
-     */
-    private void shiftLanguage(Locale locale) {
-        logger.info(ConfigMeta.SET_USER_PREFER_LANGUAGE_FROM_TO_NOW, I18NManager.getLocale().getLanguage(),
-            locale.getLanguage());
-        I18NManager.setLocale(locale);
-    }
-
-    //    https://stackoverflow.com/questions/21171249/how-to-reload-the-screen-when-changing-languages-in-javafx
-//    https://stackoverflow.com/questions/10143392/javafx-2-and-internationalization
-    @SuppressWarnings(value = {"unused"})
-    public void shiftToEnglish(ActionEvent actionEvent) {
-        shiftLanguage(Locale.ENGLISH);
-    }
-
-    @SuppressWarnings(value = {"unused"})
-    public void shiftForGerman(ActionEvent actionEvent) {
-        shiftLanguage(Locale.GERMANY);
-    }
-
-    @SuppressWarnings(value = {"unused"})
-    public void shiftForJapanese(ActionEvent actionEvent) {
-        shiftLanguage(Locale.JAPANESE);
-    }
-
-    @SuppressWarnings(value = {"unused"})
-    public void shiftForKorean(ActionEvent actionEvent) {
-        shiftLanguage(Locale.KOREAN);
-    }
-
-    @SuppressWarnings(value = {"unused"})
-    public void shiftForSimpleChinese(ActionEvent actionEvent) {
-        shiftLanguage(Locale.SIMPLIFIED_CHINESE);
-    }
-
-    @SuppressWarnings(value = {"unused"})
-    public void shiftForTraditionalChinese(ActionEvent actionEvent) {
-        shiftLanguage(Locale.TRADITIONAL_CHINESE);
     }
 }
