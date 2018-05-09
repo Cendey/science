@@ -1,6 +1,5 @@
 package cn.com.nettex.apps.mods;
 
-import cn.com.nettex.apps.meta.ConfigMeta;
 import cn.com.nettex.apps.meta.FileExtensions;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,7 +28,7 @@ public class Model {
             new FileExtensions("Microsoft Excel", ".xls"),
             new FileExtensions("Office Open XML Workbook", ".xlsx")
     };
-    private StringProperty title;
+
     private StringProperty srcPath;
     private StringProperty srcNamedAs;
     private StringProperty srcFuzzyName;
@@ -43,7 +42,6 @@ public class Model {
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
-        this.title = new SimpleStringProperty(ConfigMeta.FILE_CONVERSION);
         this.srcPath = new SimpleStringProperty(BLANK);
         this.srcNamedAs = new SimpleStringProperty(BLANK);
         this.srcFuzzyName = new SimpleStringProperty(BLANK);
@@ -62,7 +60,6 @@ public class Model {
             String srcFuzzyName, String srcFormat,
             String destPath, String destNamedTo,
             FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
-        this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
         this.srcFuzzyName = new SimpleStringProperty(srcFuzzyName);
@@ -72,18 +69,6 @@ public class Model {
         this.destFormat = FXCollections.observableArrayList(destFormat);
         this.isForBatch = new SimpleBooleanProperty(isForBatch);
         this.isWithHeader = new SimpleBooleanProperty(isWithHeader);
-    }
-
-    public String getTitle() {
-        return title.get();
-    }
-
-    public StringProperty titleProperty() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title.set(title);
     }
 
     public String getSrcPath() {

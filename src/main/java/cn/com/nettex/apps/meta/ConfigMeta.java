@@ -13,7 +13,11 @@ package cn.com.nettex.apps.meta;
 public class ConfigMeta {
 
     //application message configuration meta
-    public static final String FILE_CONVERSION = "File(s) Conversion";
+    public static final String WINDOWS_TITLE = "window.title";
+    public static final String MESSAGE_VIEW_FILE = "message.view.file";
+    public static final String MESSAGE_VIEW_DIRECTORY = "message.view.directory";
+    public static final String MESSAGE_BATCH_CONVERSION = "message.batch.conversion";
+    public static final String MESSAGE_SINGLE_CONVERSION = "message.single.conversion";
     public static final String CONFIGS_SCIENCE_FXML = "configs/science.fxml";
     public static final String MESSAGES_MESSAGE = "messages.message";
     public static final String CSS_SCIENCE_CSS = "css/science.css";
@@ -53,10 +57,6 @@ public class ConfigMeta {
     public static final String COMMA_SEPARATED_VALUES_TEXT_FILE = "Comma Separated Values text file";
     public static final String MICROSOFT_EXCEL_SPREADSHEET = "Microsoft Excel Spreadsheet";
     public static final String OFFICE_OPEN_XML_WORKBOOK = "Office Open XML Workbook";
-    public static final String VIEW_FILE = "View File";
-    public static final String VIEW_DIRECTORY = "View Directory";
-    public static final String BATCH_FILES_CONVERSION = "Batch Files Conversion";
-    public static final String SINGLE_FILE_CONVERSION = "Single File Conversion";
     public static final String TASK_S_INTERRUPTED_EXCEPTION = "Task(s) interrupted exception!";
     public static final String TEXT_PLAIN = "text/plain";
     public static final String TEXT_CSV = "text/csv";
