@@ -6,17 +6,28 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 //https://www.sothawo.com/2016/09/how-to-implement-a-javafx-ui-where-the-language-can-be-changed-dynamically/
 //https://stackoverflow.com/questions/21171249/how-to-reload-the-screen-when-changing-languages-in-javafx
 //https://stackoverflow.com/questions/32464974/javafx-change-application-language-on-the-run
 public class I18NManager {
+
+    private final static Logger logger = LogManager.getLogger(I18NManager.class);
 
     /**
      * the current selected Locale.
@@ -35,10 +46,10 @@ public class I18NManager {
      */
     public static List<Locale> getSupportedLocales() {
         return new ArrayList<>(
-                Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
-                        Locale.SIMPLIFIED_CHINESE,
-                        Locale.TRADITIONAL_CHINESE,
-                        Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
+            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
+                Locale.SIMPLIFIED_CHINESE,
+                Locale.TRADITIONAL_CHINESE,
+                Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
     }
 
     /**
@@ -146,5 +157,38 @@ public class I18NManager {
         MenuItem menuItem = new MenuItem();
         menuItem.textProperty().bind(createStringBinding(key, args));
         return menuItem;
+    }
+
+    /**
+     * creates a bound Menu for the given resource bundle key
+     *
+     * @param key  ResourceBundle key
+     * @param args optional arguments for the message
+     * @return Menu
+     */
+    public static Menu menuForKey(final String key, final Object... args) {
+        Menu menu = new Menu();
+        menu.textProperty().bind(createStringBinding(key, args));
+        return menu;
+    }
+
+    /**
+     * generally bind a key to control component for i18n.
+     *
+     * @param node a control component
+     * @param key  resource bundle key
+     * @param args optional arguments for the message
+     */
+    public static void bindKey(Object node, final String key, final Object... args) {
+        Class<?> clazz = node.getClass();
+        try {
+            Method reader = clazz.getMethod("textProperty");
+            Object property = reader.invoke(node);
+            Class<?> chain = property.getClass();
+            Method bind = chain.getMethod("bind", StringBinding.class);
+            bind.invoke(property, createStringBinding(key, args));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            logger.error(e.getCause().getMessage());
+        }
     }
 }
