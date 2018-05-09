@@ -1,8 +1,8 @@
-package com.netex.apps.meta;
+package com.netex.apps.i18n;
 
 /**
  * <p>Title: science</p>
- * <p>Description: com.netex.apps.meta.I18NMeta</p>
+ * <p>Description: com.netex.apps.i18n.I18NMeta</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *

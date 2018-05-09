@@ -2,6 +2,7 @@ package com.netex.apps.ctrl;
 
 import com.google.common.io.Files;
 import com.netex.apps.exts.ParallelGroup;
+import com.netex.apps.i18n.I18NManager;
 import com.netex.apps.intf.Effect;
 import com.netex.apps.intf.Result;
 import com.netex.apps.meta.CSSMeta;
@@ -9,7 +10,6 @@ import com.netex.apps.meta.ConfigMeta;
 import com.netex.apps.meta.FileExtensions;
 import com.netex.apps.meta.TaskMeta;
 import com.netex.apps.mods.Model;
-import com.netex.apps.util.I18NManager;
 import com.netex.apps.util.Utilities;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;

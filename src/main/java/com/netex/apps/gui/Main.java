@@ -1,8 +1,8 @@
 package com.netex.apps.gui;
 
 import com.netex.apps.ctrl.Controller;
+import com.netex.apps.i18n.BaseResourceBundleControl;
 import com.netex.apps.meta.ConfigMeta;
-import com.netex.apps.util.I18NManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -29,7 +30,8 @@ public class Main extends Application {
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
             fxmlLoader
-                    .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, I18NManager.getDefaultLocale()));
+                .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, Locale.getDefault(),
+                    new BaseResourceBundleControl()));
             Parent root = null;
             try {
                 root = fxmlLoader.load();

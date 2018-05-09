@@ -1,4 +1,4 @@
-package com.netex.apps.util;
+package com.netex.apps.i18n;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
