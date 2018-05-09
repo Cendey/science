@@ -1,5 +1,6 @@
 package cn.com.nettex.apps.mods;
 
+import cn.com.nettex.apps.meta.ConfigMeta;
 import cn.com.nettex.apps.meta.FileExtensions;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,11 +23,11 @@ public class Model {
 
     private static final String BLANK = "";
     private static final FileExtensions[] COMMON_FILE_EXTENSION = {
-        new FileExtensions("Text File", ".text"),
-        new FileExtensions("ASCII Text File", ".txt"),
-        new FileExtensions("Comma Separated Values", ".csv"),
-        new FileExtensions("Microsoft Excel", ".xls"),
-        new FileExtensions("Office Open XML Workbook", ".xlsx")
+            new FileExtensions("Text File", ".text"),
+            new FileExtensions("ASCII Text File", ".txt"),
+            new FileExtensions("Comma Separated Values", ".csv"),
+            new FileExtensions("Microsoft Excel", ".xls"),
+            new FileExtensions("Office Open XML Workbook", ".xlsx")
     };
     private StringProperty title;
     private StringProperty srcPath;
@@ -42,7 +43,7 @@ public class Model {
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
-        this.title = new SimpleStringProperty("File(s) Conversion");
+        this.title = new SimpleStringProperty(ConfigMeta.FILE_CONVERSION);
         this.srcPath = new SimpleStringProperty(BLANK);
         this.srcNamedAs = new SimpleStringProperty(BLANK);
         this.srcFuzzyName = new SimpleStringProperty(BLANK);
@@ -56,11 +57,11 @@ public class Model {
     }
 
     public Model(
-        String title,
-        String srcPath, String srcNamedAs,
-        String srcFuzzyName, String srcFormat,
-        String destPath, String destNamedTo,
-        FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
+            String title,
+            String srcPath, String srcNamedAs,
+            String srcFuzzyName, String srcFormat,
+            String destPath, String destNamedTo,
+            FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
         this.title = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
