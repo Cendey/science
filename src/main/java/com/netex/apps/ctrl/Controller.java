@@ -637,7 +637,7 @@ public class Controller implements Initializable {
      *
      * @param locale the new local to set
      */
-    private void switchLanguage(Locale locale) {
+    private void shiftLanguage(Locale locale) {
         logger.info(ConfigMeta.SET_USER_PREFER_LANGUAGE_FROM_TO_NOW, I18NManager.getLocale().getLanguage(),
             locale.getLanguage());
         I18NManager.setLocale(locale);
@@ -647,31 +647,31 @@ public class Controller implements Initializable {
 //    https://stackoverflow.com/questions/10143392/javafx-2-and-internationalization
     @SuppressWarnings(value = {"unused"})
     public void shiftToEnglish(ActionEvent actionEvent) {
-        switchLanguage(Locale.ENGLISH);
+        shiftLanguage(Locale.ENGLISH);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForGerman(ActionEvent actionEvent) {
-        switchLanguage(Locale.GERMANY);
+        shiftLanguage(Locale.GERMANY);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForJapanese(ActionEvent actionEvent) {
-        switchLanguage(Locale.JAPANESE);
+        shiftLanguage(Locale.JAPANESE);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForKorean(ActionEvent actionEvent) {
-        switchLanguage(Locale.KOREAN);
+        shiftLanguage(Locale.KOREAN);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForSimpleChinese(ActionEvent actionEvent) {
-        switchLanguage(Locale.SIMPLIFIED_CHINESE);
+        shiftLanguage(Locale.SIMPLIFIED_CHINESE);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForTraditionalChinese(ActionEvent actionEvent) {
-        switchLanguage(Locale.TRADITIONAL_CHINESE);
+        shiftLanguage(Locale.TRADITIONAL_CHINESE);
     }
 }
