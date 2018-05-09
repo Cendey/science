@@ -1,5 +1,6 @@
 package cn.com.nettex.apps.i18n;
 
+import cn.com.nettex.apps.meta.ConfigMeta;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
@@ -38,10 +39,10 @@ public class I18NManager {
      */
     public static List<Locale> getSupportedLocales() {
         return new ArrayList<>(
-            Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
-                Locale.SIMPLIFIED_CHINESE,
-                Locale.TRADITIONAL_CHINESE,
-                Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
+                Arrays.asList(Locale.ENGLISH, Locale.GERMAN, Locale.GERMANY, Locale.US, Locale.CHINESE,
+                        Locale.SIMPLIFIED_CHINESE,
+                        Locale.TRADITIONAL_CHINESE,
+                        Locale.JAPAN, Locale.JAPANESE, Locale.KOREA, Locale.KOREAN));
     }
 
     /**
@@ -76,7 +77,7 @@ public class I18NManager {
      * @return localized formatted string
      */
     public static String get(final String key, final Object... args) {
-        ResourceBundle bundle = ResourceBundle.getBundle("messages.message", getLocale());
+        ResourceBundle bundle = ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, getLocale());
         return MessageFormat.format(bundle.getString(key), args);
     }
 
