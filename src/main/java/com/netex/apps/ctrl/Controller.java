@@ -17,18 +17,24 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -44,13 +50,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -96,7 +107,6 @@ public class Controller implements Initializable {
 
     private Stage stage;
     private Model model;
-    private FXMLLoader fxmlLoader;
 
     private ParallelGroup classifier;
     private ExecutorService service;
@@ -110,10 +120,10 @@ public class Controller implements Initializable {
             } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
                 return Result.failure(txtFuzzySrcFileName, ConfigMeta.THE_MATCHED_SOURCE_FILE_NAME_IS_REQUIRED);
             } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory()
-                    .apply(new File(model.getDestPath()))) {
+                .apply(new File(model.getDestPath()))) {
                 return Result.failure(destPath, ConfigMeta.TARGET_DIRECTORY_IS_NOT_EXISTED);
             } else if (cboDestFileFormat.getValue() == null || StringUtils
-                    .isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                .isEmpty(cboDestFileFormat.getValue().getExtension())) {
                 return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
             } else {
                 return Result.success(null, ConfigMeta.SUCCESSFULLY);
@@ -124,7 +134,7 @@ public class Controller implements Initializable {
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
                 return Result.failure(srcPath, ConfigMeta.SOURCE_FILE_IS_NOT_EXISTED);
             } else if (cboDestFileFormat.getValue() == null || StringUtils
-                    .isEmpty(cboDestFileFormat.getValue().getExtension())) {
+                .isEmpty(cboDestFileFormat.getValue().getExtension())) {
                 return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
             } else {
                 return Result.success(null, ConfigMeta.SUCCESSFULLY);
@@ -139,10 +149,6 @@ public class Controller implements Initializable {
         this.stage = stage;
         stage.titleProperty().bindBidirectional(model.titleProperty());
         addResizeListener();
-    }
-
-    public void setFxmlLoader(FXMLLoader fxmlLoader) {
-        this.fxmlLoader = fxmlLoader;
     }
 
     @Override
@@ -160,17 +166,17 @@ public class Controller implements Initializable {
         cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         appLogo.setImage(new Image(
-                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_CONVERSION_PNG))
-                        .toExternalForm()));
+            Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_CONVERSION_PNG))
+                .toExternalForm()));
         centerImage(appLogo);
         nameColumn.setCellValueFactory(
-                item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
+            item -> new SimpleStringProperty(fileSystemView.getSystemDisplayName(item.getValue().getValue())));
         sizeColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) | 1));
+            item -> new SimpleObjectProperty<>((item.getValue().getValue().length() >>> 10) | 1));
         modifiedColumn.setCellValueFactory(
-                item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
+            item -> new SimpleObjectProperty<>(new Date(item.getValue().getValue().lastModified())));
         typeColumn.setCellValueFactory(
-                item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
+            item -> new SimpleStringProperty(FilenameUtils.getExtension(item.getValue().getValue().getPath())));
         progress();
     }
 
@@ -225,7 +231,7 @@ public class Controller implements Initializable {
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream().filter(Node::isResizable)
-                        .forEach(node -> adjust(node, ConfigMeta.WIDTH, delta));
+                    .forEach(node -> adjust(node, ConfigMeta.WIDTH, delta));
             }
             logTreeViewer.getColumns().forEach(column -> logTreeViewer.resizeColumn(column, delta));
         });
@@ -235,7 +241,7 @@ public class Controller implements Initializable {
             ObservableList<Node> components = Pane.class.cast(root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream().filter(Node::isResizable)
-                        .forEach(node -> adjust(node, ConfigMeta.HEIGHT, delta));
+                    .forEach(node -> adjust(node, ConfigMeta.HEIGHT, delta));
             }
         });
     }
@@ -401,13 +407,13 @@ public class Controller implements Initializable {
             try {
                 List<Future<List<String>>> result = classifier.classify(progressIndicator);
                 Optional.of(result).ifPresent(futures -> Platform.runLater(
-                        () -> {
-                            TreeItem<File> treeItem =
-                                    createTree(new File(Paths.get(
-                                            StringUtils.isNotEmpty(model.getDestPath()) ?
-                                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
-                            logTreeViewer.setRoot(treeItem);
-                        }
+                    () -> {
+                        TreeItem<File> treeItem =
+                            createTree(new File(Paths.get(
+                                StringUtils.isNotEmpty(model.getDestPath()) ?
+                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
+                        logTreeViewer.setRoot(treeItem);
+                    }
                 ));
             } catch (InterruptedException e) {
                 logger.error(ConfigMeta.TASK_S_INTERRUPTED_EXCEPTION);
@@ -423,20 +429,20 @@ public class Controller implements Initializable {
 
     private List<TaskMeta> prepare() {
         List<Pair<File, Integer>> lstFilesInfo =
-                Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
+            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
         List<TaskMeta> lstTask = new ArrayList<>();
         Optional.ofNullable(lstFilesInfo).ifPresent(
-                filesInfo -> filesInfo.forEach(
-                        pair -> {
-                            String srcFilePath = pair.getKey().getPath();
-                            String nameAs = model.getSrcFuzzyName();
-                            String destFilePath = Utilities.compose(pair, model.getDestPath());
-                            String nameTo = model.getDestRenameTo();
-                            String destFileType = cboDestFileFormat.getValue().getExtension();
-                            Boolean header = model.isIsWithHeader();
-                            lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
-                        }
-                )
+            filesInfo -> filesInfo.forEach(
+                pair -> {
+                    String srcFilePath = pair.getKey().getPath();
+                    String nameAs = model.getSrcFuzzyName();
+                    String destFilePath = Utilities.compose(pair, model.getDestPath());
+                    String nameTo = model.getDestRenameTo();
+                    String destFileType = cboDestFileFormat.getValue().getExtension();
+                    Boolean header = model.isIsWithHeader();
+                    lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
+                }
+            )
         );
         return lstTask;
     }
@@ -508,16 +514,16 @@ public class Controller implements Initializable {
             fileChooser.setTitle(ConfigMeta.VIEW_FILE);
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
-                    .addAll(
-                            new FileChooser.ExtensionFilter(ConfigMeta.ALL, ConfigMeta.ALL_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.TEXT_TYPE, ConfigMeta.CSV_TYPE,
-                                    ConfigMeta.XLS97_TYPE, ConfigMeta.XLSX07_TYPE),
-                            new FileChooser.ExtensionFilter(
-                                    ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ACII_TEXT_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ConfigMeta.CSV_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.XLS97_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.XLSX07_TYPE)
-                    );
+                .addAll(
+                    new FileChooser.ExtensionFilter(ConfigMeta.ALL, ConfigMeta.ALL_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.TEXT_TYPE, ConfigMeta.CSV_TYPE,
+                        ConfigMeta.XLS97_TYPE, ConfigMeta.XLSX07_TYPE),
+                    new FileChooser.ExtensionFilter(
+                        ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ACII_TEXT_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ConfigMeta.CSV_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.XLS97_TYPE),
+                    new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.XLSX07_TYPE)
+                );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
         }
@@ -535,7 +541,7 @@ public class Controller implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.ALL_TYPE));
         File file = fileChooser.showOpenDialog(stage);
         Optional.ofNullable(file)
-                .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
+            .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
     }
 
     @SuppressWarnings(value = {"unused"})
@@ -571,15 +577,15 @@ public class Controller implements Initializable {
         File[] children = file.listFiles();
         if (children != null) {
             Stream.of(children).filter(
-                    child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
-                    .forEach(child -> item.getChildren().add(createTree(child)));
+                child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
+                .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_FOLDER_MODERN_PNG)).
-                            toExternalForm()));
+                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_FOLDER_MODERN_PNG)).
+                    toExternalForm()));
         } else {
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_TEXT_X_GENERIC_PNG)).
-                            toExternalForm()));
+                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_TEXT_X_GENERIC_PNG)).
+                    toExternalForm()));
         }
         return item;
     }
@@ -626,35 +632,46 @@ public class Controller implements Initializable {
         return indicator == null;
     }
 
+    /**
+     * sets the given Locale in the I18N class and keeps count of the number of switches.
+     *
+     * @param locale the new local to set
+     */
+    private void switchLanguage(Locale locale) {
+        logger.info(ConfigMeta.SET_USER_PREFER_LANGUAGE_FROM_TO_NOW, I18NManager.getLocale().getLanguage(),
+            locale.getLanguage());
+        I18NManager.setLocale(locale);
+    }
+
     //    https://stackoverflow.com/questions/21171249/how-to-reload-the-screen-when-changing-languages-in-javafx
 //    https://stackoverflow.com/questions/10143392/javafx-2-and-internationalization
     @SuppressWarnings(value = {"unused"})
     public void shiftToEnglish(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.ENGLISH);
+        switchLanguage(Locale.ENGLISH);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForGerman(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.GERMANY);
+        switchLanguage(Locale.GERMANY);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForJapanese(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.JAPANESE);
+        switchLanguage(Locale.JAPANESE);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForKorean(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.KOREAN);
+        switchLanguage(Locale.KOREAN);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForSimpleChinese(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.SIMPLIFIED_CHINESE);
+        switchLanguage(Locale.SIMPLIFIED_CHINESE);
     }
 
     @SuppressWarnings(value = {"unused"})
     public void shiftForTraditionalChinese(ActionEvent actionEvent) {
-        I18NManager.setLocale(Locale.TRADITIONAL_CHINESE);
+        switchLanguage(Locale.TRADITIONAL_CHINESE);
     }
 }

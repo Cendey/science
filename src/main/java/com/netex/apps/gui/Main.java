@@ -45,7 +45,6 @@ public class Main extends Application {
             primaryStage.getIcons().add(icon);
             Controller controller = fxmlLoader.getController();
             controller.setStage(primaryStage);
-            controller.setFxmlLoader(fxmlLoader);
             primaryStage.setResizable(true);
             primaryStage.show();
         });
