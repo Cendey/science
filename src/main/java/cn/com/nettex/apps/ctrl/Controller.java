@@ -303,7 +303,7 @@ public class Controller implements Initializable {
         alert.showAndWait();
     }
 
-    private void available(Node node) {
+    private void notify(Node node) {
         if (node instanceof TextField) {
             TextField instance = TextField.class.cast(node);
             StringProperty property = instance.textProperty();
@@ -620,10 +620,10 @@ public class Controller implements Initializable {
         Node indicator = result.indicator();
         if (indicator != null) {
             showMessage(result.message());
-            available(indicator);
+            notify(indicator);
             indicator.requestFocus();
         } else {
-            Stream.of(srcPath, txtFuzzySrcFileName, destPath, txtDestPrefixName).forEach(this::available);
+            Stream.of(srcPath, txtFuzzySrcFileName, destPath, txtDestPrefixName).forEach(this::notify);
         }
         return indicator == null;
     }
