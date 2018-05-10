@@ -22,12 +22,19 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -43,13 +50,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -96,30 +107,31 @@ public class Controller implements Initializable {
     private Function<Model, Result<Node, String>> validation = (model) -> {
         if (cbxIndicatorForBatch.isSelected()) {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, ConfigMeta.SOURCE_DIRECTORY_IS_REQUIRED);
+                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_DIRECTORY_REQUIRED));
             } else if (!Files.isDirectory().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, ConfigMeta.SOURCE_DIRECTORY_IS_NOT_EXISTED);
+                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_DIRECTORY_NOT_EXIST));
             } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
-                return Result.failure(txtFuzzySrcFileName, ConfigMeta.THE_MATCHED_SOURCE_FILE_NAME_IS_REQUIRED);
+                return Result.failure(txtFuzzySrcFileName, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_NAME_REQUIRED));
             } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory()
                     .apply(new File(model.getDestPath()))) {
-                return Result.failure(destPath, ConfigMeta.TARGET_DIRECTORY_IS_NOT_EXISTED);
+                return Result.failure(destPath, I18NManager.get(ConfigMeta.MESSAGE_TARGET_DIRECTORY_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                     .isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
+                return Result
+                    .failure(cboDestFileFormat, I18NManager.get(ConfigMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED));
             } else {
-                return Result.success(null, ConfigMeta.SUCCESSFULLY);
+                return Result.success(null, I18NManager.get(ConfigMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
             }
         } else {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, ConfigMeta.SOURCE_FILE_IS_REQUIRED);
+                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_REQUIRED));
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, ConfigMeta.SOURCE_FILE_IS_NOT_EXISTED);
+                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                     .isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(cboDestFileFormat, ConfigMeta.TARGET_FILE_FORMAT_IS_REQUIRED);
+                return Result.failure(cboDestFileFormat, ConfigMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED);
             } else {
-                return Result.success(null, ConfigMeta.SUCCESSFULLY);
+                return Result.success(null, I18NManager.get(ConfigMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
             }
         }
     };
@@ -534,7 +546,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
                 if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
-                    showMessage(ConfigMeta.SOURCE_FILE_NAME_IS_ILLEGAL);
+                    showMessage(I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_NAME_ILLEGAL));
                 }
             }
         }
@@ -548,7 +560,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
                 if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
-                    showMessage(ConfigMeta.TARGET_FILE_NAME_IS_ILLEGAL);
+                    showMessage(I18NManager.get(ConfigMeta.MESSAGE_TARGET_FILE_NAME_ILLEGAL));
                 }
             }
         }
