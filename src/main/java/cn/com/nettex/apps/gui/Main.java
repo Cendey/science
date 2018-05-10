@@ -2,6 +2,7 @@ package cn.com.nettex.apps.gui;
 
 import cn.com.nettex.apps.ctrl.Controller;
 import cn.com.nettex.apps.i18n.BaseResourceBundleControl;
+import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.meta.ConfigMeta;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +31,7 @@ public class Main extends Application {
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
             fxmlLoader
-                .setResources(ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, Locale.getDefault(),
+                .setResources(ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, Locale.getDefault(),
                     new BaseResourceBundleControl()));
             Parent root = null;
             try {

@@ -1,18 +1,25 @@
 package cn.com.nettex.apps.i18n;
 
-import cn.com.nettex.apps.meta.ConfigMeta;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 //https://www.sothawo.com/2016/09/how-to-implement-a-javafx-ui-where-the-language-can-be-changed-dynamically/
@@ -77,7 +84,7 @@ public class I18NManager {
      * @return localized formatted string
      */
     public static String get(final String key, final Object... args) {
-        ResourceBundle bundle = ResourceBundle.getBundle(ConfigMeta.MESSAGES_MESSAGE, getLocale());
+        ResourceBundle bundle = ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, getLocale());
         return MessageFormat.format(bundle.getString(key), args);
     }
 

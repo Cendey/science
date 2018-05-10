@@ -12,26 +12,10 @@ package cn.com.nettex.apps.meta;
  */
 public class ConfigMeta {
 
-    //application message configuration meta
-    public static final String WINDOWS_TITLE = "window.title";
-    public static final String MESSAGE_VIEW_FILE = "message.view.file";
-    public static final String MESSAGE_VIEW_DIRECTORY = "message.view.directory";
-    public static final String MESSAGE_BATCH_CONVERSION = "message.batch.conversion";
-    public static final String MESSAGE_SINGLE_CONVERSION = "message.single.conversion";
+    //application configuration meta
     public static final String CONFIGS_SCIENCE_FXML = "configs/science.fxml";
-    public static final String MESSAGES_MESSAGE = "messages.message";
     public static final String CSS_SCIENCE_CSS = "css/science.css";
     public static final String PICTURE_OFFICE_PNG = "picture/office.png";
-    public static final String MESSAGE_SOURCE_DIRECTORY_REQUIRED = "message.source.directory.required";
-    public static final String MESSAGE_SOURCE_DIRECTORY_NOT_EXIST = "message.source.directory.not.exist";
-    public static final String MESSAGE_SOURCE_NAME_REQUIRED = "message.source.name.required";
-    public static final String MESSAGE_TARGET_DIRECTORY_NOT_EXIST = "message.target.directory.not.exist";
-    public static final String MESSAGE_TARGET_FILE_FORMAT_REQUIRED = "message.target.file.format.required";
-    public static final String MESSAGE_VALIDATE_STATUS_SUCCESS = "message.validate.status.success";
-    public static final String MESSAGE_SOURCE_FILE_REQUIRED = "message.source.file.required";
-    public static final String MESSAGE_SOURCE_FILE_NOT_EXIST = "message.source.file.not.exist";
-    public static final String MESSAGE_SOURCE_FILE_NAME_ILLEGAL = "message.source.file.name.illegal";
-    public static final String MESSAGE_TARGET_FILE_NAME_ILLEGAL = "message.target.file.name.illegal";
     public static final String ALL_REQUIRED_CHECK_IS_PASSED = "All required check is passed!";
     public static final String PICTURE_CONVERSION_PNG = "picture/conversion.png";
     public static final String WIDTH = "Width";
@@ -50,9 +34,9 @@ public class ConfigMeta {
     public static final String FILES = "Files";
     public static final String TEXT_TYPE = "*.txt";
     public static final String CSV_TYPE = "*.csv";
-    public static final String XLS97_TYPE = "*.xls";
-    public static final String ACII_TEXT_TYPE = "*.text";
-    public static final String XLSX07_TYPE = "*.xlsx";
+    public static final String EXCEL97_TYPE = "*.xls";
+    public static final String ASCII_TEXT_TYPE = "*.text";
+    public static final String EXCEL07_TYPE = "*.xlsx";
     public static final String NORMAL_TEXT_FILE = "Normal text file";
     public static final String COMMA_SEPARATED_VALUES_TEXT_FILE = "Comma Separated Values text file";
     public static final String MICROSOFT_EXCEL_SPREADSHEET = "Microsoft Excel Spreadsheet";

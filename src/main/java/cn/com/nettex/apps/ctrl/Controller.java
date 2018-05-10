@@ -2,6 +2,7 @@ package cn.com.nettex.apps.ctrl;
 
 import cn.com.nettex.apps.exts.ParallelGroup;
 import cn.com.nettex.apps.i18n.I18NManager;
+import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.intf.Effect;
 import cn.com.nettex.apps.intf.Result;
 import cn.com.nettex.apps.meta.CSSMeta;
@@ -107,31 +108,31 @@ public class Controller implements Initializable {
     private Function<Model, Result<Node, String>> validation = (model) -> {
         if (cbxIndicatorForBatch.isSelected()) {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_DIRECTORY_REQUIRED));
+                return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_DIRECTORY_REQUIRED));
             } else if (!Files.isDirectory().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_DIRECTORY_NOT_EXIST));
+                return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_DIRECTORY_NOT_EXIST));
             } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
-                return Result.failure(txtFuzzySrcFileName, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_NAME_REQUIRED));
+                return Result.failure(txtFuzzySrcFileName, I18NManager.get(MessageMeta.MESSAGE_SOURCE_NAME_REQUIRED));
             } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory()
                     .apply(new File(model.getDestPath()))) {
-                return Result.failure(destPath, I18NManager.get(ConfigMeta.MESSAGE_TARGET_DIRECTORY_NOT_EXIST));
+                return Result.failure(destPath, I18NManager.get(MessageMeta.MESSAGE_TARGET_DIRECTORY_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                     .isEmpty(cboDestFileFormat.getValue().getExtension())) {
                 return Result
-                    .failure(cboDestFileFormat, I18NManager.get(ConfigMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED));
+                    .failure(cboDestFileFormat, I18NManager.get(MessageMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED));
             } else {
-                return Result.success(null, I18NManager.get(ConfigMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
+                return Result.success(null, I18NManager.get(MessageMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
             }
         } else {
             if (StringUtils.isEmpty(model.getSrcPath())) {
-                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_REQUIRED));
+                return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_FILE_REQUIRED));
             } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
-                return Result.failure(srcPath, I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_NOT_EXIST));
+                return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_FILE_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                     .isEmpty(cboDestFileFormat.getValue().getExtension())) {
-                return Result.failure(cboDestFileFormat, ConfigMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED);
+                return Result.failure(cboDestFileFormat, MessageMeta.MESSAGE_TARGET_FILE_FORMAT_REQUIRED);
             } else {
-                return Result.success(null, I18NManager.get(ConfigMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
+                return Result.success(null, I18NManager.get(MessageMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
             }
         }
     };
@@ -141,7 +142,7 @@ public class Controller implements Initializable {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        stage.titleProperty().bind(I18NManager.createStringBinding(ConfigMeta.WINDOWS_TITLE));
+        stage.titleProperty().bind(I18NManager.createStringBinding(MessageMeta.WINDOWS_TITLE));
         addResizeListener();
     }
 
@@ -482,10 +483,10 @@ public class Controller implements Initializable {
             if (!Files.isDirectory().apply(new File(destPathProperty.getValue()))) {
                 destPathProperty.setValue(StringUtils.EMPTY);
             }
-            stage.titleProperty().setValue(I18NManager.get(ConfigMeta.MESSAGE_BATCH_CONVERSION));
+            stage.titleProperty().setValue(I18NManager.get(MessageMeta.MESSAGE_BATCH_CONVERSION));
         } else {
             txtFuzzySrcFileName.setEditable(false);
-            stage.titleProperty().setValue(I18NManager.get(ConfigMeta.MESSAGE_SINGLE_CONVERSION));
+            stage.titleProperty().setValue(I18NManager.get(MessageMeta.MESSAGE_SINGLE_CONVERSION));
         }
     }
 
@@ -499,24 +500,25 @@ public class Controller implements Initializable {
         String workDirectory = initDirectory(receiver.getText() != null ? receiver.getText().trim() : null);
         if (isForBatch || needDirectory) {
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle(I18NManager.get(ConfigMeta.MESSAGE_VIEW_DIRECTORY));
+            directoryChooser.setTitle(I18NManager.get(MessageMeta.MESSAGE_VIEW_DIRECTORY));
             directoryChooser.setInitialDirectory(new File(workDirectory));
             File parent = directoryChooser.showDialog(stage);
             Optional.ofNullable(parent).ifPresent(directory -> receiver.textProperty().setValue(directory.getPath()));
         } else {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle(I18NManager.get(ConfigMeta.MESSAGE_VIEW_FILE));
+            fileChooser.setTitle(I18NManager.get(MessageMeta.MESSAGE_VIEW_FILE));
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
                     .addAll(
                             new FileChooser.ExtensionFilter(ConfigMeta.ALL, ConfigMeta.ALL_TYPE),
                             new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.TEXT_TYPE, ConfigMeta.CSV_TYPE,
-                                    ConfigMeta.XLS97_TYPE, ConfigMeta.XLSX07_TYPE),
+                                ConfigMeta.EXCEL97_TYPE, ConfigMeta.EXCEL07_TYPE),
                             new FileChooser.ExtensionFilter(
-                                    ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ACII_TEXT_TYPE),
+                                ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ASCII_TEXT_TYPE),
                             new FileChooser.ExtensionFilter(ConfigMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ConfigMeta.CSV_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.XLS97_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.XLSX07_TYPE)
+                        new FileChooser.ExtensionFilter(
+                            ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.EXCEL97_TYPE),
+                        new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.EXCEL07_TYPE)
                     );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
@@ -530,7 +532,7 @@ public class Controller implements Initializable {
 
     private void fuzzyFileName(String initDirectory, TextField instance) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(I18NManager.get(ConfigMeta.MESSAGE_VIEW_FILE));
+        fileChooser.setTitle(I18NManager.get(MessageMeta.MESSAGE_VIEW_FILE));
         fileChooser.setInitialDirectory(new File(initDirectory));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.ALL_TYPE));
         File file = fileChooser.showOpenDialog(stage);
@@ -546,7 +548,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
                 if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
-                    showMessage(I18NManager.get(ConfigMeta.MESSAGE_SOURCE_FILE_NAME_ILLEGAL));
+                    showMessage(I18NManager.get(MessageMeta.MESSAGE_SOURCE_FILE_NAME_ILLEGAL));
                 }
             }
         }
@@ -560,7 +562,7 @@ public class Controller implements Initializable {
             } else {
                 String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
                 if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
-                    showMessage(I18NManager.get(ConfigMeta.MESSAGE_TARGET_FILE_NAME_ILLEGAL));
+                    showMessage(I18NManager.get(MessageMeta.MESSAGE_TARGET_FILE_NAME_ILLEGAL));
                 }
             }
         }
