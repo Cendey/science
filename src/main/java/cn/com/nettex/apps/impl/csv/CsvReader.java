@@ -43,7 +43,7 @@ public class CsvReader implements Reader {
                 if (isFileWithHeader) {
                     List<String> headers = new ArrayList<>();
                     List<List<Object>> records = new ArrayList<>();
-                    csvParser.forEach((csvRecord) -> {
+                    csvParser.forEach(csvRecord -> {
                         long recNum = csvRecord.getRecordNumber();
                         // Collect csv real data skip header portion
                         if (recNum != 0) {
@@ -58,7 +58,7 @@ public class CsvReader implements Reader {
                     result.add(csvSheet);
                 } else {
                     List<List<Object>> records = new ArrayList<>();
-                    csvParser.forEach((csvRecord) -> {
+                    csvParser.forEach(csvRecord -> {
                         List<Object> data = new ArrayList<>();
                         csvRecord.forEach(data::add);
                         records.add(data);
