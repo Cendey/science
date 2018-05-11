@@ -42,7 +42,6 @@ class Worker {
                     final String destFilePath =
                         String.format("%s%s%s%s", taskMeta.getDestPath(), File.separator, destFileName, taskMeta.getType());
                     try {
-
                         writer.write(file, destFilePath);
                     } catch (IOException e) {
                         logger.error(e.getCause().getMessage());
