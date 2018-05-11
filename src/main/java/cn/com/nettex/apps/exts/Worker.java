@@ -31,11 +31,12 @@ class Worker {
     //For single file conversion
     static List<String> perform(final TaskMeta taskMeta) {
         List<String> result = new ArrayList<>();
-        Boolean withHeader = taskMeta.getHeader();
         Reader reader = Facade.create(taskMeta.getSrcPath()).createReader();
         Writer writer = Facade.build(taskMeta.getType()).createWriter();
         try {
-            List<Pair<List<String>, List<List<Object>>>> contents = reader.read(taskMeta.getSrcPath(), withHeader);
+            List<Pair<List<String>, List<List<Object>>>> contents = reader.read(
+                taskMeta.getSrcPath(),
+                taskMeta.getHeader());
             Optional.ofNullable(contents).ifPresent(data -> data.forEach(file -> {
                     String destFileName = Utilities.rename(taskMeta.getSrcPath(), taskMeta.getNameTo());
                     final String destFilePath =
