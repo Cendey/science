@@ -133,7 +133,7 @@ public class Controller implements Assign<Supervisor>, Initializable {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        stage.titleProperty().bind(I18NManager.createStringBinding(MessageMeta.WINDOWS_TITLE));
+        stage.titleProperty().bindBidirectional(model.windowsTitleProperty());
         addResizeListener();
     }
 
@@ -474,10 +474,10 @@ public class Controller implements Assign<Supervisor>, Initializable {
             if (!Files.isDirectory().apply(new File(destPathProperty.getValue()))) {
                 destPathProperty.setValue(StringUtils.EMPTY);
             }
-            stage.titleProperty().setValue(I18NManager.get(MessageMeta.MESSAGE_BATCH_CONVERSION));
+            model.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_BATCH_CONVERSION));
         } else {
             txtFuzzySrcFileName.setEditable(false);
-            stage.titleProperty().setValue(I18NManager.get(MessageMeta.MESSAGE_SINGLE_CONVERSION));
+            model.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_SINGLE_CONVERSION));
         }
     }
 

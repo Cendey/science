@@ -1,6 +1,5 @@
 package cn.com.nettex.apps.exts;
 
-import cn.com.nettex.apps.intf.Factory;
 import cn.com.nettex.apps.intf.Reader;
 import cn.com.nettex.apps.intf.Writer;
 import cn.com.nettex.apps.meta.TaskMeta;
@@ -32,23 +31,23 @@ class Worker {
     //For single file conversion
     static List<String> perform(final TaskMeta taskMeta) {
         List<String> result = new ArrayList<>();
-        Boolean withHeader = taskMeta.getHeader();
-        Factory readFactory = Facade.create(taskMeta.getSrcPath());
-        Factory writeFactory = Facade.build(taskMeta.getType());
-        Reader reader = readFactory.createReader();
-        Writer writer = writeFactory.createWriter();
+        Reader reader = Facade.create(taskMeta.getSrcPath()).createReader();
+        Writer writer = Facade.build(taskMeta.getType()).createWriter();
         try {
-            List<Pair<List<String>, List<List<Object>>>> contents = reader.read(taskMeta.getSrcPath(), withHeader);
+            List<Pair<List<String>, List<List<Object>>>> contents = reader.read(
+                taskMeta.getSrcPath(),
+                taskMeta.getHeader());
             Optional.ofNullable(contents).ifPresent(data -> data.forEach(file -> {
-                        String destFileName = Utilities.rename(taskMeta.getSrcPath(), taskMeta.getNameTo());
-                final String destFilePath = String.format("%s%s%s%s", taskMeta.getDestPath(), File.separator, destFileName, taskMeta.getType());
-                        try {
-                            writer.write(file, destFilePath);
-                        } catch (IOException e) {
-                            logger.error(e.getCause().getMessage());
-                        }
-                        result.add(String.format("%s%n", destFilePath));
+                    String destFileName = Utilities.rename(taskMeta.getSrcPath(), taskMeta.getNameTo());
+                    final String destFilePath =
+                        String.format("%s%s%s%s", taskMeta.getDestPath(), File.separator, destFileName, taskMeta.getType());
+                    try {
+                        writer.write(file, destFilePath);
+                    } catch (IOException e) {
+                        logger.error(e.getCause().getMessage());
                     }
+                    result.add(String.format("%s%n", destFilePath));
+                }
             ));
         } catch (IOException e) {
             logger.error(e.getCause().getMessage());

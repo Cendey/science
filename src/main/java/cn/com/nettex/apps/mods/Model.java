@@ -1,5 +1,7 @@
 package cn.com.nettex.apps.mods;
 
+import cn.com.nettex.apps.i18n.I18NManager;
+import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.meta.FileExtensions;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,13 +24,14 @@ public class Model {
 
     private static final String BLANK = "";
     private static final FileExtensions[] COMMON_FILE_EXTENSION = {
-            new FileExtensions("Text File", ".text"),
-            new FileExtensions("ASCII Text File", ".txt"),
-            new FileExtensions("Comma Separated Values", ".csv"),
-            new FileExtensions("Microsoft Excel", ".xls"),
-            new FileExtensions("Office Open XML Workbook", ".xlsx")
+        new FileExtensions("Text File", ".text"),
+        new FileExtensions("ASCII Text File", ".txt"),
+        new FileExtensions("Comma Separated Values", ".csv"),
+        new FileExtensions("Microsoft Excel", ".xls"),
+        new FileExtensions("Office Open XML Workbook", ".xlsx")
     };
 
+    private StringProperty windowsTitle;
     private StringProperty srcPath;
     private StringProperty srcNamedAs;
     private StringProperty srcFuzzyName;
@@ -42,6 +45,7 @@ public class Model {
 
     public Model() {
 //        this("", "", "", "", "", "", "", false, false);
+        this.windowsTitle = new SimpleStringProperty(I18NManager.get(MessageMeta.WINDOWS_TITLE));
         this.srcPath = new SimpleStringProperty(BLANK);
         this.srcNamedAs = new SimpleStringProperty(BLANK);
         this.srcFuzzyName = new SimpleStringProperty(BLANK);
@@ -55,11 +59,12 @@ public class Model {
     }
 
     public Model(
-            String title,
-            String srcPath, String srcNamedAs,
-            String srcFuzzyName, String srcFormat,
-            String destPath, String destNamedTo,
-            FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
+        String title,
+        String srcPath, String srcNamedAs,
+        String srcFuzzyName, String srcFormat,
+        String destPath, String destNamedTo,
+        FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
+        this.windowsTitle = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
         this.srcFuzzyName = new SimpleStringProperty(srcFuzzyName);
@@ -69,6 +74,18 @@ public class Model {
         this.destFormat = FXCollections.observableArrayList(destFormat);
         this.isForBatch = new SimpleBooleanProperty(isForBatch);
         this.isWithHeader = new SimpleBooleanProperty(isWithHeader);
+    }
+
+    public String getWindowsTitle() {
+        return windowsTitle.get();
+    }
+
+    public StringProperty windowsTitleProperty() {
+        return windowsTitle;
+    }
+
+    public void setWindowsTitle(String windowsTitle) {
+        this.windowsTitle.set(windowsTitle);
     }
 
     public String getSrcPath() {
