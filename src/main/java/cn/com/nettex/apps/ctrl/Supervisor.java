@@ -1,17 +1,20 @@
 package cn.com.nettex.apps.ctrl;
 
 import cn.com.nettex.apps.intf.Assign;
+import cn.com.nettex.apps.meta.ConfigMeta;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Supervisor {
-
+    private static final Logger logger = LogManager.getLogger(Supervisor.class);
     private Map<String, Stage> stages = new HashMap<>();
 
 
@@ -67,10 +70,10 @@ public class Supervisor {
 
     public boolean unloadStage(String name) {
         if (stages.remove(name) == null) {
-            System.out.println("窗口不存在，请检查名称");
+            logger.warn(ConfigMeta.STAGE_IS_NOT_EXIST_PLEASE_DOUBLE_CHECK);
             return false;
         } else {
-            System.out.println("窗口移除成功");
+            logger.info(ConfigMeta.STAGE_IS_SUCCESSFULLY_REMOVED);
             return true;
         }
     }
