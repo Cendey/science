@@ -47,4 +47,7 @@ public class ConfigMeta {
     public static final String EXCEL97 = "application/vnd.ms-excel";
     public static final String EXCEL2007 = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final String SET_USER_PREFER_LANGUAGE_FROM_TO_NOW = "Set user prefer language from %s to %s now!";
+
+    //Stages name collection
+    public static final String PRIMARY_STAGE = "primary_stage";
 }

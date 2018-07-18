@@ -1,6 +1,7 @@
 package cn.com.nettex.apps.gui;
 
 import cn.com.nettex.apps.ctrl.Controller;
+import cn.com.nettex.apps.ctrl.Supervisor;
 import cn.com.nettex.apps.i18n.BaseResourceBundleControl;
 import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.meta.ConfigMeta;
@@ -24,15 +25,19 @@ public class Main extends Application {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
 
+    private Supervisor manager;
+
     @Override
     public void start(Stage primaryStage) {
+        manager = new Supervisor();
+        manager.setPrimaryStage(ConfigMeta.PRIMARY_STAGE, primaryStage);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource(ConfigMeta.CONFIGS_SCIENCE_FXML);
         Optional.ofNullable(resource).ifPresent(layout -> {
             FXMLLoader fxmlLoader = new FXMLLoader(resource);
             fxmlLoader
-                .setResources(ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, Locale.getDefault(),
-                    new BaseResourceBundleControl()));
+                    .setResources(ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, Locale.getDefault(),
+                            new BaseResourceBundleControl()));
             Parent root = null;
             try {
                 root = fxmlLoader.load();
