@@ -12,7 +12,7 @@ package cn.com.nettex.apps.i18n;
  */
 public class I18NMeta {
 
-    //menu & menu item collections
+    //menus & menus item collections
     public static final String WINDOW_TITLE = "window.title";
     public static final String MENU_FILE = "menu.file";
     public static final String MENUITEM_NEW = "menu.item.new";

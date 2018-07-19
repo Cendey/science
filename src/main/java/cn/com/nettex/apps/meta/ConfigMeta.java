@@ -35,7 +35,8 @@ public class ConfigMeta {
 
     //file relative path
     public static final String USER_HOME = "user.home";
-    public static final String CONFIGS_SCIENCE_FXML = "configs/science.fxml";
+    public static final String CONFIGS_DATA_CONVERT_FXML = "configs/convert/convert.fxml";
+    public static final String CONFIG_MENUS_FXML = "configs/menus/menus.fxml";
     public static final String CSS_SCIENCE_CSS = "css/science.css";
     public static final String PICTURE_OFFICE_PNG = "picture/office.png";
     public static final String PICTURE_CONVERSION_PNG = "picture/conversion.png";

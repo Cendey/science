@@ -1,7 +1,7 @@
 package cn.com.nettex.apps.gui;
 
-import cn.com.nettex.apps.ctrl.Controller;
 import cn.com.nettex.apps.ctrl.Supervisor;
+import cn.com.nettex.apps.ctrl.convert.DataConvertController;
 import cn.com.nettex.apps.i18n.BaseResourceBundleControl;
 import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.meta.ConfigMeta;
@@ -32,15 +32,15 @@ public class Main extends Application {
         manager = new Supervisor();
         manager.setPrimaryStage(ConfigMeta.PRIMARY_STAGE, primaryStage);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL resource = classLoader.getResource(ConfigMeta.CONFIGS_SCIENCE_FXML);
-        Optional.ofNullable(resource).ifPresent(layout -> {
-            FXMLLoader fxmlLoader = new FXMLLoader(resource);
-            fxmlLoader
+        URL dataConvertUrl = classLoader.getResource(ConfigMeta.CONFIGS_DATA_CONVERT_FXML);
+        Optional.ofNullable(dataConvertUrl).ifPresent(layout -> {
+            FXMLLoader dataConvertLoader = new FXMLLoader(dataConvertUrl);
+            dataConvertLoader
                     .setResources(ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, Locale.getDefault(),
                             new BaseResourceBundleControl()));
             Parent root = null;
             try {
-                root = fxmlLoader.load();
+                root = dataConvertLoader.load();
             } catch (IOException e) {
                 logger.error(e.getCause().getMessage());
             }
@@ -51,8 +51,8 @@ public class Main extends Application {
             URL imageUrl = classLoader.getResource(ConfigMeta.PICTURE_OFFICE_PNG);
             Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
             primaryStage.getIcons().add(icon);
-            Controller controller = fxmlLoader.getController();
-            controller.setStage(primaryStage);
+            DataConvertController dataConvertController = dataConvertLoader.getController();
+            dataConvertController.setStage(primaryStage);
             primaryStage.setResizable(true);
             primaryStage.show();
         });

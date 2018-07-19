@@ -10,6 +10,7 @@ import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,9 @@ public class Supervisor {
     public boolean loadStage(String name, String resources, StageStyle... styles) {
         try {
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(resources));
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            URL resourceUrl = classLoader.getResource(resources);
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
             Pane tempPane = loader.load();
 
             Assign<Supervisor> controlledStage = loader.getController();

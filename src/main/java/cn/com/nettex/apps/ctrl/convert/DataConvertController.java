@@ -1,5 +1,6 @@
-package cn.com.nettex.apps.ctrl;
+package cn.com.nettex.apps.ctrl.convert;
 
+import cn.com.nettex.apps.ctrl.Supervisor;
 import cn.com.nettex.apps.exts.ParallelGroup;
 import cn.com.nettex.apps.i18n.I18NManager;
 import cn.com.nettex.apps.i18n.MessageMeta;
@@ -24,12 +25,18 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -45,13 +52,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -61,14 +72,13 @@ import java.util.stream.Stream;
 
 import static javafx.application.Platform.exit;
 
-public class Controller implements Assign<Supervisor>, Initializable {
+public class DataConvertController implements Assign<Supervisor>, Initializable {
 
-    private static final Logger logger = LogManager.getLogger(Controller.class);
+    private static final Logger logger = LogManager.getLogger(DataConvertController.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
     private Supervisor manager;
 
-    public MenuItem miExit;
     public TextField srcPath;
     public Button btnSrcPath;
     public Label lblSrcFile;
