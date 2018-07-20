@@ -1,23 +1,25 @@
 package cn.com.nettex.apps.ctrl;
 
+import cn.com.nettex.apps.i18n.BaseResourceBundleControl;
+import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.intf.Assign;
-import cn.com.nettex.apps.meta.ConfigMeta;
+import cn.com.nettex.apps.meta.ElemMeta;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Supervisor {
     private static final Logger logger = LogManager.getLogger(Supervisor.class);
     private Map<String, Stage> stages = new HashMap<>();
-
 
     public void addStage(String name, Stage stage) {
         stages.put(name, stage);
@@ -31,21 +33,31 @@ public class Supervisor {
         this.addStage(primaryStageName, primaryStage);
     }
 
-
     public boolean loadStage(String name, String resources, StageStyle... styles) {
         try {
-
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL resourceUrl = classLoader.getResource(resources);
             FXMLLoader loader = new FXMLLoader(resourceUrl);
-            Pane tempPane = loader.load();
+            loader.setResources(ResourceBundle.getBundle(MessageMeta.MESSAGES_MESSAGE, Locale.getDefault(),
+                    new BaseResourceBundleControl()));
+            Parent root = null;
+            try {
+                root = loader.load();
+            } catch (IOException e) {
+                logger.error(e.getCause().getMessage());
+            }
 
             Assign<Supervisor> controlledStage = loader.getController();
             controlledStage.assign(this);
 
-            Scene tempScene = new Scene(tempPane);
+            Scene tempScene = new Scene(Objects.requireNonNull(root), 971, 600);
+            URL css = classLoader.getResource(ElemMeta.CSS_SCIENCE_CSS);
+            tempScene.getStylesheets().add(Objects.requireNonNull(css).toExternalForm());
             Stage tempStage = new Stage();
             tempStage.setScene(tempScene);
+            URL imageUrl = classLoader.getResource(ElemMeta.PICTURE_OFFICE_PNG);
+            Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
+            tempStage.getIcons().add(icon);
 
             for (StageStyle style : styles) {
                 tempStage.initStyle(style);
@@ -55,13 +67,15 @@ public class Supervisor {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getCause().getMessage());
             return false;
         }
     }
 
     public boolean setStage(String name) {
-        this.getStage(name).show();
+        Stage stage = this.getStage(name);
+        stage.setResizable(true);
+        stage.show();
         return true;
     }
 
@@ -73,10 +87,10 @@ public class Supervisor {
 
     public boolean unloadStage(String name) {
         if (stages.remove(name) == null) {
-            logger.warn(ConfigMeta.STAGE_IS_NOT_EXIST_PLEASE_DOUBLE_CHECK);
+            logger.warn(ElemMeta.STAGE_IS_NOT_EXIST_PLEASE_DOUBLE_CHECK);
             return false;
         } else {
-            logger.info(ConfigMeta.STAGE_IS_SUCCESSFULLY_REMOVED);
+            logger.info(ElemMeta.STAGE_IS_SUCCESSFULLY_REMOVED);
             return true;
         }
     }

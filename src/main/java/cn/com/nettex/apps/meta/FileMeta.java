@@ -2,11 +2,11 @@ package cn.com.nettex.apps.meta;
 
 import javafx.util.StringConverter;
 
-public class FileExtensions {
+public class FileMeta {
     private String description;
     private String extension;
 
-    public FileExtensions(String description, String extension) {
+    public FileMeta(String description, String extension) {
         this.description = description;
         this.extension = extension;
     }
@@ -32,25 +32,25 @@ public class FileExtensions {
         return String.format("[%s : %s]", description, extension);
     }
 
-    public static class FileExtensionConvert extends StringConverter<FileExtensions> {
+    public static class FileExtensionConvert extends StringConverter<FileMeta> {
 
         @Override
-        public String toString(FileExtensions object) {
+        public String toString(FileMeta object) {
             return object == null ? "[None]" : String.format("%s: %s", object.getDescription(), object.getExtension());
         }
 
         @Override
-        public FileExtensions fromString(String raw) {
+        public FileMeta fromString(String raw) {
             if (raw == null) return null;
 
-            FileExtensions extension;
+            FileMeta extension;
             int pos = raw.indexOf(":");
             if (pos == -1) {
                 //Treat the raw as file extension not description
-                extension = new FileExtensions(null, raw);
+                extension = new FileMeta(null, raw);
             } else {
                 //Ignoring raw bounds check for brevity
-                extension = new FileExtensions(raw.substring(0, pos), raw.substring(pos + 2));
+                extension = new FileMeta(raw.substring(0, pos), raw.substring(pos + 2));
             }
             return extension;
         }

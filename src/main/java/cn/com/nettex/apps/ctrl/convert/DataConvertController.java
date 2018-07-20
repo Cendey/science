@@ -8,8 +8,8 @@ import cn.com.nettex.apps.intf.Assign;
 import cn.com.nettex.apps.intf.Effect;
 import cn.com.nettex.apps.intf.Result;
 import cn.com.nettex.apps.meta.CSSMeta;
-import cn.com.nettex.apps.meta.ConfigMeta;
-import cn.com.nettex.apps.meta.FileExtensions;
+import cn.com.nettex.apps.meta.ElemMeta;
+import cn.com.nettex.apps.meta.FileMeta;
 import cn.com.nettex.apps.meta.TaskMeta;
 import cn.com.nettex.apps.mods.Model;
 import cn.com.nettex.apps.util.Utilities;
@@ -25,18 +25,11 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -52,17 +45,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.filechooser.FileSystemView;
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -84,7 +73,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     public Label lblSrcFile;
     public TextField destPath;
     public Button btnDestPath;
-    public ChoiceBox<FileExtensions> cboDestFileFormat;
+    public ChoiceBox<FileMeta> cboDestFileFormat;
     public TextField txtFuzzySrcFileName;
     public Button btnStart;
     public Button btnCancel;
@@ -138,7 +127,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
         }
     };
 
-    private Effect<String> success = valid -> logger.info(ConfigMeta.ALL_REQUIRED_CHECK_IS_PASSED);
+    private Effect<String> success = valid -> logger.info(ElemMeta.ALL_REQUIRED_CHECK_IS_PASSED);
     private Effect<String> failure = logger::error;
 
     public void setStage(Stage stage) {
@@ -159,10 +148,10 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
 
         cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
         cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
-        cboDestFileFormat.setConverter(new FileExtensions.FileExtensionConvert());
+        cboDestFileFormat.setConverter(new FileMeta.FileExtensionConvert());
         cboDestFileFormat.getItems().addAll(model.getDestFormat());
         appLogo.setImage(new Image(
-                Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_CONVERSION_PNG))
+                Objects.requireNonNull(contextClassLoader.getResource(ElemMeta.PICTURE_CONVERSION_PNG))
                         .toExternalForm()));
         centerImage(appLogo);
         nameColumn.setCellValueFactory(
@@ -227,7 +216,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
             ObservableList<Node> components = ((Pane) root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream().filter(Node::isResizable)
-                        .forEach(node -> adjust(node, ConfigMeta.WIDTH, delta));
+                        .forEach(node -> adjust(node, ElemMeta.WIDTH, delta));
             }
             logTreeViewer.getColumns().forEach(column -> logTreeViewer.resizeColumn(column, delta));
         });
@@ -237,7 +226,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
             ObservableList<Node> components = ((Pane) root).getChildren();
             if (components != null && components.size() > 0) {
                 components.parallelStream().filter(Node::isResizable)
-                        .forEach(node -> adjust(node, ConfigMeta.HEIGHT, delta));
+                        .forEach(node -> adjust(node, ElemMeta.HEIGHT, delta));
             }
         });
     }
@@ -252,11 +241,11 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
                 }
             } else {
                 //Adjust orientation only for TextField.class or TextArea.class
-                if (StringUtils.equalsIgnoreCase(propertyName, ConfigMeta.WIDTH)) {
+                if (StringUtils.equalsIgnoreCase(propertyName, ElemMeta.WIDTH)) {
                     if (ClassUtils.isAssignable(node.getClass(), TextInputControl.class)) {
                         Utilities.adjustSize(node, propertyName, delta);
                     }
-                } else if (StringUtils.equalsIgnoreCase(propertyName, ConfigMeta.HEIGHT)) {
+                } else if (StringUtils.equalsIgnoreCase(propertyName, ElemMeta.HEIGHT)) {
                     if (ClassUtils.isAssignable(node.getClass(), TextArea.class)) {
                         Utilities.adjustSize(node, propertyName, delta);
                     }
@@ -266,7 +255,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     }
 
     private String initDirectory(String fullFilePath) {
-        if (fullFilePath == null || fullFilePath.trim().length() == 0) return System.getProperty(ConfigMeta.USER_HOME);
+        if (fullFilePath == null || fullFilePath.trim().length() == 0) return System.getProperty(ElemMeta.USER_HOME);
 
         String destination;
         File targetFile = new File(fullFilePath);
@@ -298,7 +287,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     private void showMessage(String message) {
         //http://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(ConfigMeta.WARNING);
+        alert.setTitle(ElemMeta.WARNING);
         alert.setHeaderText(null);
         alert.setContentText(String.format("%s!%n", message));
         alert.showAndWait();
@@ -412,7 +401,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
                         }
                 ));
             } catch (InterruptedException e) {
-                logger.error(ConfigMeta.TASK_S_INTERRUPTED_EXCEPTION);
+                logger.error(ElemMeta.TASK_S_INTERRUPTED_EXCEPTION);
             } finally {
                 classifier.destroy();
                 btnStart.setDisable(false);
@@ -456,17 +445,17 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
 
         Optional.ofNullable(service).ifPresent((service) -> {
             try {
-                logger.info(ConfigMeta.ATTEMPT_TO_SHUTDOWN_OUTER_EXECUTOR);
+                logger.info(ElemMeta.ATTEMPT_TO_SHUTDOWN_OUTER_EXECUTOR);
                 service.shutdown();
                 service.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                logger.error(ConfigMeta.OUTER_TASKS_INTERRUPTED);
+                logger.error(ElemMeta.OUTER_TASKS_INTERRUPTED);
             } finally {
                 if (!service.isTerminated()) {
-                    logger.info(ConfigMeta.CANCEL_NON_FINISHED_OUTER_TASKS);
+                    logger.info(ElemMeta.CANCEL_NON_FINISHED_OUTER_TASKS);
                 }
                 service.shutdownNow();
-                logger.info(ConfigMeta.SHUTDOWN_OUTER_THREAD_FINISHED);
+                logger.info(ElemMeta.SHUTDOWN_OUTER_THREAD_FINISHED);
             }
         });
     }
@@ -511,15 +500,15 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
             fileChooser.setInitialDirectory(new File(workDirectory));
             fileChooser.getExtensionFilters()
                     .addAll(
-                            new FileChooser.ExtensionFilter(ConfigMeta.ALL, ConfigMeta.ALL_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.TEXT_TYPE, ConfigMeta.CSV_TYPE,
-                                    ConfigMeta.EXCEL97_TYPE, ConfigMeta.EXCEL07_TYPE),
+                            new FileChooser.ExtensionFilter(ElemMeta.ALL, ElemMeta.ALL_TYPE),
+                            new FileChooser.ExtensionFilter(ElemMeta.FILES, ElemMeta.TEXT_TYPE, ElemMeta.CSV_TYPE,
+                                    ElemMeta.EXCEL97_TYPE, ElemMeta.EXCEL07_TYPE),
                             new FileChooser.ExtensionFilter(
-                                    ConfigMeta.NORMAL_TEXT_FILE, ConfigMeta.TEXT_TYPE, ConfigMeta.ASCII_TEXT_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ConfigMeta.CSV_TYPE),
+                                    ElemMeta.NORMAL_TEXT_FILE, ElemMeta.TEXT_TYPE, ElemMeta.ASCII_TEXT_TYPE),
+                            new FileChooser.ExtensionFilter(ElemMeta.COMMA_SEPARATED_VALUES_TEXT_FILE, ElemMeta.CSV_TYPE),
                             new FileChooser.ExtensionFilter(
-                                    ConfigMeta.MICROSOFT_EXCEL_SPREADSHEET, ConfigMeta.EXCEL97_TYPE),
-                            new FileChooser.ExtensionFilter(ConfigMeta.OFFICE_OPEN_XML_WORKBOOK, ConfigMeta.EXCEL07_TYPE)
+                                    ElemMeta.MICROSOFT_EXCEL_SPREADSHEET, ElemMeta.EXCEL97_TYPE),
+                            new FileChooser.ExtensionFilter(ElemMeta.OFFICE_OPEN_XML_WORKBOOK, ElemMeta.EXCEL07_TYPE)
                     );
             File file = fileChooser.showOpenDialog(stage);
             Optional.ofNullable(file).ifPresent(path -> receiver.setText(file.getPath()));
@@ -535,7 +524,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(I18NManager.get(MessageMeta.MESSAGE_VIEW_FILE));
         fileChooser.setInitialDirectory(new File(initDirectory));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(ConfigMeta.FILES, ConfigMeta.ALL_TYPE));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(ElemMeta.FILES, ElemMeta.ALL_TYPE));
         File file = fileChooser.showOpenDialog(stage);
         Optional.ofNullable(file)
                 .ifPresent(path -> instance.textProperty().setValue(FilenameUtils.removeExtension(path.getName())));
@@ -545,7 +534,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     public void chooseSrcFuzzyName(MouseEvent actionEvent) {
         if (txtFuzzySrcFileName.isEditable() && actionEvent.getClickCount() == 2) {
             if (StringUtils.isEmpty(txtFuzzySrcFileName.textProperty().getValue())) {
-                fuzzyFileName(System.getProperty(ConfigMeta.USER_HOME), txtFuzzySrcFileName);
+                fuzzyFileName(System.getProperty(ElemMeta.USER_HOME), txtFuzzySrcFileName);
             } else {
                 String fileName = FilenameUtils.normalize(txtFuzzySrcFileName.textProperty().getValue());
                 if (!StringUtils.equals(txtFuzzySrcFileName.textProperty().getValue(), fileName)) {
@@ -559,7 +548,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     public void chooseDestPrefixName(MouseEvent actionEvent) {
         if (actionEvent.getClickCount() == 2) {
             if (StringUtils.isEmpty(txtDestPrefixName.textProperty().getValue())) {
-                fuzzyFileName(System.getProperty(ConfigMeta.USER_HOME), txtDestPrefixName);
+                fuzzyFileName(System.getProperty(ElemMeta.USER_HOME), txtDestPrefixName);
             } else {
                 String fileName = FilenameUtils.normalize(txtDestPrefixName.textProperty().getValue());
                 if (!StringUtils.equals(txtDestPrefixName.textProperty().getValue(), fileName)) {
@@ -577,11 +566,11 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
                     child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
                     .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_FOLDER_MODERN_PNG)).
+                    Objects.requireNonNull(contextClassLoader.getResource(ElemMeta.PICTURE_FOLDER_MODERN_PNG)).
                             toExternalForm()));
         } else {
             item.setGraphic(new ImageView(
-                    Objects.requireNonNull(contextClassLoader.getResource(ConfigMeta.PICTURE_TEXT_X_GENERIC_PNG)).
+                    Objects.requireNonNull(contextClassLoader.getResource(ElemMeta.PICTURE_TEXT_X_GENERIC_PNG)).
                             toExternalForm()));
         }
         return item;
@@ -593,7 +582,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
             Desktop desktop = Desktop.getDesktop();
 
             if (!Desktop.isDesktopSupported()) {
-                logger.error(ConfigMeta.DESKTOP_IS_NOT_SUPPORTED_IN_CURRENT_OS);
+                logger.error(ElemMeta.DESKTOP_IS_NOT_SUPPORTED_IN_CURRENT_OS);
             } else {
                 Object source = mouseEvent.getSource();
                 if (source != null && ClassUtils.isAssignable(TreeTableView.class, source.getClass())) {

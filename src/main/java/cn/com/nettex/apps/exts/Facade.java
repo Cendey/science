@@ -5,7 +5,7 @@ import cn.com.nettex.apps.impl.csv.CsvFactory;
 import cn.com.nettex.apps.impl.txt.TextFactory;
 import cn.com.nettex.apps.impl.xsl.ExcelFactory;
 import cn.com.nettex.apps.intf.Factory;
-import cn.com.nettex.apps.meta.ConfigMeta;
+import cn.com.nettex.apps.meta.ElemMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,14 +38,14 @@ class Facade {
                 }
                 if (StringUtils.isNotEmpty(fileType)) {
                     switch (fileType) {
-                        case ConfigMeta.TEXT_PLAIN:
+                        case ElemMeta.TEXT_PLAIN:
                             factory = new TextFactory();
                             break;
-                        case ConfigMeta.TEXT_CSV:
+                        case ElemMeta.TEXT_CSV:
                             factory = new CsvFactory();
                             break;
-                        case ConfigMeta.EXCEL97:
-                        case ConfigMeta.EXCEL2007:
+                        case ElemMeta.EXCEL97:
+                        case ElemMeta.EXCEL2007:
                             factory = new ExcelFactory();
                             break;
                         default:

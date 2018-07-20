@@ -2,7 +2,7 @@ package cn.com.nettex.apps.mods;
 
 import cn.com.nettex.apps.i18n.I18NManager;
 import cn.com.nettex.apps.i18n.MessageMeta;
-import cn.com.nettex.apps.meta.FileExtensions;
+import cn.com.nettex.apps.meta.FileMeta;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,12 +23,12 @@ import javafx.collections.ObservableList;
 public class Model {
 
     private static final String BLANK = "";
-    private static final FileExtensions[] COMMON_FILE_EXTENSION = {
-        new FileExtensions("Text File", ".text"),
-        new FileExtensions("ASCII Text File", ".txt"),
-        new FileExtensions("Comma Separated Values", ".csv"),
-        new FileExtensions("Microsoft Excel", ".xls"),
-        new FileExtensions("Office Open XML Workbook", ".xlsx")
+    private static final FileMeta[] COMMON_FILE_EXTENSION = {
+            new FileMeta("Text File", ".text"),
+            new FileMeta("ASCII Text File", ".txt"),
+            new FileMeta("Comma Separated Values", ".csv"),
+            new FileMeta("Microsoft Excel", ".xls"),
+            new FileMeta("Office Open XML Workbook", ".xlsx")
     };
 
     private StringProperty windowsTitle;
@@ -39,7 +39,7 @@ public class Model {
     private StringProperty destPath;
     private StringProperty destNamedTo;
     private StringProperty destRenameTo;
-    private ObservableList<FileExtensions> destFormat;
+    private ObservableList<FileMeta> destFormat;
     private BooleanProperty isForBatch;
     private BooleanProperty isWithHeader;
 
@@ -59,11 +59,11 @@ public class Model {
     }
 
     public Model(
-        String title,
-        String srcPath, String srcNamedAs,
-        String srcFuzzyName, String srcFormat,
-        String destPath, String destNamedTo,
-        FileExtensions[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
+            String title,
+            String srcPath, String srcNamedAs,
+            String srcFuzzyName, String srcFormat,
+            String destPath, String destNamedTo,
+            FileMeta[] destFormat, Boolean isForBatch, Boolean isWithHeader) {
         this.windowsTitle = new SimpleStringProperty(title);
         this.srcPath = new SimpleStringProperty(srcPath);
         this.srcNamedAs = new SimpleStringProperty(srcNamedAs);
@@ -172,11 +172,11 @@ public class Model {
         this.destRenameTo.set(destRenameTo);
     }
 
-    public ObservableList<FileExtensions> getDestFormat() {
+    public ObservableList<FileMeta> getDestFormat() {
         return destFormat;
     }
 
-    public void setDestFormat(ObservableList<FileExtensions> destFormat) {
+    public void setDestFormat(ObservableList<FileMeta> destFormat) {
         this.destFormat = destFormat;
     }
 

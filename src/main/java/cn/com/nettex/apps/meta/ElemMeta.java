@@ -2,7 +2,7 @@ package cn.com.nettex.apps.meta;
 
 /**
  * <p>Title: science</p>
- * <p>Description: ConfigMeta</p>
+ * <p>Description: ElemMeta</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *
@@ -10,11 +10,7 @@ package cn.com.nettex.apps.meta;
  * @version 1.0
  * @date 05/08/2018
  */
-public class ConfigMeta {
-
-    //application configuration meta
-
-
+public class ElemMeta {
     //field constant attribute
     public static final String WIDTH = "Width";
     public static final String HEIGHT = "Height";
@@ -35,8 +31,6 @@ public class ConfigMeta {
 
     //file relative path
     public static final String USER_HOME = "user.home";
-    public static final String CONFIGS_DATA_CONVERT_FXML = "configs/convert/convert.fxml";
-    public static final String CONFIG_MENUS_FXML = "configs/menus/menus.fxml";
     public static final String CSS_SCIENCE_CSS = "css/science.css";
     public static final String PICTURE_OFFICE_PNG = "picture/office.png";
     public static final String PICTURE_CONVERSION_PNG = "picture/conversion.png";
@@ -64,7 +58,4 @@ public class ConfigMeta {
     public static final String TEXT_CSV = "text/csv";
     public static final String EXCEL97 = "application/vnd.ms-excel";
     public static final String EXCEL2007 = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-    //Stages name collection
-    public static final String PRIMARY_STAGE = "primary_stage";
 }
