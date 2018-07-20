@@ -47,23 +47,23 @@ public class Supervisor {
                 logger.error(e.getCause().getMessage());
             }
 
-            Assign<Supervisor> controlledStage = loader.getController();
-            controlledStage.assign(this);
+            Assign<Supervisor> controller = loader.getController();
+            controller.assign(this);
 
-            Scene tempScene = new Scene(Objects.requireNonNull(root), 971, 600);
+            Scene scene = new Scene(Objects.requireNonNull(root), 971, 600);
             URL css = classLoader.getResource(ElemMeta.CSS_SCIENCE_CSS);
-            tempScene.getStylesheets().add(Objects.requireNonNull(css).toExternalForm());
-            Stage tempStage = new Stage();
-            tempStage.setScene(tempScene);
+            scene.getStylesheets().add(Objects.requireNonNull(css).toExternalForm());
+            Stage primary = new Stage();
+            primary.setScene(scene);
             URL imageUrl = classLoader.getResource(ElemMeta.PICTURE_OFFICE_PNG);
             Image icon = new Image(Objects.requireNonNull(imageUrl).toExternalForm());
-            tempStage.getIcons().add(icon);
+            primary.getIcons().add(icon);
 
             for (StageStyle style : styles) {
-                tempStage.initStyle(style);
+                primary.initStyle(style);
             }
 
-            this.addStage(name, tempStage);
+            this.addStage(name, primary);
 
             return true;
         } catch (Exception e) {
