@@ -24,9 +24,9 @@ public class I18NMeta {
     public static final String MENUITEM_REVERT = "menu.item.revert";
     public static final String MENUITEM_PREFERENCE = "menu.item.preference";
     public static final String MENUITEM_QUIT = "menu.item.quit";
-    public static final String MENU_EDIT = "menu.edit";
-    public static final String MENUITEM_UNDO = "menu.item.undo";
-    public static final String MENUITEM_REDO = "menu.item.redo";
+    public static final String MENU_EDIT = "menu.entry";
+    public static final String MENUITEM_UNDO = "menu.item.convert";
+    public static final String MENUITEM_REDO = "menu.item.extract";
     public static final String MENUITEM_CUT = "menu.item.cut";
     public static final String MENUITEM_COPY = "menu.item.copy";
     public static final String MENUITEM_PASTE = "menu.item.paste";

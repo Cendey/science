@@ -2,6 +2,7 @@ package cn.com.nettex.apps.ctrl.menus;
 
 import cn.com.nettex.apps.ctrl.Supervisor;
 import cn.com.nettex.apps.intf.Assign;
+import cn.com.nettex.apps.meta.ViewMeta;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
@@ -38,5 +39,17 @@ public class MenuCommandController implements Assign<Supervisor>, Initializable 
 
     public void exitApp(ActionEvent event) {
         exit();
+    }
+
+    public void showConvertView(ActionEvent actionEvent) {
+        manager.setStage(ViewMeta.CONVERT_STAGE, manager.getActiveStage());
+    }
+
+    public void showExtractView(ActionEvent actionEvent) {
+        manager.setStage(ViewMeta.EXTRACT_STAGE, manager.getActiveStage());
+    }
+
+    public void closeActiveStage(ActionEvent actionEvent) {
+        manager.closeStage(manager.getActiveStage());
     }
 }

@@ -4,6 +4,7 @@ import cn.com.nettex.apps.i18n.BaseResourceBundleControl;
 import cn.com.nettex.apps.i18n.MessageMeta;
 import cn.com.nettex.apps.intf.Assign;
 import cn.com.nettex.apps.meta.ElemMeta;
+import cn.com.nettex.apps.meta.ViewMeta;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import java.util.*;
 public class Supervisor {
     private static final Logger logger = LogManager.getLogger(Supervisor.class);
     private Map<String, Stage> stages = new HashMap<>();
+    private String activeStage;
 
     public void addStage(String name, Stage stage) {
         stages.put(name, stage);
@@ -76,6 +78,7 @@ public class Supervisor {
         Stage stage = this.getStage(name);
         stage.setResizable(true);
         stage.show();
+        setActiveStage(name);
         return true;
     }
 
@@ -93,5 +96,18 @@ public class Supervisor {
             logger.info(ElemMeta.STAGE_IS_SUCCESSFULLY_REMOVED);
             return true;
         }
+    }
+
+    public String getActiveStage() {
+        return activeStage;
+    }
+
+    public void setActiveStage(String activeStage) {
+        this.activeStage = activeStage;
+    }
+
+    public void closeStage(String active) {
+        getStage(active).close();
+        setStage(ViewMeta.PRIMARY_STAGE);
     }
 }

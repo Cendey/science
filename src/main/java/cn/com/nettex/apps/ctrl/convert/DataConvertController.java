@@ -87,6 +87,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     public TreeTableColumn<File, Long> sizeColumn;
     public TreeTableColumn<File, Date> modifiedColumn;
     public TreeTableColumn<File, String> typeColumn;
+    public Pane menuPane;
 
 
     private Stage stage;

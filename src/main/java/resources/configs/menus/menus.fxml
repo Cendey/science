@@ -1,10 +1,9 @@
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0" styleClass="background"
-      xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="25" prefWidth="971.0" styleClass="background"
+      xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="cn.com.nettex.apps.ctrl.menus.MenuCommandController">
     <MenuBar VBox.vgrow="NEVER">
         <menus>
@@ -14,7 +13,7 @@
                     <MenuItem mnemonicParsing="false" text="%menu.item.open"/>
                     <Menu mnemonicParsing="false" text="%menu.item.open.recent"/>
                     <SeparatorMenuItem mnemonicParsing="false"/>
-                    <MenuItem mnemonicParsing="false" text="%menu.item.close"/>
+                    <MenuItem mnemonicParsing="false" onAction="#closeActiveStage" text="%menu.item.close"/>
                     <MenuItem mnemonicParsing="false" text="%menu.item.save"/>
                     <MenuItem mnemonicParsing="false" text="%menu.item.save.as"/>
                     <MenuItem mnemonicParsing="false" text="%menu.item.revert"/>
@@ -24,10 +23,10 @@
                     <MenuItem fx:id="miExit" mnemonicParsing="false" onAction="#exitApp" text="%menu.item.quit"/>
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="%menu.edit">
+            <Menu mnemonicParsing="false" text="%menu.entry">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="%menu.item.undo"/>
-                    <MenuItem mnemonicParsing="false" text="%menu.item.redo"/>
+                    <MenuItem mnemonicParsing="false" onAction="#showConvertView" text="%menu.item.convert"/>
+                    <MenuItem mnemonicParsing="false" onAction="#showExtractView" text="%menu.item.extract"/>
                     <SeparatorMenuItem mnemonicParsing="false"/>
                     <MenuItem mnemonicParsing="false" text="%menu.item.cut"/>
                     <MenuItem mnemonicParsing="false" text="%menu.item.copy"/>
