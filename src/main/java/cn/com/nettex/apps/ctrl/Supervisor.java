@@ -79,8 +79,8 @@ public class Supervisor {
         return true;
     }
 
-    public boolean setStage(String show, String close) {
-        getStage(close).close();
+    public boolean setStage(String show, String hide) {
+        getStage(hide).hide();
         setStage(show);
         return true;
     }
