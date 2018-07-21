@@ -7,6 +7,9 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Refer: http://javajdk.net/tutorial/multiple-javafx-scenes-sharing-one-menubar/
+ */
 public class Main extends Application {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
