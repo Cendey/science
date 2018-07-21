@@ -41,15 +41,15 @@ public class CommandController implements Assign<Supervisor>, Initializable {
         exit();
     }
 
-    public void showConvertView(ActionEvent actionEvent) {
+    public void showConvertView(ActionEvent event) {
         manager.setStage(ViewMeta.CONVERT_STAGE, manager.getActiveStage());
     }
 
-    public void showExtractView(ActionEvent actionEvent) {
+    public void showExtractView(ActionEvent event) {
         manager.setStage(ViewMeta.EXTRACT_STAGE, manager.getActiveStage());
     }
 
-    public void closeActiveStage(ActionEvent actionEvent) {
+    public void closeActiveStage(ActionEvent event) {
         manager.closeStage(manager.getActiveStage());
     }
 }
