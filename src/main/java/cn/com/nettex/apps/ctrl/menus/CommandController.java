@@ -14,7 +14,7 @@ import static javafx.application.Platform.exit;
 
 /**
  * <p>Title: science</p>
- * <p>Description: cn.com.nettex.apps.ctrl.menus.MenuCommandController</p>
+ * <p>Description: cn.com.nettex.apps.ctrl.menus.CommandController</p>
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: MIT Edu</p>
  *
@@ -22,7 +22,7 @@ import static javafx.application.Platform.exit;
  * @version 1.0
  * @date 07/19/2018
  */
-public class MenuCommandController implements Assign<Supervisor>, Initializable {
+public class CommandController implements Assign<Supervisor>, Initializable {
 
     private Supervisor manager;
     public MenuItem miExit;

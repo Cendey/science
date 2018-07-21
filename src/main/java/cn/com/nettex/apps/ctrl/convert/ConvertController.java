@@ -1,7 +1,7 @@
 package cn.com.nettex.apps.ctrl.convert;
 
 import cn.com.nettex.apps.ctrl.Supervisor;
-import cn.com.nettex.apps.ctrl.menus.MenuCommandController;
+import cn.com.nettex.apps.ctrl.menus.CommandController;
 import cn.com.nettex.apps.exts.ParallelGroup;
 import cn.com.nettex.apps.i18n.I18NManager;
 import cn.com.nettex.apps.i18n.MessageMeta;
@@ -12,7 +12,7 @@ import cn.com.nettex.apps.meta.CSSMeta;
 import cn.com.nettex.apps.meta.ElemMeta;
 import cn.com.nettex.apps.meta.FileMeta;
 import cn.com.nettex.apps.meta.TaskMeta;
-import cn.com.nettex.apps.mods.Model;
+import cn.com.nettex.apps.mods.convert.ConvertModel;
 import cn.com.nettex.apps.util.Utilities;
 import com.google.common.io.Files;
 import javafx.application.Platform;
@@ -72,11 +72,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static javafx.application.Platform.exit;
+public class ConvertController implements Assign<Supervisor>, Initializable {
 
-public class DataConvertController implements Assign<Supervisor>, Initializable {
-
-    private static final Logger logger = LogManager.getLogger(DataConvertController.class);
+    private static final Logger logger = LogManager.getLogger(ConvertController.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
     private Supervisor manager;
@@ -103,25 +101,25 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     public Parent commandView;
 
     @FXML
-    private MenuCommandController commandViewController;
+    private CommandController commandViewController;
 
 
     private Stage stage;
-    private Model model;
+    private ConvertModel _convertModel;
 
     private ParallelGroup classifier;
     private ExecutorService service;
 
-    private Function<Model, Result<Node, String>> validation = (model) -> {
+    private Function<ConvertModel, Result<Node, String>> validation = (convertModel) -> {
         if (cbxIndicatorForBatch.isSelected()) {
-            if (StringUtils.isEmpty(model.getSrcPath())) {
+            if (StringUtils.isEmpty(convertModel.getSrcPath())) {
                 return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_DIRECTORY_REQUIRED));
-            } else if (!Files.isDirectory().apply(new File(model.getSrcPath()))) {
+            } else if (!Files.isDirectory().apply(new File(convertModel.getSrcPath()))) {
                 return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_DIRECTORY_NOT_EXIST));
-            } else if (StringUtils.isEmpty(model.getSrcFuzzyName())) {
+            } else if (StringUtils.isEmpty(convertModel.getSrcFuzzyName())) {
                 return Result.failure(txtFuzzySrcFileName, I18NManager.get(MessageMeta.MESSAGE_SOURCE_NAME_REQUIRED));
-            } else if (StringUtils.isNotEmpty(model.getDestPath()) && !Files.isDirectory()
-                .apply(new File(model.getDestPath()))) {
+            } else if (StringUtils.isNotEmpty(convertModel.getDestPath()) && !Files.isDirectory()
+                .apply(new File(convertModel.getDestPath()))) {
                 return Result.failure(destPath, I18NManager.get(MessageMeta.MESSAGE_TARGET_DIRECTORY_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                 .isEmpty(cboDestFileFormat.getValue().getExtension())) {
@@ -131,9 +129,9 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
                 return Result.success(null, I18NManager.get(MessageMeta.MESSAGE_VALIDATE_STATUS_SUCCESS));
             }
         } else {
-            if (StringUtils.isEmpty(model.getSrcPath())) {
+            if (StringUtils.isEmpty(convertModel.getSrcPath())) {
                 return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_FILE_REQUIRED));
-            } else if (!Files.isFile().apply(new File(model.getSrcPath()))) {
+            } else if (!Files.isFile().apply(new File(convertModel.getSrcPath()))) {
                 return Result.failure(srcPath, I18NManager.get(MessageMeta.MESSAGE_SOURCE_FILE_NOT_EXIST));
             } else if (cboDestFileFormat.getValue() == null || StringUtils
                 .isEmpty(cboDestFileFormat.getValue().getExtension())) {
@@ -149,24 +147,24 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        stage.titleProperty().bindBidirectional(model.windowsTitleProperty());
+        stage.titleProperty().bindBidirectional(_convertModel.windowsTitleProperty());
         addResizeListener();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        model = new Model();
-        srcPath.textProperty().bindBidirectional(model.srcPathProperty());
-        txtFuzzySrcFileName.textProperty().bindBidirectional(model.srcFuzzyNameProperty());
+        _convertModel = new ConvertModel();
+        srcPath.textProperty().bindBidirectional(_convertModel.srcPathProperty());
+        txtFuzzySrcFileName.textProperty().bindBidirectional(_convertModel.srcFuzzyNameProperty());
         txtFuzzySrcFileName.setEditable(false);
 
-        destPath.textProperty().bindBidirectional(model.destPathProperty());
-        txtDestPrefixName.textProperty().bindBidirectional(model.destRenameToProperty());
+        destPath.textProperty().bindBidirectional(_convertModel.destPathProperty());
+        txtDestPrefixName.textProperty().bindBidirectional(_convertModel.destRenameToProperty());
 
-        cbxNeedFileHeader.indeterminateProperty().bindBidirectional(model.isWithHeaderProperty());
-        cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(model.isForBatchProperty());
+        cbxNeedFileHeader.indeterminateProperty().bindBidirectional(_convertModel.isWithHeaderProperty());
+        cbxIndicatorForBatch.indeterminateProperty().bindBidirectional(_convertModel.isForBatchProperty());
         cboDestFileFormat.setConverter(new FileMeta.FileExtensionConvert());
-        cboDestFileFormat.getItems().addAll(model.getDestFormat());
+        cboDestFileFormat.getItems().addAll(_convertModel.getDestFormat());
         appLogo.setImage(new Image(
             Objects.requireNonNull(contextClassLoader.getResource(ElemMeta.PICTURE_CONVERSION_PNG))
                 .toExternalForm()));
@@ -391,12 +389,6 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
         }
     }
 
-
-    public void exitApp() {
-        stage.hide();
-        exit();
-    }
-
     @SuppressWarnings(value = {"unused"})
     public void startWork(ActionEvent keyEvent) {
         if (!isReady()) return;
@@ -412,8 +404,9 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
                     () -> {
                         TreeItem<File> treeItem =
                             createTree(new File(Paths.get(
-                                StringUtils.isNotEmpty(model.getDestPath()) ?
-                                    model.getDestPath() : model.getSrcPath()).getRoot().toUri()));
+                                StringUtils.isNotEmpty(_convertModel.getDestPath()) ?
+                                    _convertModel.getDestPath() : _convertModel.getSrcPath()).getRoot()
+                                .toUri()));
                         logTreeViewer.setRoot(treeItem);
                     }
                 ));
@@ -431,17 +424,17 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
 
     private List<TaskMeta> prepare() {
         List<Pair<File, Integer>> lstFilesInfo =
-            Utilities.listAll(new File(model.getSrcPath()), model.getSrcFuzzyName(), 0);
+            Utilities.listAll(new File(_convertModel.getSrcPath()), _convertModel.getSrcFuzzyName(), 0);
         List<TaskMeta> lstTask = new ArrayList<>();
         Optional.ofNullable(lstFilesInfo).ifPresent(
             filesInfo -> filesInfo.forEach(
                 pair -> {
                     String srcFilePath = pair.getKey().getPath();
-                    String nameAs = model.getSrcFuzzyName();
-                    String destFilePath = Utilities.compose(pair, model.getDestPath());
-                    String nameTo = model.getDestRenameTo();
+                    String nameAs = _convertModel.getSrcFuzzyName();
+                    String destFilePath = Utilities.compose(pair, _convertModel.getDestPath());
+                    String nameTo = _convertModel.getDestRenameTo();
                     String destFileType = cboDestFileFormat.getValue().getExtension();
-                    Boolean header = model.isIsWithHeader();
+                    Boolean header = _convertModel.isIsWithHeader();
                     lstTask.add(new TaskMeta(srcFilePath, nameAs, destFilePath, nameTo, destFileType, header));
                 }
             )
@@ -490,10 +483,10 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
             if (!Files.isDirectory().apply(new File(destPathProperty.getValue()))) {
                 destPathProperty.setValue(StringUtils.EMPTY);
             }
-            model.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_BATCH_CONVERSION));
+            _convertModel.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_BATCH_CONVERSION));
         } else {
             txtFuzzySrcFileName.setEditable(false);
-            model.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_SINGLE_CONVERSION));
+            _convertModel.setWindowsTitle(I18NManager.get(MessageMeta.MESSAGE_SINGLE_CONVERSION));
         }
     }
 
@@ -580,7 +573,8 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
         File[] children = file.listFiles();
         if (children != null) {
             Stream.of(children).filter(
-                child -> child.getPath().contains(model.getDestPath()) || model.getDestPath().contains(child.getPath()))
+                child -> child.getPath().contains(_convertModel.getDestPath()) || _convertModel.getDestPath()
+                    .contains(child.getPath()))
                 .forEach(child -> item.getChildren().add(createTree(child)));
             item.setGraphic(new ImageView(
                 Objects.requireNonNull(contextClassLoader.getResource(ElemMeta.PICTURE_FOLDER_MODERN_PNG)).
@@ -622,7 +616,7 @@ public class DataConvertController implements Assign<Supervisor>, Initializable 
     }
 
     private boolean isReady() {
-        Result<Node, String> result = validation.apply(model);
+        Result<Node, String> result = validation.apply(_convertModel);
         result.bind(success, failure);
         Node indicator = result.indicator();
         if (indicator != null) {

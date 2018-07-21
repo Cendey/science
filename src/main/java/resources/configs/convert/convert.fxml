@@ -18,7 +18,7 @@
 <?import java.lang.String?>
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="971.0" styleClass="background"
       xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="cn.com.nettex.apps.ctrl.convert.DataConvertController">
+      fx:controller="cn.com.nettex.apps.ctrl.convert.ConvertController">
     <children>
         <fx:include fx:id="commandView" source="../menus/menus.fxml"/>
         <GridPane prefHeight="1200.0" prefWidth="700.0" VBox.vgrow="ALWAYS">
