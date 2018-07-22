@@ -1,7 +1,6 @@
 package cn.com.nettex.apps.ctrl.convert;
 
-import cn.com.nettex.apps.ctrl.Supervisor;
-import cn.com.nettex.apps.ctrl.menus.CommandController;
+import cn.com.nettex.apps.ctrl.strategy.Director;
 import cn.com.nettex.apps.exts.ParallelGroup;
 import cn.com.nettex.apps.i18n.I18NManager;
 import cn.com.nettex.apps.i18n.MessageMeta;
@@ -21,7 +20,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -72,12 +70,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class ConvertController implements Assign<Supervisor>, Initializable {
+public class ConvertController implements Assign<Director>, Initializable {
 
     private static final Logger logger = LogManager.getLogger(ConvertController.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-    private Supervisor manager;
+    private Director manager;
 
     public TextField srcPath;
     public Button btnSrcPath;
@@ -98,10 +96,6 @@ public class ConvertController implements Assign<Supervisor>, Initializable {
     public TreeTableColumn<File, Long> sizeColumn;
     public TreeTableColumn<File, Date> modifiedColumn;
     public TreeTableColumn<File, String> typeColumn;
-    public Parent commandView;
-
-    @FXML
-    private CommandController commandViewController;
 
 
     private Stage stage;
@@ -145,7 +139,7 @@ public class ConvertController implements Assign<Supervisor>, Initializable {
     private Effect<String> success = valid -> logger.info(ElemMeta.ALL_REQUIRED_CHECK_IS_PASSED);
     private Effect<String> failure = logger::error;
 
-    public void setStage(Stage stage) {
+    public void changeStatus(Stage stage) {
         this.stage = stage;
         stage.titleProperty().bindBidirectional(_convertModel.windowsTitleProperty());
         addResizeListener();
@@ -630,8 +624,7 @@ public class ConvertController implements Assign<Supervisor>, Initializable {
     }
 
     @Override
-    public void assign(Supervisor from) {
-        manager = from;
-        commandViewController.assign(from);
+    public void assign(Director from) {
+        this.manager = from;
     }
 }

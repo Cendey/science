@@ -1,6 +1,6 @@
 package cn.com.nettex.apps.ctrl.menus;
 
-import cn.com.nettex.apps.ctrl.Supervisor;
+import cn.com.nettex.apps.ctrl.strategy.Director;
 import cn.com.nettex.apps.intf.Assign;
 import cn.com.nettex.apps.meta.ViewMeta;
 import javafx.event.ActionEvent;
@@ -22,13 +22,13 @@ import static javafx.application.Platform.exit;
  * @version 1.0
  * @date 07/19/2018
  */
-public class CommandController implements Assign<Supervisor>, Initializable {
+public class CommandController implements Assign<Director>, Initializable {
 
-    private Supervisor manager;
+    private Director manager;
     public MenuItem miExit;
 
     @Override
-    public void assign(Supervisor from) {
+    public void assign(Director from) {
         manager = from;
     }
 
@@ -42,14 +42,14 @@ public class CommandController implements Assign<Supervisor>, Initializable {
     }
 
     public void showConvertView(ActionEvent event) {
-        manager.setStage(ViewMeta.CONVERT_STAGE, manager.getActiveStage());
+        manager.show(ViewMeta.CONVERT_STAGE);
     }
 
     public void showExtractView(ActionEvent event) {
-        manager.setStage(ViewMeta.EXTRACT_STAGE, manager.getActiveStage());
+        manager.show(ViewMeta.EXTRACT_STAGE);
     }
 
     public void closeActiveStage(ActionEvent event) {
-        manager.closeStage(manager.getActiveStage());
+        manager.close();
     }
 }
