@@ -25,10 +25,6 @@ public class Director {
     private Map<String, Assign<Director>> controllers = new HashMap<>();
     private Stage primaryStage;
     private static Director instance;
-    private String activeChild;
-
-    private Director() {
-    }
 
     private Director(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -41,12 +37,8 @@ public class Director {
         return instance;
     }
 
-    public Stage getPrimaryStage() {
+    private Stage getPrimaryStage() {
         return primaryStage;
-    }
-
-    private void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     private void addChild(String name, Parent node) {
@@ -61,11 +53,11 @@ public class Director {
         controllers.put(name, controller);
     }
 
-    public Assign<Director> getController(String name) {
+    private Assign<Director> getController(String name) {
         return controllers.get(name);
     }
 
-    public boolean loadChild(String name, String resources) {
+    public void loadChild(String name, String resources) {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL resourceUrl = classLoader.getResource(resources);
@@ -83,10 +75,8 @@ public class Director {
             controller.assign(this);
             this.addChild(name, child);
             this.addController(name, controller);
-            return true;
         } catch (Exception e) {
             logger.error(e.getCause().getMessage());
-            return false;
         }
     }
 
@@ -101,17 +91,8 @@ public class Director {
         }
     }
 
-    public String getActiveChild() {
-        return activeChild;
-    }
-
-    public void setActiveChild(String activePane) {
-        this.activeChild = activePane;
-    }
-
     public void close() {
         Main.getRoot().setCenter(null);
-        setActiveChild(null);
     }
 
     public void show(String activeChild) {

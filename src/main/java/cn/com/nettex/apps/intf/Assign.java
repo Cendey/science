@@ -4,7 +4,8 @@ import javafx.stage.Stage;
 
 public interface Assign<T> {
 
-    void assign(T from);
+    default void assign(T from) {
+    }
 
     default void changeStatus(Stage stage) {
     }

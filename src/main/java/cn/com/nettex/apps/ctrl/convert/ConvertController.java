@@ -75,7 +75,6 @@ public class ConvertController implements Assign<Director>, Initializable {
     private static final Logger logger = LogManager.getLogger(ConvertController.class);
     private static ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     private static final FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-    private Director manager;
 
     public TextField srcPath;
     public Button btnSrcPath;
@@ -621,10 +620,5 @@ public class ConvertController implements Assign<Director>, Initializable {
             Stream.of(srcPath, txtFuzzySrcFileName, destPath, txtDestPrefixName).forEach(this::notify);
         }
         return indicator == null;
-    }
-
-    @Override
-    public void assign(Director from) {
-        this.manager = from;
     }
 }

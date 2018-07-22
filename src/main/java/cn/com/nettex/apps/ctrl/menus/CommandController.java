@@ -6,6 +6,8 @@ import cn.com.nettex.apps.meta.ViewMeta;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -24,6 +26,8 @@ import static javafx.application.Platform.exit;
  */
 public class CommandController implements Assign<Director>, Initializable {
 
+    private static final Logger logger = LogManager.getLogger(CommandController.class);
+
     private Director manager;
     public MenuItem miExit;
 
@@ -38,18 +42,22 @@ public class CommandController implements Assign<Director>, Initializable {
     }
 
     public void exitApp(ActionEvent event) {
+        logger.info(event.getSource());
         exit();
     }
 
     public void showConvertView(ActionEvent event) {
+        logger.info(event.getSource());
         manager.show(ViewMeta.CONVERT_STAGE);
     }
 
     public void showExtractView(ActionEvent event) {
+        logger.info(event.getSource());
         manager.show(ViewMeta.EXTRACT_STAGE);
     }
 
     public void closeActiveStage(ActionEvent event) {
+        logger.info(event.getSource());
         manager.close();
     }
 }
