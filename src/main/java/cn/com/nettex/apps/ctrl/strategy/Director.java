@@ -96,7 +96,7 @@ public class Director {
     }
 
     public void show(String activeChild) {
-        getController(activeChild).changeStatus(getPrimaryStage());
+        getController(activeChild).change(getPrimaryStage());
         Main.getRoot().setCenter(getChild(activeChild));
     }
 }

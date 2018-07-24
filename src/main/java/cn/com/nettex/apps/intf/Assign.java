@@ -7,6 +7,6 @@ public interface Assign<T> {
     default void assign(T from) {
     }
 
-    default void changeStatus(Stage stage) {
+    default void change(Stage stage) {
     }
 }

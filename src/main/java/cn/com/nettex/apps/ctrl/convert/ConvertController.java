@@ -138,7 +138,7 @@ public class ConvertController implements Assign<Director>, Initializable {
     private Effect<String> success = valid -> logger.info(ElemMeta.ALL_REQUIRED_CHECK_IS_PASSED);
     private Effect<String> failure = logger::error;
 
-    public void changeStatus(Stage stage) {
+    public void change(Stage stage) {
         this.stage = stage;
         stage.titleProperty().bindBidirectional(_convertModel.windowsTitleProperty());
         addResizeListener();
